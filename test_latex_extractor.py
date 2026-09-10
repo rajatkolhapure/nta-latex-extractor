@@ -85,12 +85,12 @@ def detect_and_crop_diagram_cut_to_cut(
 
     row_sums = np.sum(thresh, axis=1) / 255.0
 
-    # Group contiguous non-empty rows into layout blocks (threshold 1.2 to not split on subtle gaps)
-    blocks = []
+    # Group contiguous non-empty rows into layout blocks (threshold 1.0)
+    raw_blocks = []
     in_block = False
     start = 0
     for y in range(h):
-        if row_sums[y] > 1.2:
+        if row_sums[y] > 1.0:
             if not in_block:
                 in_block = True
                 start = y
@@ -98,29 +98,50 @@ def detect_and_crop_diagram_cut_to_cut(
             if in_block:
                 in_block = False
                 if y - start > 1:
-                    blocks.append((start, y - 1))
+                    raw_blocks.append((start, y - 1))
     if in_block:
-        blocks.append((start, h - 1))
+        raw_blocks.append((start, h - 1))
+
+    # Merge adjacent blocks if gap <= 4 px AND either block is a sparse fragment (bridges dashed lines)
+    merged = []
+    for b in raw_blocks:
+        if not merged:
+            merged.append(list(b))
+        else:
+            gap = b[0] - merged[-1][1]
+            prev_h = merged[-1][1] - merged[-1][0]
+            cur_h = b[1] - b[0]
+            is_sparse = (cur_h <= 8) or (prev_h <= 8)
+            if gap <= 4 and is_sparse:
+                merged[-1][1] = b[1]
+            else:
+                merged.append(list(b))
+    blocks = [(b[0], b[1]) for b in merged]
 
     # Identify the main diagram block:
     diag_idx = None
     for i, (b_start, b_end) in enumerate(blocks):
         b_h = b_end - b_start
-        if b_h >= 35 and int(h * 0.12) <= b_start <= int(h * 0.85):
-            # Reject full-width text paragraphs:
-            # Diagrams rarely span more than ~85% of image width.
-            # Full-width coverage strongly indicates typeset text (question text, options).
+        # Support diagrams anywhere from top (b_start >= 0) to 85% of image
+        if b_h >= 35 and b_start <= int(h * 0.85):
             roi_block = thresh[b_start:b_end + 1, :]
             col_sums = np.sum(roi_block, axis=0) / 255.0
             ink_cols = np.sum(col_sums > 0)
             coverage = ink_cols / w
+
+            # Reject option blocks in the lower half starting near left margin
+            pts = np.argwhere(roi_block > 0)
+            if len(pts) > 0:
+                xmin = pts[:, 1].min()
+                if b_start > int(h * 0.50) and xmin < int(w * 0.10) and coverage < 0.35:
+                    continue
 
             # Count sub-rows (line groups) within this layout block
             rs = np.sum(roi_block, axis=1) / 255.0
             sub_rows = 0
             in_sub = False
             for v in rs:
-                if v > 1.2:
+                if v > 1.0:
                     if not in_sub:
                         sub_rows += 1
                         in_sub = True
