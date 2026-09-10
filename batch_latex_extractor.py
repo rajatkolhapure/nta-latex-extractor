@@ -340,6 +340,7 @@ def main():
     parser.add_argument("--bg-mode", default="white", choices=["transparent", "white", "dark"], help="Background mode")
     parser.add_argument("--input-json", default="all_nta_questions.json", help="Input questions file")
     parser.add_argument("--output-json", default="all_extracted_latex_questions.json", help="Output JSON file")
+    parser.add_argument("--subject", default=None, choices=["Physics", "Chemistry", "Mathematics"], help="Filter by subject (Physics, Chemistry, Mathematics)")
 
     args = parser.parse_args()
 
@@ -374,6 +375,8 @@ def main():
 
     to_process = []
     for q in questions:
+        if args.subject and q.get("subject", "").lower() != args.subject.lower():
+            continue
         url = q.get("imageUrl")
         p = q.get("localImagePath")
         if url and url not in processed_map and p and os.path.exists(p):
@@ -382,7 +385,7 @@ def main():
     if args.limit > 0:
         to_process = to_process[:args.limit]
 
-    print(f"Questions to process in this run: {len(to_process)}")
+    print(f"Questions to process in this run: {len(to_process)}" + (f" (Subject: {args.subject})" if args.subject else ""))
     results = list(processed_map.values())
 
     for idx, q in enumerate(to_process, 1):

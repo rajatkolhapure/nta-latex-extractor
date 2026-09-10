@@ -98,9 +98,18 @@ Rules:
 }"""
 
 
-def process_dataset(input_json: str = "all_nta_questions.json", limit: int = None):
+def process_dataset(
+    input_json: str = "all_nta_questions.json",
+    output_json: str = "all_nta_questions_latex.json",
+    limit: int = None,
+    subject: str = None
+):
     with open(input_json, "r", encoding="utf-8") as f:
         questions = json.load(f)
+
+    if subject:
+        questions = [q for q in questions if q.get("subject", "").lower() == subject.lower()]
+        print(f"Filtered by subject '{subject}': {len(questions)} questions found.")
 
     if limit:
         questions = questions[:limit]
@@ -113,7 +122,7 @@ def process_dataset(input_json: str = "all_nta_questions.json", limit: int = Non
         if not img_path or not os.path.exists(img_path):
             continue
 
-        print(f"[{idx}/{len(questions)}] Processing Q{q['questionNumber']} ({q['paperTitle']})...")
+        print(f"[{idx}/{len(questions)}] Processing Q{q['questionNumber']} ({q['paperTitle']} - {q.get('subject')})...")
         try:
             result = call_ollama_vlm(img_path, SYSTEM_PROMPT)
             q["hasDiagram"] = result.get("hasDiagram", False)
@@ -129,7 +138,7 @@ def process_dataset(input_json: str = "all_nta_questions.json", limit: int = Non
                     q["diagramLocalPath"] = str(diag_save_path.as_posix())
 
             # Save progress
-            with open("all_nta_questions_latex.json", "w", encoding="utf-8") as f:
+            with open(output_json, "w", encoding="utf-8") as f:
                 json.dump(questions, f, indent=2, ensure_ascii=False)
 
         except Exception as e:
@@ -138,7 +147,15 @@ def process_dataset(input_json: str = "all_nta_questions.json", limit: int = Non
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--limit", type=int, default=5, help="Number of questions to test")
+    parser = argparse.ArgumentParser(description="Local VLM LaTeX & Diagram Extraction on RTX 4070")
+    parser.add_argument("--limit", type=int, default=5, help="Number of questions to test (0 for all)")
+    parser.add_argument("--subject", default=None, choices=["Physics", "Chemistry", "Mathematics"], help="Filter by subject (Physics, Chemistry, Mathematics)")
+    parser.add_argument("--input-json", default="all_nta_questions.json", help="Input questions JSON file")
+    parser.add_argument("--output-json", default="all_nta_questions_latex.json", help="Output JSON file")
     args = parser.parse_args()
-    process_dataset(limit=args.limit)
+    process_dataset(
+        input_json=args.input_json,
+        output_json=args.output_json,
+        limit=args.limit if args.limit > 0 else None,
+        subject=args.subject
+    )
