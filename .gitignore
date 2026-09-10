@@ -10,10 +10,14 @@ venv/
 # Large data files - do not commit
 downloads/
 all_nta_questions.json
+all_nta_questions_sorted.json
 all_extracted_latex_questions.json
 all_nta_questions_latex.json
-master_nta_questions.json
-nta_database_questions.json
+physics_questions.json
+chemistry_questions.json
+mathematics_questions.json
+questions_by_subject.json
+*_questions.json
 
 # Keep the diagrams folder structure but not the files
 !downloads/
