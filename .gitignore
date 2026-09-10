@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.env
+venv/
+.venv/
+
+# Large data files - do not commit
+downloads/
+all_nta_questions.json
+all_extracted_latex_questions.json
+all_nta_questions_latex.json
+master_nta_questions.json
+nta_database_questions.json
+
+# Keep the diagrams folder structure but not the files
+!downloads/
+!downloads/diagrams/
+downloads/diagrams/*.png
+downloads/diagrams/*.jpg
+downloads/question_images/
+
+# Misc
+*.log
+.DS_Store
+Thumbs.db
+test_q2_box.png

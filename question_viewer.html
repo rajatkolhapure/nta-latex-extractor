@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NTA Question & Diagram Explorer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    
+    <!-- Top Bar -->
+    <header class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-6 mb-6 gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+          <span class="text-blue-500">⚛</span> NTA Exam Question & Diagram Explorer
+        </h1>
+        <p class="text-slate-400 text-sm mt-1">
+          Loaded from <code class="text-blue-400 bg-slate-800 px-1.5 py-0.5 rounded text-xs">all_nta_questions.json</code>
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <select id="subjectFilter" onchange="applyFilters()" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          <option value="ALL">All Subjects (2,999)</option>
+          <option value="Physics">Physics</option>
+          <option value="Chemistry">Chemistry</option>
+          <option value="Mathematics">Mathematics</option>
+        </select>
+
+        <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search paper or topic..." class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 w-48" />
+      </div>
+    </header>
+
+    <!-- Pagination & Stats Bar -->
+    <div class="flex items-center justify-between bg-slate-800/60 border border-slate-800 rounded-xl px-4 py-3 mb-6">
+      <div id="statsText" class="text-xs text-slate-400 font-medium">
+        Showing 1-10 of 2,999 questions
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="changePage(-1)" id="prevBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-semibold rounded-lg border border-slate-700 transition">
+          &larr; Previous
+        </button>
+        <span id="pageIndicator" class="text-xs text-slate-300 font-mono px-2">Page 1 of 300</span>
+        <button onclick="changePage(1)" id="nextBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-semibold rounded-lg border border-slate-700 transition">
+          Next &rarr;
+        </button>
+      </div>
+    </div>
+
+    <!-- Questions Feed -->
+    <div id="questionsContainer" class="space-y-6">
+      <div class="text-center py-12 text-slate-500">Loading questions dataset...</div>
+    </div>
+
+  </div>
+
+  <script>
+    let allQuestions = [];
+    let filteredQuestions = [];
+    let currentPage = 1;
+    const pageSize = 10;
+
+    async function loadDataset() {
+      try {
+        const resp = await fetch('all_nta_questions.json');
+        allQuestions = await resp.json();
+        filteredQuestions = [...allQuestions];
+        applyFilters();
+      } catch (err) {
+        document.getElementById('questionsContainer').innerHTML = 
+          `<div class="p-6 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl">
+            Failed to load all_nta_questions.json. Make sure you run via <code>python preview_server.py</code>!
+          </div>`;
+      }
+    }
+
+    function applyFilters() {
+      const sub = document.getElementById('subjectFilter').value;
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      filteredQuestions = allQuestions.filter(q => {
+        const matchSub = sub === 'ALL' || q.subject === sub;
+        const matchSearch = !search || 
+          q.paperTitle.toLowerCase().includes(search) || 
+          q.topic.toLowerCase().includes(search) || 
+          String(q.questionNumber).includes(search);
+        return matchSub && matchSearch;
+      });
+
+      currentPage = 1;
+      renderCurrentPage();
+    }
+
+    function changePage(delta) {
+      const maxPage = Math.ceil(filteredQuestions.length / pageSize) || 1;
+      currentPage = Math.max(1, Math.min(maxPage, currentPage + delta));
+      renderCurrentPage();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderCurrentPage() {
+      const total = filteredQuestions.length;
+      const maxPage = Math.ceil(total / pageSize) || 1;
+      const startIdx = (currentPage - 1) * pageSize;
+      const endIdx = Math.min(startIdx + pageSize, total);
+      const slice = filteredQuestions.slice(startIdx, endIdx);
+
+      document.getElementById('statsText').innerText = `Showing ${total ? startIdx + 1 : 0}-${endIdx} of ${total} questions`;
+      document.getElementById('pageIndicator').innerText = `Page ${currentPage} of ${maxPage}`;
+      document.getElementById('prevBtn').disabled = currentPage <= 1;
+      document.getElementById('nextBtn').disabled = currentPage >= maxPage;
+
+      const container = document.getElementById('questionsContainer');
+      if (!slice.length) {
+        container.innerHTML = `<div class="text-center py-12 text-slate-500">No questions matched the filter.</div>`;
+        return;
+      }
+
+      container.innerHTML = slice.map((q, idx) => {
+        const subjectColor = q.subject === 'Physics' ? 'text-blue-400 bg-blue-500/10 border-blue-500/20' :
+                             q.subject === 'Chemistry' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' :
+                             'text-purple-400 bg-purple-500/10 border-purple-500/20';
+
+        return `
+          <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl hover:border-slate-600 transition">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-3 mb-4">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-lg border ${subjectColor}">
+                  ${q.subject}
+                </span>
+                <span class="text-xs font-medium text-slate-400 bg-slate-900/60 px-2 py-1 rounded-md border border-slate-800">
+                  Q${q.questionNumber}
+                </span>
+                <span class="text-xs text-slate-400">
+                  Paper ${q.paperId}: ${q.paperTitle}
+                </span>
+              </div>
+              <div class="text-xs font-mono text-slate-400">
+                +${q.marks} / -${q.negativeMarks}
+              </div>
+            </div>
+
+            <!-- Question Image -->
+            <div class="mb-5 bg-white p-3 rounded-xl inline-block shadow-inner">
+              <img src="${q.localImagePath}" alt="Question ${q.questionNumber}" class="max-h-72 object-contain rounded" loading="lazy" />
+            </div>
+
+            <!-- Options Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+              ${(q.options || []).map(opt => {
+                const isCorrect = (q.correctOptions || []).includes(opt.key);
+                return `
+                  <div class="flex items-center p-3 rounded-xl border ${isCorrect ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-medium' : 'border-slate-700 bg-slate-900/40 text-slate-300'} text-xs">
+                    <span class="w-5 h-5 rounded-full flex items-center justify-center font-bold mr-2 text-[11px] ${isCorrect ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400'}">
+                      ${opt.key}
+                    </span>
+                    <span>${opt.text}</span>
+                    ${isCorrect ? '<span class="ml-auto text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-mono">Answer Key</span>' : ''}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.addEventListener('DOMContentLoaded', loadDataset);
+  </script>
+</body>
+</html>

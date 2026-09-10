@@ -1,0 +1,486 @@
+[
+    {
+        "paperId": "1",
+        "title": "JEE-Main"
+    },
+    {
+        "paperId": "2",
+        "title": "UGC-NET"
+    },
+    {
+        "paperId": "3",
+        "title": "NEET"
+    },
+    {
+        "paperId": "4",
+        "title": "AIAPGT"
+    },
+    {
+        "paperId": "5",
+        "title": "JNU"
+    },
+    {
+        "paperId": "6",
+        "title": "ARPIT"
+    },
+    {
+        "paperId": "7",
+        "title": "NCHM"
+    },
+    {
+        "paperId": "8",
+        "title": "ICAR-AIEEA-UG"
+    },
+    {
+        "paperId": "9",
+        "title": "ICAR-AIEEA-PG"
+    },
+    {
+        "paperId": "10",
+        "title": "ICAR-AIEEA-JRF"
+    },
+    {
+        "paperId": "11",
+        "title": "IGNOU"
+    },
+    {
+        "paperId": "12",
+        "title": "SWAYAM"
+    },
+    {
+        "paperId": "13",
+        "title": "CMAT"
+    },
+    {
+        "paperId": "14",
+        "title": "GPAT"
+    },
+    {
+        "paperId": "17",
+        "title": "CSIR"
+    },
+    {
+        "paperId": "18",
+        "title": "IIFT"
+    },
+    {
+        "paperId": "19",
+        "title": "KCET"
+    },
+    {
+        "paperId": "20",
+        "title": "DUET"
+    },
+    {
+        "paperId": "21",
+        "title": "AISSEE"
+    },
+    {
+        "paperId": "22",
+        "title": "NSU"
+    },
+    {
+        "paperId": "23",
+        "title": "GNDU"
+    },
+    {
+        "paperId": "24",
+        "title": "MEA-JSS"
+    },
+    {
+        "paperId": "25",
+        "title": "MEA-SWAYAM"
+    },
+    {
+        "paperId": "26",
+        "title": "I & B"
+    },
+    {
+        "paperId": "27",
+        "title": "IIMC"
+    },
+    {
+        "paperId": "28",
+        "title": "NIS"
+    },
+    {
+        "paperId": "29",
+        "title": "FNCON"
+    },
+    {
+        "paperId": "30",
+        "title": "Ind-SAT"
+    },
+    {
+        "paperId": "31",
+        "title": "NLU"
+    },
+    {
+        "paperId": "32",
+        "title": "LHMC"
+    },
+    {
+        "paperId": "33",
+        "title": "IGNOU Recruitment"
+    },
+    {
+        "paperId": "34",
+        "title": "AO - 2021"
+    },
+    {
+        "paperId": "35",
+        "title": "ALLAHABAD HIGH COURT"
+    },
+    {
+        "paperId": "36",
+        "title": "AICTE Recruitment Test -2021"
+    },
+    {
+        "paperId": "37",
+        "title": "Devi Ahilya Vishwavidyalaya"
+    },
+    {
+        "paperId": "38",
+        "title": "NITTT"
+    },
+    {
+        "paperId": "39",
+        "title": "PRAGATII (IND-SAT)"
+    },
+    {
+        "paperId": "40",
+        "title": "National Institute of Social Defence"
+    },
+    {
+        "paperId": "41",
+        "title": "BET"
+    },
+    {
+        "paperId": "42",
+        "title": "GAT-B"
+    },
+    {
+        "paperId": "43",
+        "title": "JIP-MAT"
+    },
+    {
+        "paperId": "44",
+        "title": "LNIPE"
+    },
+    {
+        "paperId": "45",
+        "title": "CUCET"
+    },
+    {
+        "paperId": "46",
+        "title": "YASASVI"
+    },
+    {
+        "paperId": "47",
+        "title": "SHRESHTA"
+    },
+    {
+        "paperId": "48",
+        "title": "CUET(UG)"
+    },
+    {
+        "paperId": "49",
+        "title": "CUET (PG)"
+    },
+    {
+        "paperId": "50",
+        "title": "ISRO"
+    },
+    {
+        "paperId": "51",
+        "title": "CRENIT"
+    },
+    {
+        "paperId": "52",
+        "title": "NFSUJUL"
+    },
+    {
+        "paperId": "53",
+        "title": "MNS"
+    },
+    {
+        "paperId": "54",
+        "title": "DU, JNU, BHU and BBAU"
+    },
+    {
+        "paperId": "55",
+        "title": "DOPT"
+    },
+    {
+        "paperId": "56",
+        "title": "NCET"
+    },
+    {
+        "paperId": "57",
+        "title": "FIT INDIA QUIZ"
+    },
+    {
+        "paperId": "59",
+        "title": "EPFO"
+    },
+    {
+        "paperId": "60",
+        "title": "Visva-Bharati Recruitment Examination"
+    },
+    {
+        "paperId": "61",
+        "title": "Young Professional Recruitment Examination"
+    },
+    {
+        "paperId": "62",
+        "title": "Dr. Harisingh Gour Vishwavidyalaya Recruitment Examination"
+    },
+    {
+        "paperId": "63",
+        "title": "National Horticulture Board Recruitment Examination"
+    },
+    {
+        "paperId": "64",
+        "title": "NIFT"
+    },
+    {
+        "paperId": "65",
+        "title": "Delhi High Court"
+    },
+    {
+        "paperId": "66",
+        "title": "ICMR"
+    },
+    {
+        "paperId": "67",
+        "title": "DU Recruitment"
+    },
+    {
+        "paperId": "69",
+        "title": "IIT DELHI Recruitment 2023"
+    },
+    {
+        "paperId": "70",
+        "title": "NTET"
+    },
+    {
+        "paperId": "71",
+        "title": "JNURE"
+    },
+    {
+        "paperId": "72",
+        "title": "RLBCAU"
+    },
+    {
+        "paperId": "73",
+        "title": "NSSNET"
+    },
+    {
+        "paperId": "74",
+        "title": "UGC NET DECEMBER 2024"
+    },
+    {
+        "paperId": "75",
+        "title": "CUO"
+    },
+    {
+        "paperId": "78",
+        "title": "CURE"
+    },
+    {
+        "paperId": "79",
+        "title": "CUET (PG) 2026"
+    },
+    {
+        "paperId": "3992",
+        "title": "4050367_B PLANNING 6th JAN 2020 Shift 2 Set 2"
+    },
+    {
+        "paperId": "3991",
+        "title": "40503627_BTECH 9th Jan 2020 Shift 2"
+    },
+    {
+        "paperId": "3990",
+        "title": "40503624_BTECH 9th Jan 2020 Shift 1"
+    },
+    {
+        "paperId": "3989",
+        "title": "40503621_BTECH 8th Jan 2020 Shift 2"
+    },
+    {
+        "paperId": "3988",
+        "title": "40503618_BTECH 8th Jan 2020 Shift 1"
+    },
+    {
+        "paperId": "3987",
+        "title": "40503615_BTECH 7th Jan 2020 Shift 2"
+    },
+    {
+        "paperId": "3986",
+        "title": "4050361_BTECH 7th Jan 2020 Shift 1"
+    },
+    {
+        "paperId": "3985",
+        "title": "40503612_B PLANNING AND B ARCH 6th Jan 2020 Shift 2 Set 2"
+    },
+    {
+        "paperId": "3984",
+        "title": "4050366_B ARCH 6th Jan 2020 Shift 2 Set 2"
+    },
+    {
+        "paperId": "3983",
+        "title": "4050369_B ARCH 6th Jan 2020 Shift 1 Set 2"
+    },
+    {
+        "paperId": "327",
+        "title": "PAPER 1 EHG 11th Jan SHIFT 2"
+    },
+    {
+        "paperId": "326",
+        "title": "PAPER 1 EHG 11th Jan SHIFT 1"
+    },
+    {
+        "paperId": "325",
+        "title": "PAPER 1 EHG 10th Jan SHIFT 2"
+    },
+    {
+        "paperId": "324",
+        "title": "PAPER 1 EHG 12th Jan SHIFT 1"
+    },
+    {
+        "paperId": "323",
+        "title": "PAPER 1 EHG 12th Jan SHIFT 2"
+    },
+    {
+        "paperId": "322",
+        "title": "PAPER 1 EHG 10th Jan SHIFT 1"
+    },
+    {
+        "paperId": "321",
+        "title": "PAPER 1 EHG 9th Jan SHIFT 2"
+    },
+    {
+        "paperId": "320",
+        "title": "PAPER II EHG 8th Jan SHIFT 2"
+    },
+    {
+        "paperId": "319",
+        "title": "PAPER 1 EHG 9th Jan SHIFT 1"
+    },
+    {
+        "paperId": "318",
+        "title": "PAPER II EHG 8th Jan SHIFT 1"
+    },
+    {
+        "paperId": "317",
+        "title": "PAPER 1 EHG 12th  April SHIFT 1"
+    },
+    {
+        "paperId": "316",
+        "title": "PAPER 1 EHG 12th  April SHIFT 2"
+    },
+    {
+        "paperId": "315",
+        "title": "PAPER 1 EHG 10th  April SHIFT 1"
+    },
+    {
+        "paperId": "314",
+        "title": "PAPER 1 EHG 10th  April SHIFT 2"
+    },
+    {
+        "paperId": "313",
+        "title": "PAPER II EHG 7th April SHIFT 1"
+    },
+    {
+        "paperId": "312",
+        "title": "PAPER 1 EHG 9th  April SHIFT 1"
+    },
+    {
+        "paperId": "311",
+        "title": "PAPER 1 EHG 9th  April SHIFT 2"
+    },
+    {
+        "paperId": "310",
+        "title": "PAPER 1 EHG 8th  April SHIFT 2"
+    },
+    {
+        "paperId": "309",
+        "title": "PAPER II EHG 7th  April SHIFT 2"
+    },
+    {
+        "paperId": "308",
+        "title": "PAPER 1 EHG 8th  April SHIFT 1"
+    },
+    {
+        "paperId": "299",
+        "title": "PAPER 1 08.04.2019 1st SHIFT"
+    },
+    {
+        "paperId": "169",
+        "title": "PAPER 2 08-01-2019 EVENING"
+    },
+    {
+        "paperId": "163",
+        "title": "PAPER 2 08-01-2019 MORNING"
+    },
+    {
+        "paperId": "161",
+        "title": "PAPER 1 12-01-2019 EVENING"
+    },
+    {
+        "paperId": "155",
+        "title": "PAPER 1 12-01-2019 MORNING"
+    },
+    {
+        "paperId": "153",
+        "title": "PAPER 1 11-01-2019 EVENING"
+    },
+    {
+        "paperId": "151",
+        "title": "Paper 1 15-04-18"
+    },
+    {
+        "paperId": "150",
+        "title": "PAPER 1 10-01-2019"
+    },
+    {
+        "paperId": "148",
+        "title": "PAPER 1 09-01-2019 MORNING"
+    },
+    {
+        "paperId": "146",
+        "title": "PAPER 1 10-04-16"
+    },
+    {
+        "paperId": "145",
+        "title": "PAPER 1 03-04-16"
+    },
+    {
+        "paperId": "144",
+        "title": "PAPER 1 09-04-17"
+    },
+    {
+        "paperId": "143",
+        "title": "PAPER 1 03-04-17"
+    },
+    {
+        "paperId": "140",
+        "title": "PAPER 1 16-04-18 MORNING"
+    },
+    {
+        "paperId": "138",
+        "title": "PAPER1 15-04-18 MORNING"
+    },
+    {
+        "paperId": "135",
+        "title": "PAPER 2"
+    },
+    {
+        "paperId": "133",
+        "title": "Paper1"
+    },
+    {
+        "paperId": "1",
+        "title": "Paper 1 15-Apr-2018 (Evening)"
+    }
+]
