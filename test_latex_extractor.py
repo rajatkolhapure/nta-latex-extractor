@@ -20,15 +20,22 @@ DIAGRAM_DIR = Path("./downloads/diagrams")
 DIAGRAM_DIR.mkdir(parents=True, exist_ok=True)
 
 PROMPT = """You are an expert LaTeX OCR and Exam Digitization engine.
-Extract the question text and all 4 options from the provided NTA exam question image.
+Extract the question text, all 4 options, subject, topic, and subtopic from the provided NTA exam question image.
 
 Rules:
 1. Wrap all mathematical variables, symbols, numbers with units, and equations in LaTeX:
    - Inline math: $...$
    - Block equations: $$...$$
 2. Transcribe Greek symbols (\\alpha, \\beta, \\lambda, \\Omega, \\mu) and sub/superscripts precisely.
-3. Output strictly valid JSON matching this schema:
+3. Classify the question accurately:
+   - "subject": Exactly one of ["Physics", "Chemistry", "Mathematics"]
+   - "topic": Standard JEE/NEET chapter or major topic (e.g. "Current Electricity", "Conic Sections - Hyperbola", "Organic Reaction Mechanisms", "Thermodynamics", "Capacitance & Dielectrics", "Vectors & 3D Geometry", "Equilibrium")
+   - "subTopic": The specific concept tested (e.g. "Kirchhoff's Laws & Nodal Analysis", "Eccentricity & Latus Rectum", "Peroxide Effect on Alkenes", "Dielectric Medium", "Equilibrium Constant")
+4. Output strictly valid JSON matching this schema:
 {
+  "subject": "Physics | Chemistry | Mathematics",
+  "topic": "...",
+  "subTopic": "...",
   "latexQuestion": "...",
   "latexOptions": [
     {"key": "1", "latex": "..."},
@@ -265,11 +272,21 @@ def fix_latex_json(raw: str) -> str:
     return "".join(out)
 
 
-def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-2.5-flash-lite") -> dict:
+def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-3.1-flash-lite") -> dict:
     with open(image_path, "rb") as f:
         img_b64 = base64.b64encode(f.read()).decode("utf-8")
 
-    models_to_try = [model, "gemini-2.5-flash-lite", "gemini-2.5-flash", "gemini-3.1-flash-lite-preview"]
+    models_to_try = [
+        model,
+        "gemini-3.1-flash-lite",
+        "gemini-3.5-flash-lite",
+        "gemini-2.5-flash-lite",
+        "gemini-3.8-flash",
+        "gemini-3.7-flash",
+        "gemini-3.6-flash",
+        "gemini-3-flash-preview",
+        "gemini-2.5-flash",
+    ]
     # De-duplicate while preserving order
     seen = set()
     models_to_try = [m for m in models_to_try if not (m in seen or seen.add(m))]
@@ -300,13 +317,18 @@ def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-2.5-flas
             text = text.strip()
 
             try:
-                return json.loads(text, strict=False)
+                data = json.loads(text, strict=False)
             except Exception:
                 fixed = fix_latex_json(text)
-                return json.loads(fixed, strict=False)
+                data = json.loads(fixed, strict=False)
+            data["_used_model"] = cur_model
+            return data
         elif resp.status_code == 429:
-            last_err = f"Model {cur_model} 429 Quota Exceeded. Trying alternate model..."
+            last_err = f"Model {cur_model} 429 Quota Exceeded. Trying next model..."
             print(f"  [!] {last_err}")
+            continue
+        elif resp.status_code == 404:
+            # Model might not be enabled or available in current API tier
             continue
         else:
             raise RuntimeError(f"Gemini API Error {resp.status_code}: {resp.text}")
@@ -338,8 +360,19 @@ def main():
         print("\n[!] Please pass --gemini-key YOUR_API_KEY")
         return
 
-    print("\nTranscribing Math & Question Text via Gemini 2.5 Flash...")
+    print("\nTranscribing Math, Subject & Topic via Gemini API...")
     result = call_gemini_api(args.image, args.gemini_key)
+
+    used_model = result.get("_used_model", "Unknown")
+    subj = result.get("subject", "Unclassified")
+    topic = result.get("topic", "General")
+    subtopic = result.get("subTopic", "")
+
+    print(f"\n--- CLASSIFICATION (via {used_model}) ---")
+    print(f"  Subject  : {subj}")
+    print(f"  Topic    : {topic}")
+    if subtopic:
+        print(f"  Sub-Topic: {subtopic}")
 
     q_text = result.get("latexQuestion") or result.get("question", "")
     print("\n--- EXTRACTED LATEX QUESTION ---")

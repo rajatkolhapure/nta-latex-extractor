@@ -20,15 +20,22 @@ DIAGRAM_DIR = Path("./downloads/diagrams")
 DIAGRAM_DIR.mkdir(parents=True, exist_ok=True)
 
 PROMPT = """You are an expert LaTeX OCR and Exam Digitization engine.
-Extract the question text and all 4 options from the provided NTA exam question image.
+Extract the question text, all 4 options, subject, topic, and subtopic from the provided NTA exam question image.
 
 Rules:
 1. Wrap all mathematical variables, symbols, numbers with units, and equations in LaTeX:
    - Inline math: $...$
    - Block equations: $$...$$
 2. Transcribe Greek symbols (\\alpha, \\beta, \\lambda, \\Omega, \\mu) and sub/superscripts precisely.
-3. Output strictly valid JSON matching this schema:
+3. Classify the question accurately:
+   - "subject": Exactly one of ["Physics", "Chemistry", "Mathematics"]
+   - "topic": Standard JEE/NEET chapter or major topic (e.g. "Current Electricity", "Conic Sections - Hyperbola", "Organic Reaction Mechanisms", "Thermodynamics", "Capacitance & Dielectrics", "Vectors & 3D Geometry", "Equilibrium")
+   - "subTopic": The specific concept tested (e.g. "Kirchhoff's Laws & Nodal Analysis", "Eccentricity & Latus Rectum", "Peroxide Effect on Alkenes", "Dielectric Medium", "Equilibrium Constant")
+4. Output strictly valid JSON matching this schema:
 {
+  "subject": "Physics | Chemistry | Mathematics",
+  "topic": "...",
+  "subTopic": "...",
   "latexQuestion": "...",
   "latexOptions": [
     {"key": "1", "latex": "..."},
@@ -288,47 +295,63 @@ def safe_json_loads(text: str) -> dict:
     return json.loads(text)
 
 
-def call_gemini_api(image_path: str, api_key: str, retries: int = 3) -> dict:
+def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-3.1-flash-lite") -> dict:
     with open(image_path, "rb") as f:
         img_b64 = base64.b64encode(f.read()).decode("utf-8")
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
-    payload = {
-        "contents": [
-            {
-                "parts": [
-                    {"text": PROMPT},
-                    {"inline_data": {"mime_type": "image/jpeg", "data": img_b64}}
-                ]
-            }
-        ],
-        "generationConfig": {
-            "response_mime_type": "application/json"
-        }
-    }
+    models_to_try = [
+        model,
+        "gemini-3.1-flash-lite",
+        "gemini-3.5-flash-lite",
+        "gemini-2.5-flash-lite",
+        "gemini-3.8-flash",
+        "gemini-3.7-flash",
+        "gemini-3.6-flash",
+        "gemini-3-flash-preview",
+        "gemini-2.5-flash",
+    ]
+    seen = set()
+    models_to_try = [m for m in models_to_try if not (m in seen or seen.add(m))]
 
-    import time
-    for attempt in range(retries):
+    last_err = None
+    for cur_model in models_to_try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{cur_model}:generateContent?key={api_key}"
+        payload = {
+            "contents": [
+                {
+                    "parts": [
+                        {"text": PROMPT},
+                        {"inline_data": {"mime_type": "image/jpeg", "data": img_b64}}
+                    ]
+                }
+            ],
+            "generationConfig": {
+                "response_mime_type": "application/json"
+            }
+        }
+
         try:
             resp = requests.post(url, json=payload, timeout=90)
-            if resp.status_code == 429:
-                wait_time = 15 * (attempt + 1)
-                print(f"  [!] Rate limited (429). Backing off {wait_time}s...")
-                time.sleep(wait_time)
+            if resp.status_code == 200:
+                text = resp.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+                data = safe_json_loads(text)
+                data["_used_model"] = cur_model
+                return data
+            elif resp.status_code == 429:
+                last_err = f"Model {cur_model} 429 Quota Exceeded. Trying next model..."
+                print(f"  [!] {last_err}")
                 continue
-            if resp.status_code != 200:
-                raise RuntimeError(f"Gemini API Error {resp.status_code}: {resp.text}")
-
-            text = resp.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
-            return safe_json_loads(text)
-        except requests.exceptions.Timeout:
-            if attempt < retries - 1:
-                print("  [!] Request timed out, retrying...")
-                time.sleep(5)
+            elif resp.status_code == 404:
+                continue
             else:
-                raise
+                last_err = f"Gemini API Error {resp.status_code}: {resp.text}"
+                continue
+        except requests.exceptions.Timeout:
+            last_err = f"Model {cur_model} timed out. Trying next model..."
+            print(f"  [!] {last_err}")
+            continue
 
-    raise RuntimeError(f"Failed to process {image_path} after {retries} retries.")
+    raise RuntimeError(f"All fallback models exhausted for {image_path}. Last error: {last_err}")
 
 
 def main():
@@ -411,14 +434,25 @@ def main():
                 stroke_color=args.stroke_color
             )
 
+            subj = extracted.get("subject") or q.get("subject", "Unclassified")
+            topic = extracted.get("topic") or "General"
+            subtopic = extracted.get("subTopic", "")
+            used_model = extracted.get("_used_model", "gemini")
+
             q_record = dict(q)
+            q_record["subject"] = subj
+            q_record["topic"] = topic
+            q_record["subTopic"] = subtopic
             q_record["latexQuestion"] = q_latex
             q_record["latexOptions"] = opts_latex
             q_record["hasDiagram"] = has_diag
             q_record["diagramPath"] = str(diag_save_path) if has_diag else None
             q_record["diagramBBox"] = [int(c) for c in bbox] if has_diag else None
+            q_record["extractedVia"] = used_model
 
             results.append(q_record)
+
+            print(f"   [*] {subj} > {topic}" + (f" ({subtopic})" if subtopic else "") + f" [Model: {used_model}]")
 
             if has_diag:
                 print(f"   [+] Diagram: True -> Saved Cut-to-Cut: {diag_save_path}")

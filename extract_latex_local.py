@@ -72,19 +72,26 @@ def call_ollama_vlm(image_path: str, prompt: str, model: str = "qwen2.5-vl:7b") 
 
 
 SYSTEM_PROMPT = """You are an expert LaTeX OCR and Exam Digitization engine.
-Extract the question text and all 4 options from the provided NTA exam question image.
+Extract the question text, all 4 options, subject, topic, and subtopic from the provided NTA exam question image.
 
 Rules:
 1. Wrap all mathematical variables, symbols, numbers with units, and equations in LaTeX:
    - Inline math: $...$
    - Block equations: $$...$$
-2. Transcribe Greek symbols (\alpha, \beta, \lambda, \Omega, \mu) and sub/superscripts precisely.
-3. If the question contains a diagram, circuit, graph, or chemical structure:
+2. Transcribe Greek symbols (\\alpha, \\beta, \\lambda, \\Omega, \\mu) and sub/superscripts precisely.
+3. Classify the question:
+   - "subject": One of ["Physics", "Chemistry", "Mathematics"]
+   - "topic": Standard JEE/NEET chapter or major topic (e.g. "Current Electricity", "Conic Sections - Hyperbola", "Organic Reaction Mechanisms", "Thermodynamics", "Capacitance & Dielectrics", "Vectors & 3D Geometry", "Equilibrium")
+   - "subTopic": The specific concept tested
+4. If the question contains a diagram, circuit, graph, or chemical structure:
    - Set "hasDiagram": true
    - Provide "diagramBoundingBox": [ymin, xmin, ymax, xmax] in 0-1000 normalized coordinates.
    - Describe the diagram briefly in "diagramDescription".
-4. Output strictly valid JSON with this schema:
+5. Output strictly valid JSON with this schema:
 {
+  "subject": "Physics | Chemistry | Mathematics",
+  "topic": "...",
+  "subTopic": "...",
   "hasDiagram": true/false,
   "diagramBoundingBox": [ymin, xmin, ymax, xmax] or null,
   "diagramDescription": "...",
@@ -122,9 +129,11 @@ def process_dataset(
         if not img_path or not os.path.exists(img_path):
             continue
 
-        print(f"[{idx}/{len(questions)}] Processing Q{q['questionNumber']} ({q['paperTitle']} - {q.get('subject')})...")
         try:
             result = call_ollama_vlm(img_path, SYSTEM_PROMPT)
+            q["subject"] = result.get("subject") or q.get("subject", "Unclassified")
+            q["topic"] = result.get("topic") or "General"
+            q["subTopic"] = result.get("subTopic", "")
             q["hasDiagram"] = result.get("hasDiagram", False)
             q["latexQuestion"] = result.get("latexQuestion", "")
             q["latexOptions"] = result.get("latexOptions", [])
