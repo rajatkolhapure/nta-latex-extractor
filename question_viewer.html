@@ -1,35 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" id="rootHtml" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CBT Exam Interface - Mock Test</title>
+  <title>NTA Question & LaTeX Explorer</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            cbtDark: {
-              bg: '#0f1117',
-              panel: '#151821',
-              card: '#1a1e2b',
-              border: '#262c3d',
-              header: '#141d2b',
-            },
-            cbtLight: {
-              bg: '#f3f4f6',
-              panel: '#ffffff',
-              card: '#f9fafb',
-              border: '#e5e7eb',
-              header: '#1e293b',
-            }
-          }
-        }
-      }
-    }
-  </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
@@ -41,234 +16,95 @@
       font-size: 0.875rem;
       margin: 0 auto;
     }
-    .dark .table-container th, .dark .table-container td {
-      border: 1px solid #334155;
-      padding: 0.5rem 1.25rem;
+    .table-container th, .table-container td {
+      border: 1px solid #475569;
+      padding: 0.6rem 1.25rem;
       text-align: center;
     }
-    .dark .table-container th {
+    .table-container th {
       background-color: #1e293b;
       color: #93c5fd;
       font-weight: 700;
+      letter-spacing: 0.025em;
     }
-    .dark .table-container td {
+    .table-container td {
       color: #f1f5f9;
       background-color: #0f172a;
     }
-    .dark .table-container tr:nth-child(even) td {
+    .table-container tr:nth-child(even) td {
       background-color: #1e293b;
     }
-
-    /* Light mode table */
-    html:not(.dark) .table-container th, html:not(.dark) .table-container td {
-      border: 1px solid #cbd5e1;
-      padding: 0.5rem 1.25rem;
-      text-align: center;
-    }
-    html:not(.dark) .table-container th {
-      background-color: #e2e8f0;
-      color: #1e3a8a;
-      font-weight: 700;
-    }
-    html:not(.dark) .table-container td {
-      color: #0f172a;
-      background-color: #ffffff;
-    }
-    html:not(.dark) .table-container tr:nth-child(even) td {
-      background-color: #f8fafc;
-    }
-
-    /* Dynamic Diagram Inversion for Light Mode:
-       White/navy strokes on transparent background invert cleanly to crisp dark strokes! */
-    html:not(.dark) .dynamic-diagram-img {
-      filter: invert(1) brightness(0.2) contrast(1.2);
-    }
-
     .katex-display {
       margin: 0.75rem 0 !important;
     }
   </style>
 </head>
-<body class="bg-[#0f1117] text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-150">
-  
-  <!-- TOP CBT HEADER BAR -->
-  <header class="bg-[#141d2b] border-b border-[#262c3d] px-4 py-2.5 flex items-center justify-between shadow-md shrink-0">
-    <!-- Left: CBT logo + Test Title -->
-    <div class="flex items-center gap-3">
-      <span class="bg-amber-500 text-slate-950 font-black text-xs px-2 py-0.5 rounded tracking-wider">
-        CBT
-      </span>
-      <h1 id="testHeaderTitle" class="text-sm md:text-base font-bold text-slate-100 flex items-center gap-2">
-        MHT-CET 2026 Mock Test – Paper I (PCM)
-      </h1>
-    </div>
-
-    <!-- Center: Countdown Timer Box -->
-    <div class="hidden sm:flex items-center gap-2 bg-[#0a0d14] border border-[#2d3748] px-3.5 py-1 rounded-md shadow-inner">
-      <span class="text-xs text-slate-400">🕒</span>
-      <span id="cbtTimer" class="font-mono text-sm font-bold text-amber-400 tracking-wider">01:29:02</span>
-    </div>
-
-    <!-- Right Controls: Theme Toggle, Dataset Selector, Paper, Rules, Profile -->
-    <div class="flex items-center gap-2 md:gap-3 text-xs">
-      <!-- Theme Toggle (Light / Dark) -->
-      <button onclick="toggleTheme()" id="themeBtn" class="flex items-center gap-1 bg-[#1e293b] hover:bg-[#2e3e57] text-amber-300 px-2.5 py-1 rounded border border-[#374151] font-semibold transition">
-        ☀️ Light
-      </button>
-
-      <!-- Dataset Selector -->
-      <select id="datasetSelector" onchange="switchDataset()" class="bg-[#1e293b] border border-[#374151] rounded px-2 py-1 text-slate-200 text-xs focus:outline-none focus:border-blue-500">
-        <option value="extracted_physics.json">Extracted Physics</option>
-        <option value="extracted_chemistry.json">Extracted Chemistry</option>
-        <option value="extracted_mathematics.json">Extracted Mathematics</option>
-        <option value="all_extracted_latex_questions.json">All Extracted (Merged)</option>
-        <option value="all_nta_questions.json">Raw NTA Scans</option>
-      </select>
-
-      <span class="hidden lg:inline-flex items-center gap-1 text-slate-300 hover:text-white cursor-pointer px-2 py-1 rounded bg-[#1e293b]/50 border border-slate-700">
-        📋 Paper
-      </span>
-      <span class="hidden lg:inline-flex items-center gap-1 text-slate-300 hover:text-white cursor-pointer px-2 py-1 rounded bg-[#1e293b]/50 border border-slate-700">
-        ℹ️ Rules
-      </span>
-      <div class="hidden sm:flex items-center gap-1 text-slate-400 font-mono px-1.5 py-0.5 bg-slate-900 rounded border border-slate-800">
-        <span class="text-[10px]">A-</span>
-        <span class="text-xs font-bold text-white">A</span>
-        <span class="text-xs">A+</span>
-      </div>
-      <span class="font-medium text-amber-400 pl-1">Rajat Kolhapure</span>
-    </div>
-  </header>
-
-  <!-- SECTION TABS BAR -->
-  <div class="bg-[#10141d] border-b border-[#222736] px-4 py-1.5 flex items-center gap-2 text-xs overflow-x-auto shrink-0">
-    <span class="font-bold text-slate-500 uppercase text-[10px] tracking-wider pr-1">SECTION:</span>
-    <button onclick="filterSection('Physics')" id="tabPhysics" class="px-3 py-1 rounded font-semibold transition flex items-center gap-1.5 bg-[#1e283b] text-amber-400 border border-amber-500/40">
-      SECTION A – PHYSICS <span id="countPhysics" class="bg-amber-500 text-slate-950 text-[10px] px-1.5 rounded-full font-bold">0</span>
-    </button>
-    <button onclick="filterSection('Chemistry')" id="tabChemistry" class="px-3 py-1 rounded font-semibold transition flex items-center gap-1.5 bg-[#171b26] text-slate-400 border border-transparent hover:text-slate-200">
-      SECTION B – CHEMISTRY <span id="countChemistry" class="bg-slate-700 text-slate-300 text-[10px] px-1.5 rounded-full font-bold">0</span>
-    </button>
-    <button onclick="filterSection('Mathematics')" id="tabMathematics" class="px-3 py-1 rounded font-semibold transition flex items-center gap-1.5 bg-[#171b26] text-slate-400 border border-transparent hover:text-slate-200">
-      SECTION C – MATHEMATICS <span id="countMathematics" class="bg-slate-700 text-slate-300 text-[10px] px-1.5 rounded-full font-bold">0</span>
-    </button>
-    <button onclick="filterSection('ALL')" id="tabAll" class="ml-auto px-2.5 py-1 rounded text-slate-400 text-xs hover:text-white">
-      Show All
-    </button>
-  </div>
-
-  <!-- MAIN CBT EXAM BODY: QUESTION (LEFT 75%) + QUESTION PALETTE (RIGHT 25%) -->
-  <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
+  <div class="max-w-6xl mx-auto px-4 py-8">
     
-    <!-- LEFT: QUESTION PANE -->
-    <main class="flex-1 overflow-y-auto p-4 md:p-6 bg-[#0f1117] flex flex-col justify-between" id="questionPane">
-      <div id="questionContentContainer" class="max-w-4xl w-full mx-auto">
-        <!-- Injected via JavaScript -->
-        <div class="text-center py-16 text-slate-500">Loading exam questions...</div>
+    <!-- Top Bar -->
+    <header class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-6 mb-6 gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+          <span class="text-blue-500">⚛</span> NTA Exam Question & LaTeX Explorer
+        </h1>
+        <p class="text-slate-400 text-sm mt-1">
+          Supports LaTeX Math, Observation Tables, HD Diagrams & Option Structures
+        </p>
       </div>
 
-      <!-- BOTTOM NAVIGATION BAR (Exact CBT matching) -->
-      <footer class="mt-8 pt-4 border-t border-[#222736] flex flex-wrap items-center justify-between gap-3 max-w-4xl w-full mx-auto">
-        <div class="flex items-center gap-2">
-          <button onclick="markForReview()" class="px-3 py-1.5 rounded bg-[#171c28] hover:bg-[#202738] border border-amber-500/40 text-amber-400 text-xs font-semibold flex items-center gap-1.5 transition">
-            🚩 Mark for Review & Next
-          </button>
-          <button onclick="clearResponse()" class="px-3 py-1.5 rounded bg-[#171c28] hover:bg-[#202738] border border-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1 transition">
-            🔄 CLEAR
-          </button>
-        </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Dataset Selector -->
+        <select id="datasetSelector" onchange="switchDataset()" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          <option value="test_q30.json">🔬 Test: Q30 Meter Bridge</option>
+          <option value="extracted_physics.json">Extracted Physics</option>
+          <option value="extracted_chemistry.json">Extracted Chemistry</option>
+          <option value="extracted_mathematics.json">Extracted Mathematics</option>
+          <option value="all_extracted_latex_questions.json">All Extracted (Merged)</option>
+          <option value="all_nta_questions.json">Raw NTA Scans (Original)</option>
+        </select>
 
-        <div class="flex items-center gap-2">
-          <button onclick="navigateQuestion(-1)" id="prevBtn" class="px-4 py-1.5 rounded bg-[#1e2536] hover:bg-[#2b354d] border border-slate-700 text-slate-200 text-xs font-bold transition disabled:opacity-30 disabled:cursor-not-allowed">
-            &larr; PREVIOUS
-          </button>
-          <button onclick="navigateQuestion(1)" id="nextBtn" class="px-4 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-md transition disabled:opacity-30 disabled:cursor-not-allowed">
-            SAVE & NEXT &rarr;
-          </button>
-          <button onclick="submitTest()" class="px-4 py-1.5 rounded bg-amber-600 hover:bg-amber-500 text-slate-950 text-xs font-black tracking-wide shadow-md transition">
-            SUBMIT PAPER
-          </button>
-        </div>
-      </footer>
-    </main>
+        <!-- Subject Filter -->
+        <select id="subjectFilter" onchange="applyFilters()" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          <option value="ALL">All Subjects</option>
+          <option value="Physics">Physics</option>
+          <option value="Chemistry">Chemistry</option>
+          <option value="Mathematics">Mathematics</option>
+        </select>
 
-    <!-- RIGHT: QUESTION PALETTE SIDEBAR (25% WIDTH) -->
-    <aside class="w-full md:w-80 bg-[#12151f] border-l border-[#222736] flex flex-col p-4 shrink-0 overflow-y-auto" id="palettePane">
-      
-      <!-- Palette Header -->
-      <div class="flex items-center justify-between border-b border-[#222736] pb-3 mb-4">
-        <span class="text-xs font-bold tracking-wider text-slate-300 uppercase">QUESTION PALETTE</span>
-        <span id="paletteTotalBadge" class="text-xs font-mono bg-[#1c2233] px-2 py-0.5 rounded text-amber-400 border border-slate-700">TOTAL: 0</span>
+        <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search topic or paper..." class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 w-44" />
       </div>
+    </header>
 
-      <!-- Legend Grid (Answered, Unanswered, Review, Unvisited) -->
-      <div class="grid grid-cols-2 gap-2 text-[11px] mb-4">
-        <div class="flex items-center gap-2 p-2 bg-[#161a26] rounded border border-emerald-900/40">
-          <span id="countAnswered" class="w-6 h-6 rounded bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">0</span>
-          <span class="text-emerald-300 font-medium">ANSWERED</span>
-        </div>
-        <div class="flex items-center gap-2 p-2 bg-[#161a26] rounded border border-rose-900/40">
-          <span id="countUnanswered" class="w-6 h-6 rounded bg-rose-600 text-white font-bold flex items-center justify-center text-xs">0</span>
-          <span class="text-rose-300 font-medium">UNANSWERED</span>
-        </div>
-        <div class="flex items-center gap-2 p-2 bg-[#161a26] rounded border border-amber-900/40">
-          <span id="countReview" class="w-6 h-6 rounded bg-amber-600 text-slate-950 font-bold flex items-center justify-center text-xs">0</span>
-          <span class="text-amber-300 font-medium">REVIEW</span>
-        </div>
-        <div class="flex items-center gap-2 p-2 bg-[#161a26] rounded border border-slate-800">
-          <span id="countUnvisited" class="w-6 h-6 rounded bg-[#2a3245] text-slate-300 font-bold flex items-center justify-center text-xs">0</span>
-          <span class="text-slate-400 font-medium">UNVISITED</span>
-        </div>
+    <!-- Pagination & Stats Bar -->
+    <div class="flex items-center justify-between bg-slate-800/60 border border-slate-800 rounded-xl px-4 py-3 mb-6">
+      <div id="statsText" class="text-xs text-slate-400 font-medium">
+        Loading...
       </div>
+      <div class="flex items-center gap-2">
+        <button onclick="changePage(-1)" id="prevBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-semibold rounded-lg border border-slate-700 transition">
+          &larr; Previous
+        </button>
+        <span id="pageIndicator" class="text-xs text-slate-300 font-mono px-2">Page 1 of 1</span>
+        <button onclick="changePage(1)" id="nextBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-semibold rounded-lg border border-slate-700 transition">
+          Next &rarr;
+        </button>
+      </div>
+    </div>
 
-      <!-- Question Number Buttons Grid -->
-      <div class="flex-1">
-        <div class="text-[11px] font-bold text-slate-400 mb-2 uppercase tracking-wide">CHOOSE A QUESTION:</div>
-        <div id="questionButtonsGrid" class="grid grid-cols-5 gap-2 max-h-96 overflow-y-auto pr-1">
-          <!-- Populated dynamically -->
-        </div>
-      </div>
-
-      <!-- Quick Exam Switcher Tag -->
-      <div class="mt-4 pt-3 border-t border-[#222736] text-[11px] text-slate-400 flex items-center justify-between">
-        <span id="examTagLabel" class="font-bold text-amber-400">EXAM: JEE_MAIN</span>
-        <span id="qDifficultyLabel" class="font-mono text-slate-400">Diff: Medium</span>
-      </div>
-    </aside>
+    <!-- Questions Feed -->
+    <div id="questionsContainer" class="space-y-6">
+      <div class="text-center py-12 text-slate-500">Loading dataset...</div>
+    </div>
 
   </div>
 
   <script>
     let allQuestions = [];
     let filteredQuestions = [];
-    let currentIndex = 0;
-    let currentDataset = 'extracted_physics.json';
-    let currentSection = 'Physics';
-    let isDarkMode = true;
-
-    // CBT question states: { questionIndex: 'ANSWERED' | 'UNANSWERED' | 'REVIEW' | 'UNVISITED' }
-    let questionStates = {};
-    // Selected options: { questionIndex: '1' | '2' | '3' | '4' }
-    let selectedOptions = {};
-
-    function toggleTheme() {
-      isDarkMode = !isDarkMode;
-      const root = document.getElementById('rootHtml');
-      const themeBtn = document.getElementById('themeBtn');
-
-      if (isDarkMode) {
-        root.classList.add('dark');
-        document.body.className = "bg-[#0f1117] text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-150";
-        themeBtn.innerText = "☀️ Light";
-        themeBtn.className = "flex items-center gap-1 bg-[#1e293b] hover:bg-[#2e3e57] text-amber-300 px-2.5 py-1 rounded border border-[#374151] font-semibold transition";
-      } else {
-        root.classList.remove('dark');
-        document.body.className = "bg-[#f3f4f6] text-slate-900 min-h-screen flex flex-col font-sans transition-colors duration-150";
-        themeBtn.innerText = "🌙 Dark";
-        themeBtn.className = "flex items-center gap-1 bg-amber-100 hover:bg-amber-200 text-slate-900 px-2.5 py-1 rounded border border-amber-300 font-semibold transition";
-      }
-      renderCurrentQuestion();
-    }
+    let currentPage = 1;
+    const pageSize = 10;
+    let currentDataset = 'test_q30.json';
 
     async function switchDataset() {
       currentDataset = document.getElementById('datasetSelector').value;
@@ -276,316 +112,224 @@
     }
 
     async function loadDataset() {
-      const container = document.getElementById('questionContentContainer');
-      container.innerHTML = `<div class="text-center py-16 text-slate-500">Loading ${currentDataset}...</div>`;
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = `<div class="text-center py-12 text-slate-500">Loading ${currentDataset}...</div>`;
       try {
         const resp = await fetch(currentDataset);
-        if (!resp.ok) throw new Error(`Dataset not found: ${currentDataset}`);
+        if (!resp.ok) {
+          throw new Error(`File not found: ${currentDataset}`);
+        }
         allQuestions = await resp.json();
-
-        // Update counts
-        updateSectionCounts();
-        filterSection(currentSection);
-      } catch (err) {
-        container.innerHTML = `
-          <div class="p-6 bg-[#1a1e2b] border border-amber-500/40 text-slate-300 rounded-2xl text-center max-w-lg mx-auto">
-            <p class="text-amber-400 font-bold text-base mb-2">Dataset not yet created</p>
-            <p class="text-xs text-slate-400 mb-4"><code>${currentDataset}</code> has not been generated yet. You can switch to <code>all_nta_questions.json</code> or run the batch extractor.</p>
-          </div>
-        `;
-      }
-    }
-
-    function updateSectionCounts() {
-      const phys = allQuestions.filter(q => (q.subject || '').toLowerCase() === 'physics').length;
-      const chem = allQuestions.filter(q => (q.subject || '').toLowerCase() === 'chemistry').length;
-      const math = allQuestions.filter(q => (q.subject || '').toLowerCase() === 'mathematics').length;
-
-      document.getElementById('countPhysics').innerText = phys;
-      document.getElementById('countChemistry').innerText = chem;
-      document.getElementById('countMathematics').innerText = math;
-    }
-
-    function filterSection(sec) {
-      currentSection = sec;
-      ['Physics', 'Chemistry', 'Mathematics', 'ALL'].forEach(s => {
-        const btn = document.getElementById('tab' + (s === 'ALL' ? 'All' : s));
-        if (!btn) return;
-        if (s === sec) {
-          btn.className = "px-3 py-1 rounded font-semibold transition flex items-center gap-1.5 bg-[#1e283b] text-amber-400 border border-amber-500/40";
-        } else {
-          btn.className = "px-3 py-1 rounded font-semibold transition flex items-center gap-1.5 bg-[#171b26] text-slate-400 border border-transparent hover:text-slate-200";
-        }
-      });
-
-      if (sec === 'ALL') {
         filteredQuestions = [...allQuestions];
-      } else {
-        filteredQuestions = allQuestions.filter(q => (q.subject || '').toLowerCase() === sec.toLowerCase());
+        currentPage = 1;
+        applyFilters();
+      } catch (err) {
+        container.innerHTML = 
+          `<div class="p-6 bg-slate-800/80 border border-slate-700 text-slate-300 rounded-2xl text-center">
+            <p class="text-amber-400 font-semibold mb-2">Dataset not yet created: <code>${currentDataset}</code></p>
+            <p class="text-xs text-slate-400">Run the batch extractor for this subject first, or switch to <code>all_nta_questions.json</code> to view original scanned questions.</p>
+          </div>`;
+        document.getElementById('statsText').innerText = `0 questions loaded`;
+        document.getElementById('pageIndicator').innerText = `Page 0 of 0`;
+        document.getElementById('prevBtn').disabled = true;
+        document.getElementById('nextBtn').disabled = true;
       }
+    }
 
-      currentIndex = 0;
-      // Initialize question states
-      filteredQuestions.forEach((q, idx) => {
-        if (!questionStates[idx]) questionStates[idx] = 'UNVISITED';
+    function applyFilters() {
+      const sub = document.getElementById('subjectFilter').value;
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      filteredQuestions = allQuestions.filter(q => {
+        const matchSub = sub === 'ALL' || (q.subject && q.subject.toLowerCase() === sub.toLowerCase());
+        const matchSearch = !search || 
+          (q.paperTitle && q.paperTitle.toLowerCase().includes(search)) || 
+          (q.topic && q.topic.toLowerCase().includes(search)) || 
+          (q.subTopic && q.subTopic.toLowerCase().includes(search)) || 
+          (q.latexQuestion && q.latexQuestion.toLowerCase().includes(search)) || 
+          (q.exam && q.exam.toLowerCase().includes(search)) ||
+          String(q.questionNumber).includes(search);
+        return matchSub && matchSearch;
       });
 
-      renderCurrentQuestion();
-      renderPaletteGrid();
+      currentPage = 1;
+      renderCurrentPage();
     }
 
-    function navigateQuestion(delta) {
-      if (questionStates[currentIndex] === 'UNVISITED') {
-        questionStates[currentIndex] = selectedOptions[currentIndex] ? 'ANSWERED' : 'UNANSWERED';
-      }
-      const newIdx = currentIndex + delta;
-      if (newIdx >= 0 && newIdx < filteredQuestions.length) {
-        currentIndex = newIdx;
-        renderCurrentQuestion();
-        renderPaletteGrid();
-      }
+    function changePage(delta) {
+      const maxPage = Math.ceil(filteredQuestions.length / pageSize) || 1;
+      currentPage = Math.max(1, Math.min(maxPage, currentPage + delta));
+      renderCurrentPage();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function jumpToQuestion(idx) {
-      currentIndex = idx;
-      renderCurrentQuestion();
-      renderPaletteGrid();
-    }
-
-    function selectOption(key) {
-      selectedOptions[currentIndex] = key;
-      questionStates[currentIndex] = 'ANSWERED';
-      renderCurrentQuestion();
-      renderPaletteGrid();
-    }
-
-    function clearResponse() {
-      delete selectedOptions[currentIndex];
-      questionStates[currentIndex] = 'UNANSWERED';
-      renderCurrentQuestion();
-      renderPaletteGrid();
-    }
-
-    function markForReview() {
-      questionStates[currentIndex] = 'REVIEW';
-      navigateQuestion(1);
-    }
-
-    function submitTest() {
-      alert("Test submitted successfully! Total questions processed: " + filteredQuestions.length);
-    }
-
-    function renderPaletteGrid() {
-      const grid = document.getElementById('questionButtonsGrid');
+    function renderCurrentPage() {
       const total = filteredQuestions.length;
-      document.getElementById('paletteTotalBadge').innerText = `TOTAL: ${total}`;
+      const maxPage = Math.ceil(total / pageSize) || 1;
+      const startIdx = (currentPage - 1) * pageSize;
+      const endIdx = Math.min(startIdx + pageSize, total);
+      const slice = filteredQuestions.slice(startIdx, endIdx);
 
-      let answeredCount = 0, unansweredCount = 0, reviewCount = 0, unvisitedCount = 0;
+      document.getElementById('statsText').innerText = `Showing ${total ? startIdx + 1 : 0}-${endIdx} of ${total} questions (${currentDataset})`;
+      document.getElementById('pageIndicator').innerText = `Page ${currentPage} of ${maxPage}`;
+      document.getElementById('prevBtn').disabled = currentPage <= 1;
+      document.getElementById('nextBtn').disabled = currentPage >= maxPage;
 
-      grid.innerHTML = filteredQuestions.map((q, idx) => {
-        const state = questionStates[idx] || 'UNVISITED';
-        const isCurrent = idx === currentIndex;
-
-        let bgClass = "bg-[#2a3245] text-slate-300"; // unvisited
-        if (state === 'ANSWERED') {
-          bgClass = "bg-emerald-600 text-white font-bold";
-          answeredCount++;
-        } else if (state === 'UNANSWERED') {
-          bgClass = "bg-rose-600 text-white font-bold";
-          unansweredCount++;
-        } else if (state === 'REVIEW') {
-          bgClass = "bg-amber-600 text-slate-950 font-bold";
-          reviewCount++;
-        } else {
-          unvisitedCount++;
-        }
-
-        const borderClass = isCurrent ? "ring-2 ring-white ring-offset-2 ring-offset-[#12151f] scale-105" : "border border-slate-700/50";
-
-        return `
-          <button onclick="jumpToQuestion(${idx})" class="w-9 h-9 rounded text-xs font-semibold flex items-center justify-center transition ${bgClass} ${borderClass}">
-            ${idx + 1}
-          </button>
-        `;
-      }).join('');
-
-      document.getElementById('countAnswered').innerText = answeredCount;
-      document.getElementById('countUnanswered').innerText = unansweredCount;
-      document.getElementById('countReview').innerText = reviewCount;
-      document.getElementById('countUnvisited').innerText = unvisitedCount;
-    }
-
-    function renderCurrentQuestion() {
-      const container = document.getElementById('questionContentContainer');
-      const total = filteredQuestions.length;
-
-      if (!total) {
-        container.innerHTML = `<div class="text-center py-16 text-slate-500">No questions found in this section.</div>`;
+      const container = document.getElementById('questionsContainer');
+      if (!slice.length) {
+        container.innerHTML = `<div class="text-center py-12 text-slate-500">No questions matched the filter.</div>`;
         return;
       }
 
-      const q = filteredQuestions[currentIndex];
-      const qNum = currentIndex + 1;
-      const isExtracted = Boolean(q.latexQuestion);
+      container.innerHTML = slice.map((q, idx) => {
+        const subjectColor = q.subject === 'Physics' ? 'text-blue-400 bg-blue-500/10 border-blue-500/20' :
+                             q.subject === 'Chemistry' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' :
+                             'text-purple-400 bg-purple-500/10 border-purple-500/20';
 
-      // Header exam tag
-      const examName = q.exam || (q.paperTitle && q.paperTitle.toUpperCase().includes('CET') ? 'MHT_CET' : 'JEE_MAIN');
-      document.getElementById('testHeaderTitle').innerText = `${examName === 'MHT_CET' ? 'MHT-CET' : 'JEE-Main'} 2026 Mock Test – ${q.paperTitle || 'Paper I (PCM)'}`;
-      document.getElementById('examTagLabel').innerText = `EXAM: ${examName}`;
-      document.getElementById('qDifficultyLabel').innerText = `Diff: ${q.difficulty || 'Medium'}`;
+        const isExtracted = Boolean(q.latexQuestion);
 
-      // Navigation buttons state
-      document.getElementById('prevBtn').disabled = currentIndex <= 0;
-      document.getElementById('nextBtn').disabled = currentIndex >= total - 1;
-
-      // Question body clean formatting (newlines to paragraph breaks)
-      let bodyHtml = '';
-      if (isExtracted) {
-        const cleanQuestion = (q.latexQuestion || '')
-          .replace(/\\n/g, '
-')
-          .replace(/\n/g, '
-')
-          .replace(/
-{3,}/g, '
-
-')
-          .trim();
-
-        bodyHtml += `
-          <div class="text-sm md:text-base leading-relaxed mb-5 font-normal ${isDarkMode ? 'text-slate-100' : 'text-slate-900'} whitespace-pre-line">
-            ${cleanQuestion}
-          </div>
-        `;
-
-        // Diagram rendering (High-Resolution & Dynamic Inversion for Light Mode)
-        if (q.hasDiagram && q.diagramPath) {
-          bodyHtml += `
-            <div class="my-5 flex justify-center">
-              <div class="${isDarkMode ? 'bg-[#151924] border-[#2d3748]' : 'bg-white border-slate-200'} p-4 rounded-xl border shadow-md inline-block max-w-lg transition">
-                <img src="${q.diagramPath}" alt="Diagram Q${qNum}" class="dynamic-diagram-img max-h-64 object-contain mx-auto" loading="lazy" />
-              </div>
-            </div>
-          `;
+        // Badges
+        const topicBadge = q.topic ? `<span class="text-xs font-medium text-slate-300 bg-slate-800 px-2 py-1 rounded-md border border-slate-700">${q.topic}</span>` : '';
+        const subTopicBadge = q.subTopic ? `<span class="text-xs text-slate-400 bg-slate-900/60 px-2 py-1 rounded-md border border-slate-800">${q.subTopic}</span>` : '';
+        
+        let diffBadge = '';
+        if (q.difficulty) {
+          const d = String(q.difficulty).toLowerCase();
+          const diffColor = d === 'easy' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' :
+                            d === 'hard' ? 'text-rose-400 bg-rose-500/10 border-rose-500/30' :
+                            'text-amber-400 bg-amber-500/10 border-amber-500/30';
+          diffBadge = `<span class="text-xs font-semibold px-2 py-0.5 rounded border ${diffColor}">${q.difficulty}</span>`;
         }
 
-        // Table rendering
-        if (q.hasTable && q.tableHtml) {
-          bodyHtml += `
-            <div class="table-container my-5 flex justify-center">
-              <div class="overflow-x-auto ${isDarkMode ? 'bg-[#0b0e14] border-[#222b3d]' : 'bg-slate-50 border-slate-300'} p-4 rounded-xl border shadow-md">
-                ${q.tableHtml}
-              </div>
-            </div>
-          `;
+        let examBadge = '';
+        if (q.exam) {
+          const isCet = String(q.exam).toUpperCase().includes('CET');
+          const examColor = isCet ? 'text-amber-400 bg-amber-500/10 border-amber-500/30' : 'text-blue-400 bg-blue-500/10 border-blue-500/30';
+          examBadge = `<span class="text-[11px] font-bold px-2 py-0.5 rounded border ${examColor}">${q.exam}</span>`;
         }
 
-      } else if (q.localImagePath) {
-        bodyHtml += `
-          <div class="mb-5 bg-white p-3 rounded-xl inline-block shadow-inner">
-            <img src="${q.localImagePath}" alt="Question ${qNum}" class="max-h-72 object-contain rounded" loading="lazy" />
-          </div>
-        `;
-      }
+        const modelBadge = q.extractedVia ? `<span class="text-[10px] text-slate-500 font-mono bg-slate-950/60 px-1.5 py-0.5 rounded border border-slate-800">${q.extractedVia}</span>` : '';
 
-      // Options Rendering with [A], [B], [C], [D] checkbox styling (matching CBT screenshot)
-      const optionsList = q.latexOptions && q.latexOptions.length ? q.latexOptions : (q.options || []);
-      const optDiagramsMap = q.optionDiagrams || {};
-      const letterKeys = ['A', 'B', 'C', 'D'];
-      const userSelected = selectedOptions[currentIndex];
+        // Question body rendering (LaTeX or Raw Image)
+        let bodyHtml = '';
+        if (isExtracted) {
+          const cleanQuestion = (q.latexQuestion || '')
+            .replace(/\\n/g, '\n')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
 
-      const optionsHtml = `
-        <div class="space-y-3 mt-6">
-          <div class="text-[11px] font-bold tracking-wider text-slate-400 uppercase">[SELECT ONE RESPONSE]</div>
-          ${optionsList.map((opt, oIdx) => {
-            const optKey = String(opt.key || (oIdx + 1));
-            const letter = letterKeys[oIdx] || optKey;
-            const isSelected = userSelected === optKey;
-            const isAnswerKey = (q.correctOptions || []).map(String).includes(optKey);
-            const optDiagram = optDiagramsMap[optKey];
-            const optText = opt.latex || opt.text || '';
+          bodyHtml += `
+            <div class="latex-content text-sm text-slate-200 leading-relaxed mb-4 whitespace-pre-line">
+              ${cleanQuestion}
+            </div>
+          `;
 
-            // Styling matching the CBT screenshot checkbox card
-            let cardBg = isDarkMode ? 'bg-[#131722] hover:bg-[#1a2030] border-[#252c3f]' : 'bg-white hover:bg-slate-50 border-slate-300';
-            if (isSelected) {
-              cardBg = isDarkMode ? 'bg-blue-950/40 border-blue-500 text-blue-200' : 'bg-blue-50 border-blue-600 text-blue-950';
-            } else if (isAnswerKey) {
-              cardBg = isDarkMode ? 'bg-emerald-950/20 border-emerald-500/60' : 'bg-emerald-50 border-emerald-500';
-            }
-
-            let optContentHtml = '';
-            if (optDiagram) {
-              optContentHtml = `
-                <div class="p-2 inline-block ${isDarkMode ? 'bg-[#1a1f2e]' : 'bg-slate-100'} rounded">
-                  <img src="${optDiagram}" alt="Option ${letter}" class="dynamic-diagram-img max-h-24 object-contain" />
+          // Diagram rendering (if question body has a diagram)
+          if (q.hasDiagram && q.diagramPath) {
+            bodyHtml += `
+              <div class="my-4 flex justify-center">
+                <div class="bg-white rounded-xl p-3 shadow-md border border-slate-300 inline-block">
+                  <img src="${q.diagramPath}" alt="Diagram Q${q.questionNumber}" class="max-h-72 object-contain" loading="lazy" />
                 </div>
-              `;
-            } else {
-              optContentHtml = `<span class="latex-content font-medium text-sm">${optText}</span>`;
-            }
-
-            return `
-              <div onclick="selectOption('${optKey}')" class="flex items-center p-3 rounded-lg border cursor-pointer transition ${cardBg}">
-                <!-- Square Checkbox with Letter [A] [B] [C] [D] -->
-                <div class="w-7 h-7 rounded flex items-center justify-center font-bold text-xs mr-3 shrink-0 ${
-                  isSelected ? 'bg-blue-600 text-white' : 
-                  isAnswerKey ? 'bg-emerald-600 text-white' :
-                  isDarkMode ? 'bg-[#1e2536] text-slate-300 border border-slate-700' : 'bg-slate-200 text-slate-700 border border-slate-300'
-                }">
-                  ${letter}
-                </div>
-
-                <div class="flex-1">${optContentHtml}</div>
-
-                ${isAnswerKey ? `
-                  <span class="ml-auto text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-mono border border-emerald-500/30 font-bold">
-                    Answer Key
-                  </span>
-                ` : ''}
               </div>
             `;
-          }).join('')}
-        </div>
-      `;
+          }
 
-      // Header row
-      container.innerHTML = `
-        <div class="border-b border-[#222736] pb-3 mb-4 flex flex-wrap items-center justify-between gap-2">
-          <div class="flex items-center gap-3">
-            <h2 class="text-lg md:text-xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}">
-              Question ${qNum} <span class="text-xs text-slate-400 font-normal">/ ${total}</span>
-            </h2>
-            <span class="text-[10px] font-bold uppercase tracking-wider bg-[#1c2233] text-slate-300 border border-slate-700 px-2 py-0.5 rounded">
-              SINGLE CHOICE
-            </span>
+          // Table rendering (if question has a data table)
+          if (q.hasTable && q.tableHtml) {
+            bodyHtml += `
+              <div class="table-container my-5 flex justify-center">
+                <div class="overflow-x-auto bg-slate-950/70 p-4 rounded-xl border border-slate-700 shadow-lg">
+                  ${q.tableHtml}
+                </div>
+              </div>
+            `;
+          }
+
+        } else if (q.localImagePath) {
+          bodyHtml += `
+            <div class="mb-5 bg-white p-3 rounded-xl inline-block shadow-inner">
+              <img src="${q.localImagePath}" alt="Question ${q.questionNumber}" class="max-h-72 object-contain rounded" loading="lazy" />
+            </div>
+          `;
+        }
+
+        // Options rendering
+        let optionsHtml = '';
+        const optionsList = q.latexOptions && q.latexOptions.length ? q.latexOptions : (q.options || []);
+        const optDiagramsMap = q.optionDiagrams || {};
+
+        optionsHtml = `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+            ${optionsList.map(opt => {
+              const optKey = String(opt.key || '');
+              const isCorrect = (q.correctOptions || []).map(String).includes(optKey);
+              const optDiagramPath = optDiagramsMap[optKey];
+              const optText = opt.latex || opt.text || '';
+
+              let optionContent = '';
+              if (optDiagramPath) {
+                optionContent = `
+                  <div class="flex flex-col items-center py-2 w-full">
+                    <div class="bg-white p-2 rounded-lg inline-block shadow-sm">
+                      <img src="${optDiagramPath}" alt="Option ${optKey}" class="max-h-28 object-contain" loading="lazy" />
+                    </div>
+                    ${optText && !optText.startsWith('[') ? `<span class="mt-1.5 text-xs text-slate-300 latex-content">${optText}</span>` : ''}
+                  </div>
+                `;
+              } else {
+                optionContent = `<span class="latex-content">${optText}</span>`;
+              }
+
+              return `
+                <div class="flex items-start p-3 rounded-xl border ${isCorrect ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300' : 'border-slate-700 bg-slate-900/40 text-slate-300'} text-xs transition">
+                  <span class="w-5 h-5 rounded-full flex items-center justify-center font-bold mr-2 text-[11px] shrink-0 mt-0.5 ${isCorrect ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400'}">
+                    ${optKey}
+                  </span>
+                  <div class="flex-1">${optionContent}</div>
+                  ${isCorrect ? '<span class="ml-2 text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-mono shrink-0">Answer Key</span>' : ''}
+                </div>
+              `;
+            }).join('')}
           </div>
+        `;
 
-          <div class="flex items-center gap-2 text-xs font-mono">
-            <span class="px-2 py-0.5 rounded bg-emerald-950/40 text-emerald-400 border border-emerald-800/60 font-bold">+${q.marks || 4.0}</span>
-            <span class="px-2 py-0.5 rounded bg-rose-950/40 text-rose-400 border border-rose-800/60 font-bold">-${q.negativeMarks || 1.0}</span>
+        return `
+          <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl hover:border-slate-600 transition">
+            <div class="flex flex-wrap items-center justify-between border-b border-slate-700/60 pb-3 mb-4 gap-2">
+              <div class="flex flex-wrap items-center gap-2">
+                ${examBadge}
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-lg border ${subjectColor}">
+                  ${q.subject || 'Unclassified'}
+                </span>
+                <span class="text-xs font-medium text-slate-400 bg-slate-900/60 px-2 py-1 rounded-md border border-slate-800 font-mono">
+                  Q${q.questionNumber}
+                </span>
+                ${diffBadge}
+                ${topicBadge}
+                ${subTopicBadge}
+                <span class="text-xs text-slate-500">
+                  Paper ${q.paperId}
+                </span>
+              </div>
+              <div class="flex items-center gap-2">
+                ${modelBadge}
+                <div class="text-xs font-mono text-slate-400">
+                  +${q.marks || 4} / -${q.negativeMarks || 1}
+                </div>
+              </div>
+            </div>
+
+            <!-- Question Body & Rich Media -->
+            ${bodyHtml}
+
+            <!-- Options Grid -->
+            ${optionsHtml}
           </div>
-        </div>
+        `;
+      }).join('');
 
-        <!-- Meta Sub-bar -->
-        <div class="flex flex-wrap items-center gap-2 mb-4 text-xs">
-          <span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-semibold">${q.subject || 'Physics'}</span>
-          ${q.topic ? `<span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">${q.topic}</span>` : ''}
-          ${q.subTopic ? `<span class="px-2 py-0.5 rounded bg-slate-900/60 text-slate-400 border border-slate-800">${q.subTopic}</span>` : ''}
-          <span class="px-2 py-0.5 rounded ${
-            (q.difficulty || '').toLowerCase() === 'easy' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' :
-            (q.difficulty || '').toLowerCase() === 'hard' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30' :
-            'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-          } font-semibold">${q.difficulty || 'Medium'}</span>
-        </div>
-
-        <!-- Question Content -->
-        ${bodyHtml}
-
-        <!-- Options List -->
-        ${optionsHtml}
-      `;
-
-      // Render math
+      // Trigger KaTeX rendering across all math spans
       renderMathInElement(container, {
         delimiters: [
           {left: '$$', right: '$$', display: true},

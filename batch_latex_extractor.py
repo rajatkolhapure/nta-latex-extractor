@@ -242,7 +242,6 @@ def detect_and_crop_diagram_cut_to_cut(
 
     # --- SUPER-RESOLUTION UPSCALING (2.5x) & ANTI-ALIASING ---
     # Eliminates scanned pixelation and delivers crisp vector-like curves on 1080p/4K displays
-    ink_mask = np.clip((245.0 - crop_gray.astype(np.float32)) / 160.0, 0.0, 1.0)
     scale = 2.5
     up_w = int(cw * scale)
     up_h = int(ch * scale)
@@ -649,7 +648,6 @@ def main():
                     stroke_color=args.stroke_color
                 )
 
-            # Exam classification (JEE_MAIN or MHT_CET)
             exam_val = extracted.get("exam")
             if not exam_val or exam_val not in ["JEE_MAIN", "MHT_CET"]:
                 paper_title = str(q.get("paperTitle", "")).upper()
@@ -659,11 +657,11 @@ def main():
                     exam_val = q.get("targetExam") or "JEE_MAIN"
 
             q_record = dict(q)
-            q_record["exam"] = exam_val
             q_record["subject"] = subj
             q_record["topic"] = topic
             q_record["subTopic"] = subtopic
             q_record["difficulty"] = difficulty
+            q_record["exam"] = exam_val
             q_record["latexQuestion"] = q_latex
             q_record["hasTable"] = has_table
             q_record["tableHtml"] = table_html
@@ -677,10 +675,11 @@ def main():
 
             results.append(q_record)
 
-            status_parts = [f"   [*] [{exam_val}] {subj} > {topic}"]
+            status_parts = [f"   [*] {subj} > {topic}"]
             if subtopic:
                 status_parts.append(f"({subtopic})")
             status_parts.append(f"[{difficulty}]")
+            status_parts.append(f"[{exam_val}]")
             status_parts.append(f"[Model: {used_model}]")
             if has_table:
                 status_parts.append("[TABLE]")

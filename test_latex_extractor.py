@@ -31,8 +31,7 @@ Rules:
    - "subject": Exactly one of ["Physics", "Chemistry", "Mathematics"]
    - "topic": Standard JEE/NEET chapter or major topic (e.g. "Current Electricity", "Conic Sections - Hyperbola", "Organic Reaction Mechanisms", "Thermodynamics", "Capacitance & Dielectrics", "Vectors & 3D Geometry", "Equilibrium")
    - "subTopic": The specific concept tested (e.g. "Kirchhoff's Laws & Nodal Analysis", "Eccentricity & Latus Rectum", "Peroxide Effect on Alkenes", "Dielectric Medium", "Equilibrium Constant")
-   - "difficulty": Exactly one of ["Easy", "Medium", "Hard"] reflecting typical exam difficulty.
-   - "exam": Exactly one of ["JEE_MAIN", "MHT_CET"].
+   - "difficulty": Exactly one of ["Easy", "Medium", "Hard"] reflecting typical JEE Main difficulty.
 4. Detect tables:
    - "hasTable": true if a data table appears anywhere in the question body (not options).
    - "tableHtml": If hasTable is true, transcribe the ENTIRE table as a valid HTML <table> string with <thead>/<tbody>/<tr>/<th>/<td> tags. Wrap any math inside cells in $...$. If hasTable is false, set tableHtml to null.
@@ -46,7 +45,6 @@ Rules:
   "topic": "...",
   "subTopic": "...",
   "difficulty": "Easy | Medium | Hard",
-  "exam": "JEE_MAIN | MHT_CET",
   "hasTable": false,
   "tableHtml": null,
   "optionsHaveDiagrams": false,
@@ -238,9 +236,11 @@ def detect_and_crop_diagram_cut_to_cut(
     crop_gray = gray[final_y1:final_y2, final_x1:final_x2]
     ch, cw = raw_crop.shape[:2]
 
+    # --- COLOR TRANSFORM ---
+    # Ink mask: 1.0 for solid dark ink, 0.0 for scanner paper background
+    ink_mask = np.clip((245.0 - crop_gray) / 160.0, 0.0, 1.0)
     # --- SUPER-RESOLUTION UPSCALING (2.5x) & ANTI-ALIASING ---
     # Eliminates scanned pixelation and delivers crisp vector-like curves on 1080p/4K displays
-    ink_mask = np.clip((245.0 - crop_gray.astype(np.float32)) / 160.0, 0.0, 1.0)
     scale = 2.5
     up_w = int(cw * scale)
     up_h = int(ch * scale)
