@@ -608,15 +608,43 @@ def main():
     print(f" Output File                : {args.output_json}")
     print("=================================================================")
 
+    subject_files = {
+        "Physics": "extracted_physics.json",
+        "Chemistry": "extracted_chemistry.json",
+        "Mathematics": "extracted_mathematics.json",
+    }
+
     processed_map = {}
-    if os.path.exists(args.output_json):
-        try:
-            with open(args.output_json, "r", encoding="utf-8") as f:
-                existing = json.load(f)
-                processed_map = {q.get("imageUrl"): q for q in existing if "imageUrl" in q}
-                print(f"[+] Found {len(processed_map)} previously extracted questions. Resuming...")
-        except Exception:
-            pass
+    subject_data = {"Physics": [], "Chemistry": [], "Mathematics": []}
+    files_to_check = set([args.output_json] + list(subject_files.values()))
+
+    for fpath in files_to_check:
+        if os.path.exists(fpath):
+            try:
+                with open(fpath, "r", encoding="utf-8") as f:
+                    items = json.load(f)
+                    for item in items:
+                        url = item.get("imageUrl")
+                        if url:
+                            processed_map[url] = item
+                        item_subj = (item.get("subject") or "Physics").capitalize()
+                        if item_subj in subject_data:
+                            if not any(x.get("imageUrl") == url for x in subject_data[item_subj] if url):
+                                subject_data[item_subj].append(item)
+                        else:
+                            subject_data["Physics"].append(item)
+            except Exception:
+                pass
+
+    if processed_map:
+        print(f"[+] Found {len(processed_map)} previously extracted questions across datasets:")
+        for s_name, s_list in subject_data.items():
+            print(f"    - {s_name}: {len(s_list)} questions in {subject_files[s_name]}")
+        # Sync partitions to ensure clean subject separation
+        for s_name, s_list in subject_data.items():
+            if s_list:
+                with open(subject_files[s_name], "w", encoding="utf-8") as f:
+                    json.dump(s_list, f, indent=2, ensure_ascii=False)
 
     to_process = []
     for q in questions:
@@ -630,8 +658,7 @@ def main():
     if args.limit > 0:
         to_process = to_process[:args.limit]
 
-    print(f"Questions to process in this run: {len(to_process)}" + (f" (Subject: {args.subject})" if args.subject else ""))
-    results = list(processed_map.values())
+    print(f"Questions to process in this run: {len(to_process)}" + (f" (Input Filter: {args.subject})" if args.subject else ""))
 
     for idx, q in enumerate(to_process, 1):
         img_path = q.get("localImagePath")
@@ -708,7 +735,15 @@ def main():
             q_record["optionDiagrams"] = option_diagrams if opts_have_diag else {}
             q_record["extractedVia"] = used_model
 
-            results.append(q_record)
+            # Route to detected subject dataset
+            norm_subj = subj.capitalize() if subj else "Physics"
+            if norm_subj not in subject_data:
+                norm_subj = "Physics"
+
+            target_file = subject_files.get(norm_subj, args.output_json)
+            subject_data[norm_subj].append(q_record)
+            if q.get("imageUrl"):
+                processed_map[q["imageUrl"]] = q_record
 
             status_parts = [f"   [*] {subj} > {topic}"]
             if subtopic:
@@ -720,6 +755,9 @@ def main():
                 status_parts.append("[TABLE]")
             print(" ".join(status_parts))
 
+            if args.subject and norm_subj.lower() != args.subject.lower():
+                print(f"   [->] Subject detected as {norm_subj} (not {args.subject}) -> Routed to {target_file}")
+
             if has_diag:
                 print(f"   [+] Diagram: True -> Saved: {diag_save_path}")
             else:
@@ -728,10 +766,9 @@ def main():
                 cropped_count = sum(1 for v in option_diagrams.values() if v)
                 print(f"   [+] Option Diagrams: {cropped_count}/4 cropped")
 
-            # Save progress every 5 questions
-            if idx % 5 == 0 or idx == len(to_process):
-                with open(args.output_json, "w", encoding="utf-8") as f:
-                    json.dump(results, f, indent=2, ensure_ascii=False)
+            # Save progress: write immediately to the target subject file
+            with open(target_file, "w", encoding="utf-8") as f:
+                json.dump(subject_data[norm_subj], f, indent=2, ensure_ascii=False)
 
             time.sleep(4.2)
 
@@ -739,10 +776,14 @@ def main():
             print(f"   [!] Error: {e}")
             time.sleep(5)
 
-    with open(args.output_json, "w", encoding="utf-8") as f:
-        json.dump(results, f, indent=2, ensure_ascii=False)
+    for s_name, s_list in subject_data.items():
+        if s_list:
+            with open(subject_files[s_name], "w", encoding="utf-8") as f:
+                json.dump(s_list, f, indent=2, ensure_ascii=False)
 
-    print(f"\n[OK] Batch run complete. Saved {len(results)} questions to {args.output_json}")
+    print("\n[OK] Batch run complete. Summary by subject:")
+    for s_name, s_list in subject_data.items():
+        print(f"  - {s_name}: {len(s_list)} questions in {subject_files[s_name]}")
 
 
 if __name__ == "__main__":
