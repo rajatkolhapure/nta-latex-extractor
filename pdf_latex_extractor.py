@@ -46,10 +46,10 @@ Rules:
    - "optionsHaveDiagrams": true if options contain drawn diagrams/structures, false otherwise.
    - "latexQuestion": Full transcribed question statement with LaTeX math.
    - "latexOptions": Array of options [
-       {"key": "A", "latex": "...", "hasDiagram": false, "bbox": null},
-       {"key": "B", "latex": "...", "hasDiagram": false, "bbox": null},
-       {"key": "C", "latex": "...", "hasDiagram": false, "bbox": null},
-       {"key": "D", "latex": "...", "hasDiagram": false, "bbox": null}
+       {"key": "1", "latex": "...", "hasDiagram": false, "bbox": null},
+       {"key": "2", "latex": "...", "hasDiagram": false, "bbox": null},
+       {"key": "3", "latex": "...", "hasDiagram": false, "bbox": null},
+       {"key": "4", "latex": "...", "hasDiagram": false, "bbox": null}
      ]
 
 Output strictly valid JSON matching this schema:
@@ -71,10 +71,10 @@ Output strictly valid JSON matching this schema:
       "optionsHaveDiagrams": false,
       "latexQuestion": "...",
       "latexOptions": [
-        {"key": "A", "latex": "...", "hasDiagram": false, "bbox": null},
-        {"key": "B", "latex": "...", "hasDiagram": false, "bbox": null},
-        {"key": "C", "latex": "...", "hasDiagram": false, "bbox": null},
-        {"key": "D", "latex": "...", "hasDiagram": false, "bbox": null}
+        {"key": "1", "latex": "...", "hasDiagram": false, "bbox": null},
+        {"key": "2", "latex": "...", "hasDiagram": false, "bbox": null},
+        {"key": "3", "latex": "...", "hasDiagram": false, "bbox": null},
+        {"key": "4", "latex": "...", "hasDiagram": false, "bbox": null}
       ]
     }
   ]
@@ -336,7 +336,7 @@ def process_pdf_file(
         for q in questions:
             q_num = q.get("questionNumber")
             dedupe_key = f"{pdf_stem}_p{page_num}_q{q_num}"
-            if dedupe_key in processed_keys:
+            if dedupe_key in processed_keys or f"{pdf_stem}_q{q_num}" in processed_keys:
                 print(f"    [-] Skipping Q{q_num} (already extracted)")
                 continue
 
@@ -366,11 +366,14 @@ def process_pdf_file(
                     if process_and_save_diagram_crop(raw_diag_crop, diag_save_full, stroke_color, bg_mode):
                         diag_saved_path = diag_save_full
 
+            key_map = {"A": "1", "B": "2", "C": "3", "D": "4", "1": "1", "2": "2", "3": "3", "4": "4"}
+
             opts_have_diag = bool(q.get("optionsHaveDiagrams", False))
             option_diagrams = {}
             if opts_have_diag:
                 for opt in q.get("latexOptions", []):
-                    opt_key = str(opt.get("key", ""))
+                    raw_opt_key = str(opt.get("key", "")).strip().upper()
+                    opt_key = key_map.get(raw_opt_key, raw_opt_key)
                     opt_bbox = opt.get("bbox")
                     if opt.get("hasDiagram") and opt_bbox and len(opt_bbox) == 4:
                         oymin, oxmin, oymax, oxmax = [float(c) / 1000.0 for c in opt_bbox]
@@ -385,34 +388,59 @@ def process_pdf_file(
                             if process_and_save_diagram_crop(opt_crop, opt_save_full, stroke_color, bg_mode):
                                 option_diagrams[opt_key] = opt_save_full
 
+            clean_options = []
+            clean_latex_options = []
+            for opt in q.get("latexOptions", []):
+                raw_k = str(opt.get("key", "")).strip().upper()
+                k = key_map.get(raw_k, raw_k)
+                txt = opt.get("latex") or opt.get("text") or ""
+                clean_options.append({"key": k, "text": f"Option {k}"})
+                clean_latex_options.append({
+                    "key": k,
+                    "latex": txt,
+                    "hasDiagram": bool(opt.get("hasDiagram", False))
+                })
+
+            if not clean_options:
+                clean_options = [{"key": str(i), "text": f"Option {i}"} for i in range(1, 5)]
+
+            exam_val = q.get("exam") or "MHT_CET"
+            if "CET" in pdf_stem.upper() or "MHCET" in pdf_stem.upper():
+                exam_val = "MHT_CET"
+
+            # Exact schema matching batch_latex_extractor.py
             record = {
-                "questionNumber": q_num,
                 "paperId": pdf_stem,
                 "paperTitle": pdf_stem.replace("_", " "),
-                "sourcePdf": pdf_path,
-                "sourcePage": page_num,
+                "targetExam": exam_val,
                 "subject": subj,
+                "questionNumber": q_num,
                 "topic": q.get("topic") or "General",
+                "imageUrl": f"file:///{page_img_path.resolve().as_posix()}",
+                "localImagePath": str(page_img_path),
+                "type": "SINGLE_CHOICE",
+                "options": clean_options,
+                "correctOptions": [],
+                "marks": float(q.get("marks") or (2.0 if subj == "Mathematics" else 1.0)),
+                "negativeMarks": float(q.get("negativeMarks") or 0.0),
                 "subTopic": q.get("subTopic", ""),
                 "difficulty": q.get("difficulty") or "Medium",
-                "exam": q.get("exam") or "MHT_CET",
-                "marks": q.get("marks") or (2 if subj == "Mathematics" else 1),
-                "negativeMarks": q.get("negativeMarks") or 0,
-                "localImagePath": str(page_img_path),
-                "extractedVia": q.get("_used_model", "gemini-3.5-flash-lite"),
-                "hasDiagram": bool(diag_saved_path),
-                "diagramPath": diag_saved_path,
+                "exam": exam_val,
+                "latexQuestion": q.get("latexQuestion", ""),
                 "hasTable": bool(q.get("hasTable", False)),
                 "tableHtml": q.get("tableHtml") or None,
+                "latexOptions": clean_latex_options,
+                "hasDiagram": bool(diag_saved_path),
+                "diagramPath": diag_saved_path,
+                "diagramBBox": [int(x1), int(y1), int(x2), int(y2)] if (has_diag and diag_saved_path) else None,
                 "optionsHaveDiagrams": bool(option_diagrams),
                 "optionDiagrams": option_diagrams,
-                "latexQuestion": q.get("latexQuestion", ""),
-                "latexOptions": q.get("latexOptions", []),
-                "correctOptions": []
+                "extractedVia": q.get("_used_model", "gemini-3.5-flash-lite")
             }
 
             subject_data[subj].append(record)
             processed_keys.add(dedupe_key)
+            processed_keys.add(f"{pdf_stem}_q{q_num}")
             total_extracted_this_pdf += 1
 
             status_note = f"    [*] Q{q_num}: {subj} > {record['topic']} [{record['difficulty']}]"
@@ -467,10 +495,12 @@ def main():
                     subject_data[s_name] = items
                     for item in items:
                         pdf_src = item.get("paperId", "")
-                        page_src = item.get("sourcePage", "")
                         q_num = item.get("questionNumber", "")
-                        if pdf_src and page_src and q_num:
-                            processed_keys.add(f"{pdf_src}_p{page_src}_q{q_num}")
+                        if pdf_src and q_num:
+                            processed_keys.add(f"{pdf_src}_q{q_num}")
+                            page_m = re.search(r"page_(\d+)", str(item.get("localImagePath", "")))
+                            if page_m:
+                                processed_keys.add(f"{pdf_src}_p{page_m.group(1)}_q{q_num}")
             except Exception:
                 pass
 

@@ -23,6 +23,7 @@ questions_by_subject.json
 # Diagrams and downloaded images
 downloads/diagrams/
 downloads/question_images/
+cet/
 
 # Misc
 *.log
