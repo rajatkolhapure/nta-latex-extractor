@@ -16,7 +16,9 @@ import cv2
 import numpy as np
 import requests
 
-DIAGRAM_DIR = Path("./downloads/diagrams")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent if (Path(__file__).resolve().parent.name == "extractors") else Path(__file__).resolve().parent
+DATA_DIR = PROJECT_ROOT / "data"
+DIAGRAM_DIR = PROJECT_ROOT / "downloads" / "diagrams"
 DIAGRAM_DIR.mkdir(parents=True, exist_ok=True)
 
 PROMPT = """You are an expert LaTeX OCR and Exam Digitization engine preparing academic problem sheets.
@@ -31,7 +33,8 @@ Rules:
    - "subject": Exactly one of ["Physics", "Chemistry", "Mathematics"]
    - "topic": Standard JEE/NEET chapter or major topic (e.g. "Current Electricity", "Conic Sections - Hyperbola", "Organic Reaction Mechanisms", "Thermodynamics", "Capacitance & Dielectrics", "Vectors & 3D Geometry", "Equilibrium")
    - "subTopic": The specific concept tested (e.g. "Kirchhoff's Laws & Nodal Analysis", "Eccentricity & Latus Rectum", "Peroxide Effect on Alkenes", "Dielectric Medium", "Equilibrium Constant")
-   - "difficulty": Exactly one of ["Easy", "Medium", "Hard"] reflecting typical JEE Main difficulty.
+   - "difficulty": Exactly one of ["Easy", "Medium", "Hard"] reflecting typical exam difficulty.
+   - "exam": Exactly one of ["JEE_MAIN", "MHT_CET"].
 4. Detect tables:
    - "hasTable": true if a data table appears anywhere in the question body (not options).
    - "tableHtml": If hasTable is true, transcribe the ENTIRE table as a valid HTML <table> string with <thead>/<tbody>/<tr>/<th>/<td> tags. Wrap any math inside cells in $...$. If hasTable is false, set tableHtml to null.
@@ -45,6 +48,7 @@ Rules:
   "topic": "...",
   "subTopic": "...",
   "difficulty": "Easy | Medium | Hard",
+  "exam": "JEE_MAIN | MHT_CET",
   "hasTable": false,
   "tableHtml": null,
   "optionsHaveDiagrams": false,
@@ -191,6 +195,7 @@ def detect_and_crop_diagram_cut_to_cut(
             if len(pts) > 0:
                 xmin, xmax = pts[:, 1].min(), pts[:, 1].max()
                 bw = xmax - xmin
+                # Only merge if it is a small label (width <= 45px) or far from left margin
                 if bw <= 45 or xmin > int(w * 0.15):
                     start_idx -= 1
 
@@ -205,6 +210,7 @@ def detect_and_crop_diagram_cut_to_cut(
             if len(pts) > 0:
                 xmin, xmax = pts[:, 1].min(), pts[:, 1].max()
                 bw = xmax - xmin
+                # Ensure it is not an Option line (options start near x=0 with '(1)' or 'Options')
                 is_option = (xmin < int(w * 0.08)) and (np.sum(thresh[next_start:next_end + 1, :int(w * 0.25)]) / 255.0 > 35)
                 if not is_option and (bw < int(w * 0.8)):
                     end_idx += 1
@@ -236,9 +242,9 @@ def detect_and_crop_diagram_cut_to_cut(
     crop_gray = gray[final_y1:final_y2, final_x1:final_x2]
     ch, cw = raw_crop.shape[:2]
 
-    # --- COLOR TRANSFORM ---
-    # Ink mask: 1.0 for solid dark ink, 0.0 for scanner paper background
-    ink_mask = np.clip((245.0 - crop_gray) / 160.0, 0.0, 1.0)
+    # Compute ink mask from grayscale crop (before upscaling)
+    ink_mask = np.clip((245.0 - crop_gray.astype(float)) / 160.0, 0.0, 1.0)
+
     # --- SUPER-RESOLUTION UPSCALING (2.5x) & ANTI-ALIASING ---
     # Eliminates scanned pixelation and delivers crisp vector-like curves on 1080p/4K displays
     scale = 2.5
@@ -454,10 +460,32 @@ def fix_latex_json(raw: str) -> str:
     return "".join(out)
 
 
+def safe_json_loads(text: str) -> dict:
+    text = text.strip()
+    if text.startswith("```json"): text = text[7:]
+    if text.startswith("```"): text = text[3:]
+    if text.endswith("```"): text = text[:-3]
+    text = text.strip()
+
+    try:
+        return json.loads(text, strict=False)
+    except Exception:
+        pass
+
+    try:
+        fixed = fix_latex_json(text)
+        return json.loads(fixed, strict=False)
+    except Exception:
+        pass
+
+    return json.loads(text)
+
+
 def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-3.5-flash-lite") -> dict:
     with open(image_path, "rb") as f:
         img_b64 = base64.b64encode(f.read()).decode("utf-8")
 
+    # High-quota production models on Gemini API
     models_to_try = [
         model,
         "gemini-3.5-flash-lite",
@@ -490,6 +518,7 @@ def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-3.5-flas
             resp = requests.post(url, json=payload, timeout=35)
             if resp.status_code == 200:
                 rj = resp.json()
+                # Safely navigate response structure — may be missing if blocked by safety filters
                 candidates = rj.get("candidates", [])
                 if not candidates:
                     last_err = f"Model {cur_model}: empty candidates (possibly blocked by safety filter)"
@@ -507,16 +536,7 @@ def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-3.5-flas
                     print(f"  [!] {last_err}")
                     continue
                 text = parts[0]["text"].strip()
-                if text.startswith("```json"): text = text[7:]
-                if text.startswith("```"): text = text[3:]
-                if text.endswith("```"): text = text[:-3]
-                text = text.strip()
-
-                try:
-                    data = json.loads(text, strict=False)
-                except Exception:
-                    fixed = fix_latex_json(text)
-                    data = json.loads(fixed, strict=False)
+                data = safe_json_loads(text)
                 data["_used_model"] = cur_model
                 return data
             elif resp.status_code == 429:
@@ -533,6 +553,8 @@ def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-3.5-flas
             print(f"  [!] {last_err}")
             continue
 
+    # Graceful fallback: If an exam question triggered Google's strict recitation/copyright filter across all models,
+    # don't halt the entire batch run! Return a fallback so the scan is preserved and the batch continues smoothly.
     print(f"  [~] Notice: Question flagged by API recitation filter on all models. Preserving scanned image and continuing...")
     return {
         "subject": "Physics",
@@ -551,110 +573,242 @@ def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-3.5-flas
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Deterministic Cut-to-Cut LaTeX & Diagram Extractor")
-    parser.add_argument("--image", default="downloads/question_images/14_20191125104442.JPG", help="Image path")
+    import time
+    parser = argparse.ArgumentParser(description="Batch LaTeX & Cut-to-Cut Diagram Extractor")
     parser.add_argument("--gemini-key", default=os.getenv("GEMINI_API_KEY"), help="API Key")
+    parser.add_argument("--limit", type=int, default=0, help="Max questions to process (0 = all)")
     parser.add_argument("--stroke-color", default="#ffffff", help="Stroke color hex (e.g. #ffffff white, #000000 black, #1e40af navy)")
     parser.add_argument("--bg-mode", default="transparent", choices=["transparent", "white", "dark"], help="Background mode")
+    parser.add_argument("--input-json", default="all_nta_questions.json", help="Input questions file")
+    parser.add_argument("--output-json", default="all_extracted_latex_questions.json", help="Output JSON file")
+    parser.add_argument("--subject", default=None, choices=["Physics", "Chemistry", "Mathematics"], help="Filter by subject (Physics, Chemistry, Mathematics)")
 
     args = parser.parse_args()
 
-    if not os.path.exists(args.image):
-        print(f"Image not found: {args.image}")
-        return
-
-    print("=================================================================")
-    print(f" Deterministic Cut-to-Cut LaTeX & Diagram Extractor")
-    print(f" Target Image : {args.image}")
-    print(f" Stroke Color : {args.stroke_color}")
-    print(f" Background   : {args.bg_mode}")
-    print("=================================================================")
+    # Auto-set isolated output file per subject (unless user explicitly provided --output-json)
+    default_output = "all_extracted_latex_questions.json"
+    if args.subject and args.output_json == default_output:
+        args.output_json = f"extracted_{args.subject.lower()}.json"
+        print(f"[*] Auto-set output file to: {args.output_json}")
 
     if not args.gemini_key:
         print("\n[!] Please pass --gemini-key YOUR_API_KEY")
         return
 
-    print("\nTranscribing Math, Subject & Topic via Gemini API...")
-    result = call_gemini_api(args.image, args.gemini_key)
+    # Resolve input JSON path
+    input_path = Path(args.input_json)
+    if not input_path.exists():
+        if (DATA_DIR / args.input_json).exists():
+            input_path = DATA_DIR / args.input_json
+        elif (PROJECT_ROOT / args.input_json).exists():
+            input_path = PROJECT_ROOT / args.input_json
 
-    used_model = result.get("_used_model", "Unknown")
-    subj = result.get("subject", "Unclassified")
-    topic = result.get("topic", "General")
-    subtopic = result.get("subTopic", "")
-    difficulty = result.get("difficulty") or "Medium"
-    exam = result.get("exam") or "JEE_MAIN"
-    has_table = bool(result.get("hasTable", False))
-    table_html = result.get("tableHtml") or None
-    opts_have_diag = bool(result.get("optionsHaveDiagrams", False))
-    opts_latex = result.get("latexOptions", [])
+    if not input_path.exists():
+        print(f"\n[!] Input file not found: {args.input_json}")
+        return
 
-    print(f"\n--- CLASSIFICATION (via {used_model}) ---")
-    print(f"  Exam      : {exam}")
-    print(f"  Subject   : {subj}")
-    print(f"  Topic     : {topic}")
-    if subtopic:
-        print(f"  Sub-Topic : {subtopic}")
-    print(f"  Difficulty: {difficulty}")
-    if has_table:
-        print(f"  Has Table : True")
-        if table_html:
-            print(f"  Table HTML:\n{table_html}")
-    if opts_have_diag:
-        print(f"  Options Have Diagrams: True")
+    with open(input_path, "r", encoding="utf-8") as f:
+        questions = json.load(f)
 
-    q_text = result.get("latexQuestion") or result.get("question", "")
-    print("\n--- EXTRACTED LATEX QUESTION ---")
-    print(q_text)
+    # Resolve output JSON path to data directory if single filename
+    output_path = Path(args.output_json)
+    if not output_path.is_absolute() and len(output_path.parts) == 1:
+        args.output_json = str(DATA_DIR / args.output_json)
 
-    print("\n--- EXTRACTED OPTIONS ---")
-    for opt in opts_latex:
-        key = opt.get("key", "")
-        formula = opt.get("latex", "")
-        opt_diag = opt.get("hasDiagram", False)
-        diag_tag = " [HAS DRAWN STRUCTURE]" if opt_diag else ""
-        print(f"  Option ({key}): {formula}{diag_tag}")
+    print("=================================================================")
+    print(" Production Batch LaTeX & Cut-to-Cut Diagram Extractor")
+    print(f" Total Questions in Dataset : {len(questions)}")
+    print(f" Stroke Color               : {args.stroke_color}")
+    print(f" Background Mode            : {args.bg_mode}")
+    print(f" Output File                : {args.output_json}")
+    print("=================================================================")
 
-    # Deterministic Cut-to-Cut Diagram Detection & Cropping (Question Body)
-    print("\n--- DETERMINISTIC DIAGRAM EXTRACTION ---")
-    diag_dir = DIAGRAM_DIR / subj
-    diag_dir.mkdir(parents=True, exist_ok=True)
-    crop_filename = f"diagram_{Path(args.image).stem}.png"
-    crop_path = diag_dir / crop_filename
+    subject_files = {
+        "Physics": str(DATA_DIR / "extracted_physics.json"),
+        "Chemistry": str(DATA_DIR / "extracted_chemistry.json"),
+        "Mathematics": str(DATA_DIR / "extracted_mathematics.json"),
+    }
 
-    effective_question_text = "" if subj == "Chemistry" else q_text
+    processed_map = {}
+    subject_data = {"Physics": [], "Chemistry": [], "Mathematics": []}
+    files_to_check = set([args.output_json] + list(subject_files.values()))
 
-    has_diag, box = detect_and_crop_diagram_cut_to_cut(
-        img_path=args.image,
-        question_text=effective_question_text,
-        save_path=str(crop_path),
-        bg_mode=args.bg_mode,
-        stroke_color=args.stroke_color
-    )
+    for fpath in files_to_check:
+        if os.path.exists(fpath):
+            try:
+                with open(fpath, "r", encoding="utf-8") as f:
+                    items = json.load(f)
+                    for item in items:
+                        url = item.get("imageUrl")
+                        if url:
+                            processed_map[url] = item
+                        item_subj = (item.get("subject") or "Physics").capitalize()
+                        if item_subj in subject_data:
+                            if not any(x.get("imageUrl") == url for x in subject_data[item_subj] if url):
+                                subject_data[item_subj].append(item)
+                        else:
+                            subject_data["Physics"].append(item)
+            except Exception:
+                pass
 
-    print(f"  Has Question Diagram : {has_diag}")
-    if has_diag:
-        x1, y1, x2, y2 = box
-        print(f"  Exact Bounds: [x1={x1}, y1={y1}, x2={x2}, y2={y2}] (Dimensions: {x2-x1}x{y2-y1} px)")
-        print(f"  [+] Saved Cut-to-Cut Diagram to: {crop_path}")
-    else:
-        print("  Clean: No diagram in question body.")
+    if processed_map:
+        print(f"[+] Found {len(processed_map)} previously extracted questions across datasets:")
+        for s_name, s_list in subject_data.items():
+            print(f"    - {s_name}: {len(s_list)} questions in {subject_files[s_name]}")
+        # Sync partitions to ensure clean subject separation
+        for s_name, s_list in subject_data.items():
+            if s_list:
+                with open(subject_files[s_name], "w", encoding="utf-8") as f:
+                    json.dump(s_list, f, indent=2, ensure_ascii=False)
 
-    # Option Diagrams Cropping
-    if opts_have_diag:
-        print("\n--- OPTION DIAGRAMS EXTRACTION ---")
-        option_diagrams = crop_option_regions(
-            img_path=args.image,
-            opts_latex=opts_latex,
-            diag_dir=diag_dir,
-            stem=Path(args.image).stem,
-            bg_mode=args.bg_mode,
-            stroke_color=args.stroke_color
-        )
-        for k, p in option_diagrams.items():
-            if p:
-                print(f"  [+] Option ({k}) Diagram: {p}")
+    to_process = []
+    for q in questions:
+        if args.subject and q.get("subject", "").lower() != args.subject.lower():
+            continue
+        url = q.get("imageUrl")
+        p = q.get("localImagePath")
+        if p and not os.path.exists(p):
+            alt_p = str(PROJECT_ROOT / p)
+            if os.path.exists(alt_p):
+                p = alt_p
+                q["localImagePath"] = p
+        if url and url not in processed_map and p and os.path.exists(p):
+            to_process.append(q)
+
+    if args.limit > 0:
+        to_process = to_process[:args.limit]
+
+    print(f"Questions to process in this run: {len(to_process)}" + (f" (Input Filter: {args.subject})" if args.subject else ""))
+
+    for idx, q in enumerate(to_process, 1):
+        img_path = q.get("localImagePath")
+        if img_path and not os.path.exists(img_path):
+            alt_img = str(PROJECT_ROOT / img_path)
+            if os.path.exists(alt_img):
+                img_path = alt_img
+                q["localImagePath"] = img_path
+        if not img_path or not os.path.exists(img_path):
+            continue
+
+        print(f"\n[{idx}/{len(to_process)}] Paper {q.get('paperId')} - Q{q.get('questionNumber')} ({os.path.basename(img_path)})", flush=True)
+
+        try:
+            extracted = call_gemini_api(img_path, args.gemini_key)
+            q_latex = extracted.get("latexQuestion") or extracted.get("question", "")
+            opts_latex = extracted.get("latexOptions", [])
+
+            subj = extracted.get("subject") or q.get("subject", "Unclassified")
+            topic = extracted.get("topic") or "General"
+            subtopic = extracted.get("subTopic", "")
+            difficulty = extracted.get("difficulty") or "Medium"
+            used_model = extracted.get("_used_model", "gemini")
+            has_table = bool(extracted.get("hasTable", False))
+            table_html = extracted.get("tableHtml") or None
+            opts_have_diag = bool(extracted.get("optionsHaveDiagrams", False))
+
+            # Save question-body diagram into subject-specific subdirectory
+            diag_filename = f"diagram_{Path(img_path).stem}.png"
+            diag_dir = DIAGRAM_DIR / subj
+            diag_dir.mkdir(parents=True, exist_ok=True)
+            diag_save_path = diag_dir / diag_filename
+
+            # Step 2: Chemistry bypass — benzene/structures don't say "shown below"
+            effective_question_text = "" if subj == "Chemistry" else q_latex
+
+            has_diag, bbox = detect_and_crop_diagram_cut_to_cut(
+                img_path=img_path,
+                question_text=effective_question_text,
+                save_path=str(diag_save_path),
+                bg_mode=args.bg_mode,
+                stroke_color=args.stroke_color
+            )
+
+            # Step 3: Option region cropping when Gemini says options have drawn structures
+            option_diagrams = {}
+            if opts_have_diag:
+                option_diagrams = crop_option_regions(
+                    img_path=img_path,
+                    opts_latex=opts_latex,
+                    diag_dir=diag_dir,
+                    stem=Path(img_path).stem,
+                    bg_mode=args.bg_mode,
+                    stroke_color=args.stroke_color
+                )
+
+            exam_val = extracted.get("exam")
+            if not exam_val or exam_val not in ["JEE_MAIN", "MHT_CET"]:
+                paper_title = str(q.get("paperTitle", "")).upper()
+                if "CET" in paper_title or "KCET" in paper_title:
+                    exam_val = "MHT_CET"
+                else:
+                    exam_val = q.get("targetExam") or "JEE_MAIN"
+
+            q_record = dict(q)
+            q_record["subject"] = subj
+            q_record["topic"] = topic
+            q_record["subTopic"] = subtopic
+            q_record["difficulty"] = difficulty
+            q_record["exam"] = exam_val
+            q_record["latexQuestion"] = q_latex
+            q_record["hasTable"] = has_table
+            q_record["tableHtml"] = table_html
+            q_record["latexOptions"] = opts_latex
+            q_record["hasDiagram"] = has_diag
+            q_record["diagramPath"] = str(diag_save_path) if has_diag else None
+            q_record["diagramBBox"] = [int(c) for c in bbox] if has_diag else None
+            q_record["optionsHaveDiagrams"] = opts_have_diag
+            q_record["optionDiagrams"] = option_diagrams if opts_have_diag else {}
+            q_record["extractedVia"] = used_model
+
+            # Route to detected subject dataset
+            norm_subj = subj.capitalize() if subj else "Physics"
+            if norm_subj not in subject_data:
+                norm_subj = "Physics"
+
+            target_file = subject_files.get(norm_subj, args.output_json)
+            subject_data[norm_subj].append(q_record)
+            if q.get("imageUrl"):
+                processed_map[q["imageUrl"]] = q_record
+
+            status_parts = [f"   [*] {subj} > {topic}"]
+            if subtopic:
+                status_parts.append(f"({subtopic})")
+            status_parts.append(f"[{difficulty}]")
+            status_parts.append(f"[{exam_val}]")
+            status_parts.append(f"[Model: {used_model}]")
+            if has_table:
+                status_parts.append("[TABLE]")
+            print(" ".join(status_parts))
+
+            if args.subject and norm_subj.lower() != args.subject.lower():
+                print(f"   [->] Subject detected as {norm_subj} (not {args.subject}) -> Routed to {target_file}")
+
+            if has_diag:
+                print(f"   [+] Diagram: True -> Saved: {diag_save_path}")
             else:
-                print(f"  [-] Option ({k}): No diagram cropped")
+                print("   [-] Diagram: False (Clean)")
+            if opts_have_diag:
+                cropped_count = sum(1 for v in option_diagrams.values() if v)
+                print(f"   [+] Option Diagrams: {cropped_count}/4 cropped")
+
+            # Save progress: write immediately to the target subject file
+            with open(target_file, "w", encoding="utf-8") as f:
+                json.dump(subject_data[norm_subj], f, indent=2, ensure_ascii=False)
+
+            time.sleep(4.2)
+
+        except Exception as e:
+            print(f"   [!] Error: {e}")
+            time.sleep(5)
+
+    for s_name, s_list in subject_data.items():
+        if s_list:
+            with open(subject_files[s_name], "w", encoding="utf-8") as f:
+                json.dump(s_list, f, indent=2, ensure_ascii=False)
+
+    print("\n[OK] Batch run complete. Summary by subject:")
+    for s_name, s_list in subject_data.items():
+        print(f"  - {s_name}: {len(s_list)} questions in {subject_files[s_name]}")
 
 
 if __name__ == "__main__":

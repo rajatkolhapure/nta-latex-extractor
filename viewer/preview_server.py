@@ -9,17 +9,26 @@ import webbrowser
 from pathlib import Path
 
 PORT = 8000
-DIRECTORY = Path(__file__).parent.resolve()
+REPO_ROOT = Path(__file__).resolve().parent.parent if (Path(__file__).resolve().parent.name == "viewer") else Path(__file__).resolve().parent
+DIRECTORY = REPO_ROOT
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(DIRECTORY), **kwargs)
 
+    def do_GET(self):
+        if self.path in ("/", "/index.html", "/question_viewer.html"):
+            self.send_response(302)
+            self.send_header("Location", "/viewer/question_viewer.html")
+            self.end_headers()
+            return
+        super().do_GET()
+
 
 def start_server():
     with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        url = f"http://localhost:{PORT}/question_viewer.html"
+        url = f"http://localhost:{PORT}/viewer/question_viewer.html"
         print(f"\n========================================================")
         print(f"  Local Question & Diagram Viewer running at:")
         print(f"  --> {url}")

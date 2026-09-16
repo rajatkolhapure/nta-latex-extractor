@@ -38,8 +38,8 @@ DEFAULT_HEADERS = {
 QUESTION_IMAGE_PATTERN = r"/Uploads/Question/"
 
 # Default Local File Paths
-DEFAULT_INPUT_FILE = "nta_papers.json"
-DEFAULT_OUTPUT_FILE = "all_nta_questions.json"
+DEFAULT_INPUT_FILE = "data/nta_papers.json"
+DEFAULT_OUTPUT_FILE = "data/all_nta_questions.json"
 DEFAULT_IMAGE_DIR = "./downloads/question_images"
 
 # Question Defaults

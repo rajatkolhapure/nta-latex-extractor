@@ -18,7 +18,10 @@ import numpy as np
 import pymupdf
 import requests
 
-DIAGRAM_DIR = Path("./downloads/diagrams")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent if (Path(__file__).resolve().parent.name == "extractors") else Path(__file__).resolve().parent
+DATA_DIR = PROJECT_ROOT / "data"
+DOWNLOADS_DIR = PROJECT_ROOT / "downloads"
+DIAGRAM_DIR = DOWNLOADS_DIR / "diagrams"
 DIAGRAM_DIR.mkdir(parents=True, exist_ok=True)
 
 PROMPT_PDF_PAGE = """You are an expert LaTeX OCR and Exam Digitization engine specializing in MHT-CET and JEE exam papers.
@@ -318,7 +321,7 @@ def process_pdf_file(
 
         h_px, w_px = img_bgr.shape[:2]
 
-        page_img_dir = Path("./downloads/pdf_pages") / pdf_stem
+        page_img_dir = DOWNLOADS_DIR / "pdf_pages" / pdf_stem
         page_img_dir.mkdir(parents=True, exist_ok=True)
         page_img_path = page_img_dir / f"page_{page_num}.png"
         cv2.imwrite(str(page_img_path), img_bgr)
@@ -479,9 +482,9 @@ def main():
         return
 
     subject_files = {
-        "Physics": "extracted_physics.json",
-        "Chemistry": "extracted_chemistry.json",
-        "Mathematics": "extracted_mathematics.json",
+        "Physics": str(DATA_DIR / "extracted_physics.json"),
+        "Chemistry": str(DATA_DIR / "extracted_chemistry.json"),
+        "Mathematics": str(DATA_DIR / "extracted_mathematics.json"),
     }
 
     subject_data = {"Physics": [], "Chemistry": [], "Mathematics": []}
@@ -515,15 +518,20 @@ def main():
     if args.pdf:
         if os.path.exists(args.pdf):
             pdf_files_to_run.append(args.pdf)
+        elif (PROJECT_ROOT / args.pdf).exists():
+            pdf_files_to_run.append(str(PROJECT_ROOT / args.pdf))
         else:
             print(f"[!] PDF not found: {args.pdf}")
             return
     else:
         target_dir = args.pdf_dir
         if not os.path.exists(target_dir):
-            alt_dir = r"C:\Users\rmk19\Downloads\cet"
-            if os.path.exists(alt_dir):
-                target_dir = alt_dir
+            if (PROJECT_ROOT / args.pdf_dir).exists():
+                target_dir = str(PROJECT_ROOT / args.pdf_dir)
+            else:
+                alt_dir = r"C:\Users\rmk19\Downloads\cet"
+                if os.path.exists(alt_dir):
+                    target_dir = alt_dir
 
         if not os.path.exists(target_dir):
             print(f"[!] PDF directory not found: {args.pdf_dir}")

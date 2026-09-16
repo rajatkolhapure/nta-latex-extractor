@@ -12,19 +12,25 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
-INPUT_FILE = BASE_DIR / "all_nta_questions.json"
+REPO_ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = REPO_ROOT / "data"
+INPUT_FILE = DATA_DIR / "all_nta_questions.json"
 
 
 def sort_and_split_questions():
     if not INPUT_FILE.exists():
-        print(f"Error: {INPUT_FILE} not found.")
-        return
+        if (REPO_ROOT / "all_nta_questions.json").exists():
+            input_file = REPO_ROOT / "all_nta_questions.json"
+        else:
+            print(f"Error: {INPUT_FILE} not found.")
+            return
+    else:
+        input_file = INPUT_FILE
 
-    with open(INPUT_FILE, "r", encoding="utf-8") as f:
+    with open(input_file, "r", encoding="utf-8") as f:
         questions = json.load(f)
 
-    print(f"Loaded {len(questions)} questions from {INPUT_FILE.name}")
+    print(f"Loaded {len(questions)} questions from {input_file.name}")
 
     # Standardize subject names
     subject_map = {
@@ -58,7 +64,7 @@ def sort_and_split_questions():
         by_subject[subj].sort(key=sort_key)
 
     # 1. Export grouped dictionary
-    grouped_path = BASE_DIR / "questions_by_subject.json"
+    grouped_path = DATA_DIR / "questions_by_subject.json"
     with open(grouped_path, "w", encoding="utf-8") as f:
         json.dump(dict(by_subject), f, indent=2, ensure_ascii=False)
     print(f" Saved: {grouped_path.name}")
@@ -66,7 +72,7 @@ def sort_and_split_questions():
     # 2. Export individual subject files
     for subj, q_list in by_subject.items():
         filename = f"{subj.lower()}_questions.json"
-        out_path = BASE_DIR / filename
+        out_path = DATA_DIR / filename
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(q_list, f, indent=2, ensure_ascii=False)
         print(f" Saved: {filename} ({len(q_list)} questions)")
@@ -81,7 +87,7 @@ def sort_and_split_questions():
         if s not in subject_order:
             all_sorted.extend(q_list)
 
-    sorted_path = BASE_DIR / "all_nta_questions_sorted.json"
+    sorted_path = DATA_DIR / "all_nta_questions_sorted.json"
     with open(sorted_path, "w", encoding="utf-8") as f:
         json.dump(all_sorted, f, indent=2, ensure_ascii=False)
     print(f" Saved: {sorted_path.name} ({len(all_sorted)} questions sorted by subject)")

@@ -138,7 +138,7 @@
     <header class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-6 mb-6 gap-4">
       <div>
         <h1 class="text-2xl font-bold text-white flex items-center gap-2">
-          <span class="text-blue-500">⚛</span> NTA Exam Question & LaTeX Explorer
+          NTA Exam Question & LaTeX Explorer
         </h1>
         <p class="text-slate-400 text-sm mt-1">
           Supports LaTeX Math, Observation Tables, HD Diagrams & Dynamic Dark/Light Modes
@@ -148,17 +148,16 @@
       <div class="flex flex-wrap items-center gap-3">
         <!-- Theme Toggle -->
         <button id="themeToggleBtn" onclick="toggleTheme()" class="input-ctrl bg-slate-800 border border-slate-700 hover:border-slate-500 rounded-lg px-3 py-2 text-sm font-medium transition flex items-center gap-1.5 shadow-sm">
-          <span id="themeIcon">☀️</span> <span id="themeLabel">Light Mode</span>
+          <span id="themeLabel">Light Mode</span>
         </button>
 
         <!-- Dataset Selector -->
         <select id="datasetSelector" onchange="switchDataset()" class="input-ctrl bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
-          <option value="test_q30.json">🔬 Test: Q30 Meter Bridge</option>
-          <option value="extracted_physics.json">Extracted Physics</option>
-          <option value="extracted_chemistry.json">Extracted Chemistry</option>
-          <option value="extracted_mathematics.json">Extracted Mathematics</option>
-          <option value="all_extracted_latex_questions.json">All Extracted (Merged)</option>
-          <option value="all_nta_questions.json">Raw NTA Scans (Original)</option>
+          <option value="data/extracted_physics.json">Extracted Physics</option>
+          <option value="data/extracted_chemistry.json">Extracted Chemistry</option>
+          <option value="data/extracted_mathematics.json">Extracted Mathematics</option>
+          <option value="data/test_q30.json">Test: Q30 Meter Bridge</option>
+          <option value="data/all_nta_questions.json">Raw NTA Scans (Original)</option>
         </select>
 
         <!-- Subject Filter -->
@@ -201,14 +200,16 @@
     let filteredQuestions = [];
     let currentPage = 1;
     const pageSize = 10;
-    let currentDataset = 'test_q30.json';
+    let currentDataset = 'data/extracted_physics.json';
     let isLightMode = false;
 
     function toggleTheme() {
       isLightMode = !isLightMode;
       document.body.classList.toggle('light-theme', isLightMode);
-      document.getElementById('themeIcon').innerText = isLightMode ? '🌙' : '☀️';
-      document.getElementById('themeLabel').innerText = isLightMode ? 'Dark Mode' : 'Light Mode';
+      const label = document.getElementById('themeLabel');
+      if (label) {
+        label.innerText = isLightMode ? 'Dark Theme' : 'Light Theme';
+      }
       localStorage.setItem('viewer_theme', isLightMode ? 'light' : 'dark');
     }
 
@@ -222,12 +223,44 @@
       await loadDataset();
     }
 
+    function resolveMediaSrc(p) {
+      if (!p) return '';
+      p = String(p).replace(/\\/g, '/');
+      if (p.startsWith('http://') || p.startsWith('https://') || p.startsWith('data:')) return p;
+      if (p.startsWith('file:///')) {
+        const dlIdx = p.indexOf('/downloads/');
+        if (dlIdx !== -1) {
+          return p.substring(dlIdx);
+        }
+      }
+      p = p.replace(/^\.?\//, '');
+      return '/' + p;
+    }
+
     async function loadDataset() {
       const container = document.getElementById('questionsContainer');
       container.innerHTML = `<div class="text-center py-12 text-slate-500">Loading ${currentDataset}...</div>`;
       try {
-        const resp = await fetch(currentDataset);
-        if (!resp.ok) {
+        const basename = currentDataset.replace(/^.*[\\\/]/, '');
+        const candidates = [
+          currentDataset,
+          `/${currentDataset.replace(/^\/+/, '')}`,
+          `/data/${basename}`,
+          `../data/${basename}`,
+          `data/${basename}`,
+          basename
+        ];
+        let resp = null;
+        for (const u of candidates) {
+          try {
+            const r = await fetch(u);
+            if (r.ok) {
+              resp = r;
+              break;
+            }
+          } catch (_) {}
+        }
+        if (!resp) {
           throw new Error(`File not found: ${currentDataset}`);
         }
         allQuestions = await resp.json();
@@ -238,7 +271,7 @@
         container.innerHTML = 
           `<div class="p-6 bg-slate-800/80 border border-slate-700 text-slate-300 rounded-2xl text-center">
             <p class="text-amber-400 font-semibold mb-2">Dataset not yet created: <code>${currentDataset}</code></p>
-            <p class="text-xs text-slate-400">Run the batch extractor for this subject first, or switch to <code>all_nta_questions.json</code> to view original scanned questions.</p>
+            <p class="text-xs text-slate-400">Run the extractor for this subject first, or switch to <code>data/all_nta_questions.json</code> to view original scanned questions.</p>
           </div>`;
         document.getElementById('statsText').innerText = `0 questions loaded`;
         document.getElementById('pageIndicator').innerText = `Page 0 of 0`;
@@ -340,7 +373,7 @@
             bodyHtml += `
               <div class="my-4 flex justify-center">
                 <div class="diagram-frame rounded-xl p-3 shadow-md inline-block">
-                  <img src="${q.diagramPath}" alt="Diagram Q${q.questionNumber}" class="diagram-img max-h-72 object-contain" loading="lazy" />
+                  <img src="${resolveMediaSrc(q.diagramPath)}" alt="Diagram Q${q.questionNumber}" class="diagram-img max-h-72 object-contain" loading="lazy" />
                 </div>
               </div>
             `;
@@ -360,7 +393,7 @@
         } else if (q.localImagePath) {
           bodyHtml += `
             <div class="mb-5 bg-white p-3 rounded-xl inline-block shadow-inner">
-              <img src="${q.localImagePath}" alt="Question ${q.questionNumber}" class="max-h-72 object-contain rounded" loading="lazy" />
+              <img src="${resolveMediaSrc(q.localImagePath)}" alt="Question ${q.questionNumber}" class="max-h-72 object-contain rounded" loading="lazy" />
             </div>
           `;
         }
@@ -383,7 +416,7 @@
                 optionContent = `
                   <div class="flex flex-col items-center py-2 w-full">
                     <div class="diagram-frame p-2 rounded-lg inline-block shadow-sm">
-                      <img src="${optDiagramPath}" alt="Option ${optKey}" class="diagram-img max-h-28 object-contain" loading="lazy" />
+                      <img src="${resolveMediaSrc(optDiagramPath)}" alt="Option ${optKey}" class="diagram-img max-h-28 object-contain" loading="lazy" />
                     </div>
                     ${optText && !optText.startsWith('[') ? `<span class="mt-1.5 text-xs text-slate-300 latex-content">${optText}</span>` : ''}
                   </div>

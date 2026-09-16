@@ -19,7 +19,9 @@ try:
 except ImportError:
     pass
 
-DIAGRAM_OUTPUT_DIR = Path("./downloads/diagrams")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent if (Path(__file__).resolve().parent.name == "extractors") else Path(__file__).resolve().parent
+DATA_DIR = PROJECT_ROOT / "data"
+DIAGRAM_OUTPUT_DIR = PROJECT_ROOT / "downloads" / "diagrams"
 DIAGRAM_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -111,8 +113,23 @@ def process_dataset(
     limit: int = None,
     subject: str = None
 ):
-    with open(input_json, "r", encoding="utf-8") as f:
+    input_path = Path(input_json)
+    if not input_path.exists():
+        if (DATA_DIR / input_json).exists():
+            input_path = DATA_DIR / input_json
+        elif (PROJECT_ROOT / input_json).exists():
+            input_path = PROJECT_ROOT / input_json
+
+    if not input_path.exists():
+        print(f"File not found: {input_json}")
+        return
+
+    with open(input_path, "r", encoding="utf-8") as f:
         questions = json.load(f)
+
+    out_path = Path(output_json)
+    if not out_path.is_absolute() and len(out_path.parts) == 1:
+        output_json = str(DATA_DIR / output_json)
 
     if subject:
         questions = [q for q in questions if q.get("subject", "").lower() == subject.lower()]
@@ -126,6 +143,10 @@ def process_dataset(
 
     for idx, q in enumerate(questions, 1):
         img_path = q.get("localImagePath")
+        if img_path and not os.path.exists(img_path):
+            alt_img = str(PROJECT_ROOT / img_path)
+            if os.path.exists(alt_img):
+                img_path = alt_img
         if not img_path or not os.path.exists(img_path):
             continue
 
