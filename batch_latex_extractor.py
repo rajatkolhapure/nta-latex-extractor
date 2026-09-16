@@ -479,17 +479,17 @@ def safe_json_loads(text: str) -> dict:
     return json.loads(text)
 
 
-def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-2.5-flash-lite") -> dict:
+def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-3.1-flash-lite") -> dict:
     with open(image_path, "rb") as f:
         img_b64 = base64.b64encode(f.read()).decode("utf-8")
 
-    # Fast, proven production models on Gemini API
+    # High-quota production models on Gemini API
     models_to_try = [
         model,
-        "gemini-2.5-flash-lite",
         "gemini-3.1-flash-lite",
         "gemini-2.5-flash",
         "gemini-flash-latest",
+        "gemini-2.5-flash-lite",
     ]
     seen = set()
     models_to_try = [m for m in models_to_try if not (m in seen or seen.add(m))]
@@ -508,7 +508,7 @@ def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-2.5-flas
             ],
             "generationConfig": {
                 "response_mime_type": "application/json",
-                "temperature": 0.2
+                "temperature": 0.35
             }
         }
 
