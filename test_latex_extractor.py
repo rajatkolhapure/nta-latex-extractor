@@ -20,7 +20,7 @@ DIAGRAM_DIR = Path("./downloads/diagrams")
 DIAGRAM_DIR.mkdir(parents=True, exist_ok=True)
 
 PROMPT = """You are an expert LaTeX OCR and Exam Digitization engine.
-Extract the question text, all 4 options, subject, topic, and subtopic from the provided NTA exam question image.
+Extract the question text, all 4 options, subject, topic, subtopic, and rich content metadata from the provided NTA exam question image.
 
 Rules:
 1. Wrap all mathematical variables, symbols, numbers with units, and equations in LaTeX:
@@ -31,17 +31,31 @@ Rules:
    - "subject": Exactly one of ["Physics", "Chemistry", "Mathematics"]
    - "topic": Standard JEE/NEET chapter or major topic (e.g. "Current Electricity", "Conic Sections - Hyperbola", "Organic Reaction Mechanisms", "Thermodynamics", "Capacitance & Dielectrics", "Vectors & 3D Geometry", "Equilibrium")
    - "subTopic": The specific concept tested (e.g. "Kirchhoff's Laws & Nodal Analysis", "Eccentricity & Latus Rectum", "Peroxide Effect on Alkenes", "Dielectric Medium", "Equilibrium Constant")
-4. Output strictly valid JSON matching this schema:
+   - "difficulty": Exactly one of ["Easy", "Medium", "Hard"] reflecting typical exam difficulty.
+   - "exam": Exactly one of ["JEE_MAIN", "MHT_CET"].
+4. Detect tables:
+   - "hasTable": true if a data table appears anywhere in the question body (not options).
+   - "tableHtml": If hasTable is true, transcribe the ENTIRE table as a valid HTML <table> string with <thead>/<tbody>/<tr>/<th>/<td> tags. Wrap any math inside cells in $...$. If hasTable is false, set tableHtml to null.
+5. Detect drawn structural diagrams in options (common in Chemistry):
+   - "optionsHaveDiagrams": true if ANY option contains a drawn chemical structure, circuit diagram, or geometric figure that cannot be expressed as plain text or LaTeX.
+   - For each option in latexOptions, set "hasDiagram": true if THAT specific option has a drawn structure, false otherwise.
+   - If an option has a drawn structure, set its "latex" to a short description in square brackets, e.g. "[benzene ring with -OH substituent]".
+6. Output strictly valid JSON matching this schema:
 {
   "subject": "Physics | Chemistry | Mathematics",
   "topic": "...",
   "subTopic": "...",
+  "difficulty": "Easy | Medium | Hard",
+  "exam": "JEE_MAIN | MHT_CET",
+  "hasTable": false,
+  "tableHtml": null,
+  "optionsHaveDiagrams": false,
   "latexQuestion": "...",
   "latexOptions": [
-    {"key": "1", "latex": "..."},
-    {"key": "2", "latex": "..."},
-    {"key": "3", "latex": "..."},
-    {"key": "4", "latex": "..."}
+    {"key": "1", "latex": "...", "hasDiagram": false},
+    {"key": "2", "latex": "...", "hasDiagram": false},
+    {"key": "3", "latex": "...", "hasDiagram": false},
+    {"key": "4", "latex": "...", "hasDiagram": false}
   ]
 }"""
 
@@ -224,9 +238,17 @@ def detect_and_crop_diagram_cut_to_cut(
     crop_gray = gray[final_y1:final_y2, final_x1:final_x2]
     ch, cw = raw_crop.shape[:2]
 
-    # --- COLOR TRANSFORM ---
-    # Ink mask: 1.0 for solid dark ink, 0.0 for scanner paper background
-    ink_mask = np.clip((245.0 - crop_gray) / 160.0, 0.0, 1.0)
+    # --- SUPER-RESOLUTION UPSCALING (2.5x) & ANTI-ALIASING ---
+    # Eliminates scanned pixelation and delivers crisp vector-like curves on 1080p/4K displays
+    ink_mask = np.clip((245.0 - crop_gray.astype(np.float32)) / 160.0, 0.0, 1.0)
+    scale = 2.5
+    up_w = int(cw * scale)
+    up_h = int(ch * scale)
+    up_ink = cv2.resize(ink_mask, (up_w, up_h), interpolation=cv2.INTER_LANCZOS4)
+    smooth_ink = cv2.GaussianBlur(up_ink, (3, 3), 0.5)
+    ink_mask = np.clip((smooth_ink - 0.06) / 0.88, 0.0, 1.0)
+    ch, cw = up_h, up_w
+
     stroke_bgr = hex_to_bgr(stroke_color)
 
     if bg_mode == "transparent":
@@ -256,6 +278,145 @@ def detect_and_crop_diagram_cut_to_cut(
         cv2.imwrite(save_path, result)
 
     return True, (final_x1, final_y1, final_x2, final_y2)
+
+
+def _save_opt_crop(crop, crop_gray, diag_dir, stem, key, bg_mode, stroke_bgr, result_map):
+    """Apply color transform and save one option crop PNG with HD upscaling."""
+    ch, cw = crop.shape[:2]
+    if ch < 20 or cw < 20:
+        result_map[key] = None
+        return
+
+    ink_mask = np.clip((245.0 - crop_gray.astype(float)) / 160.0, 0.0, 1.0)
+
+    # 2.5x Super-Resolution upscaling for option diagram crops
+    scale = 2.5
+    up_w = int(cw * scale)
+    up_h = int(ch * scale)
+    up_ink = cv2.resize(ink_mask, (up_w, up_h), interpolation=cv2.INTER_LANCZOS4)
+    smooth_ink = cv2.GaussianBlur(up_ink, (3, 3), 0.5)
+    ink_mask = np.clip((smooth_ink - 0.06) / 0.88, 0.0, 1.0)
+    ch, cw = up_h, up_w
+
+    if bg_mode == "transparent":
+        out = np.zeros((ch, cw, 4), dtype=np.uint8)
+        out[:, :, 0] = stroke_bgr[0]
+        out[:, :, 1] = stroke_bgr[1]
+        out[:, :, 2] = stroke_bgr[2]
+        out[:, :, 3] = (ink_mask * 255).astype(np.uint8)
+    elif bg_mode == "white":
+        out = np.full((ch, cw, 3), 255, dtype=np.uint8)
+        for c in range(3):
+            out[:, :, c] = (255 * (1 - ink_mask) + stroke_bgr[c] * ink_mask).astype(np.uint8)
+    else:
+        bg_bgr = (42, 23, 15)
+        out = np.zeros((ch, cw, 3), dtype=np.uint8)
+        for c in range(3):
+            out[:, :, c] = (bg_bgr[c] * (1 - ink_mask) + 255 * ink_mask).astype(np.uint8)
+
+    save_path = str(diag_dir / f"option_{key}_{stem}.png")
+    cv2.imwrite(save_path, out)
+    result_map[key] = save_path
+
+
+def crop_option_regions(
+    img_path: str,
+    opts_latex: list,
+    diag_dir: Path,
+    stem: str,
+    bg_mode: str = "transparent",
+    stroke_color: str = "#1e40af"
+) -> dict:
+    """
+    Splits the options zone of an image into individual option crops.
+    Auto-detects vertical-list layout (4+ row blocks) vs 2x2 grid layout.
+    Returns dict: {"1": "path/to/opt1.png", "2": None, ...}
+    Only crops options where Gemini flagged hasDiagram=True.
+    """
+    img = cv2.imread(img_path)
+    if img is None:
+        return {}
+
+    h, w = img.shape[:2]
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    _, thresh = cv2.threshold(gray, 220, 255, cv2.THRESH_BINARY_INV)
+    stroke_bgr = hex_to_bgr(stroke_color)
+
+    # Build per-option hasDiagram flags from Gemini output
+    opt_has_diag = {str(opt.get("key", "")): bool(opt.get("hasDiagram", False)) for opt in opts_latex}
+
+    # Scan the bottom 60% for row groups = option blocks
+    options_start_y = int(h * 0.40)
+    row_sums = np.sum(thresh[options_start_y:, :], axis=1) / 255.0
+    opt_blocks = []
+    in_block = False
+    blk_start = 0
+    for i, v in enumerate(row_sums):
+        if v > 1.0:
+            if not in_block:
+                in_block = True
+                blk_start = i
+        else:
+            if in_block:
+                in_block = False
+                if i - blk_start > 5:
+                    opt_blocks.append((options_start_y + blk_start, options_start_y + i - 1))
+    if in_block:
+        opt_blocks.append((options_start_y + blk_start, h - 1))
+
+    result_map = {}
+
+    if len(opt_blocks) >= 4:
+        # Vertical list: each option occupies its own contiguous row band
+        for block_i, opt_obj in enumerate(opts_latex):
+            if block_i >= len(opt_blocks):
+                break
+            key = str(opt_obj.get("key", str(block_i + 1)))
+            if not opt_has_diag.get(key, False):
+                result_map[key] = None
+                continue
+            y1, y2 = opt_blocks[block_i]
+            roi = img[y1:y2 + 1, :]
+            roi_gray = gray[y1:y2 + 1, :]
+            roi_thresh = thresh[y1:y2 + 1, :]
+            pts = np.argwhere(roi_thresh > 0)
+            if len(pts) < 30:
+                result_map[key] = None
+                continue
+            ry_min, rx_min = pts.min(axis=0)
+            ry_max, rx_max = pts.max(axis=0)
+            crop = roi[ry_min:ry_max + 1, rx_min:rx_max + 1]
+            crop_g = roi_gray[ry_min:ry_max + 1, rx_min:rx_max + 1]
+            _save_opt_crop(crop, crop_g, diag_dir, stem, key, bg_mode, stroke_bgr, result_map)
+    else:
+        # 2x2 grid: split options zone by horizontal and vertical midpoints
+        opt_y_start = opt_blocks[0][0] if opt_blocks else int(h * 0.50)
+        opt_x_mid = w // 2
+        opt_y_mid = (opt_y_start + h) // 2
+        quadrants = {
+            "1": (opt_y_start, opt_y_mid, 0, opt_x_mid),
+            "2": (opt_y_start, opt_y_mid, opt_x_mid, w),
+            "3": (opt_y_mid, h, 0, opt_x_mid),
+            "4": (opt_y_mid, h, opt_x_mid, w),
+        }
+        for key, (y1, y2, x1, x2) in quadrants.items():
+            if not opt_has_diag.get(key, False):
+                result_map[key] = None
+                continue
+            roi = img[y1:y2, x1:x2]
+            roi_gray = gray[y1:y2, x1:x2]
+            roi_thresh = thresh[y1:y2, x1:x2]
+            pts = np.argwhere(roi_thresh > 0)
+            if len(pts) < 30:
+                result_map[key] = None
+                continue
+            ry_min, rx_min = pts.min(axis=0)
+            ry_max, rx_max = pts.max(axis=0)
+            crop = roi[ry_min:ry_max + 1, rx_min:rx_max + 1]
+            crop_g = roi_gray[ry_min:ry_max + 1, rx_min:rx_max + 1]
+            _save_opt_crop(crop, crop_g, diag_dir, stem, key, bg_mode, stroke_bgr, result_map)
+
+    return result_map
 
 
 def fix_latex_json(raw: str) -> str:
@@ -388,43 +549,80 @@ def main():
     subj = result.get("subject", "Unclassified")
     topic = result.get("topic", "General")
     subtopic = result.get("subTopic", "")
+    difficulty = result.get("difficulty") or "Medium"
+    exam = result.get("exam") or "JEE_MAIN"
+    has_table = bool(result.get("hasTable", False))
+    table_html = result.get("tableHtml") or None
+    opts_have_diag = bool(result.get("optionsHaveDiagrams", False))
+    opts_latex = result.get("latexOptions", [])
 
     print(f"\n--- CLASSIFICATION (via {used_model}) ---")
-    print(f"  Subject  : {subj}")
-    print(f"  Topic    : {topic}")
+    print(f"  Exam      : {exam}")
+    print(f"  Subject   : {subj}")
+    print(f"  Topic     : {topic}")
     if subtopic:
-        print(f"  Sub-Topic: {subtopic}")
+        print(f"  Sub-Topic : {subtopic}")
+    print(f"  Difficulty: {difficulty}")
+    if has_table:
+        print(f"  Has Table : True")
+        if table_html:
+            print(f"  Table HTML:\n{table_html}")
+    if opts_have_diag:
+        print(f"  Options Have Diagrams: True")
 
     q_text = result.get("latexQuestion") or result.get("question", "")
     print("\n--- EXTRACTED LATEX QUESTION ---")
     print(q_text)
 
     print("\n--- EXTRACTED OPTIONS ---")
-    for opt in result.get("latexOptions", []):
+    for opt in opts_latex:
         key = opt.get("key", "")
         formula = opt.get("latex", "")
-        print(f"  Option ({key}): {formula}")
+        opt_diag = opt.get("hasDiagram", False)
+        diag_tag = " [HAS DRAWN STRUCTURE]" if opt_diag else ""
+        print(f"  Option ({key}): {formula}{diag_tag}")
 
-    # Deterministic Cut-to-Cut Diagram Detection & Cropping
+    # Deterministic Cut-to-Cut Diagram Detection & Cropping (Question Body)
     print("\n--- DETERMINISTIC DIAGRAM EXTRACTION ---")
-    crop_filename = f"cuttocut_{Path(args.image).stem}.png"
-    crop_path = DIAGRAM_DIR / crop_filename
+    diag_dir = DIAGRAM_DIR / subj
+    diag_dir.mkdir(parents=True, exist_ok=True)
+    crop_filename = f"diagram_{Path(args.image).stem}.png"
+    crop_path = diag_dir / crop_filename
+
+    effective_question_text = "" if subj == "Chemistry" else q_text
 
     has_diag, box = detect_and_crop_diagram_cut_to_cut(
         img_path=args.image,
-        question_text=q_text,
+        question_text=effective_question_text,
         save_path=str(crop_path),
         bg_mode=args.bg_mode,
         stroke_color=args.stroke_color
     )
 
-    print(f"  Has Diagram : {has_diag}")
+    print(f"  Has Question Diagram : {has_diag}")
     if has_diag:
         x1, y1, x2, y2 = box
         print(f"  Exact Bounds: [x1={x1}, y1={y1}, x2={x2}, y2={y2}] (Dimensions: {x2-x1}x{y2-y1} px)")
         print(f"  [+] Saved Cut-to-Cut Diagram to: {crop_path}")
     else:
-        print("  Clean: No diagram present in this question.")
+        print("  Clean: No diagram in question body.")
+
+    # Option Diagrams Cropping
+    if opts_have_diag:
+        print("\n--- OPTION DIAGRAMS EXTRACTION ---")
+        option_diagrams = crop_option_regions(
+            img_path=args.image,
+            opts_latex=opts_latex,
+            diag_dir=diag_dir,
+            stem=Path(args.image).stem,
+            bg_mode=args.bg_mode,
+            stroke_color=args.stroke_color
+        )
+        for k, p in option_diagrams.items():
+            if p:
+                print(f"  [+] Option ({k}) Diagram: {p}")
+            else:
+                print(f"  [-] Option ({k}): No diagram cropped")
 
 
 if __name__ == "__main__":

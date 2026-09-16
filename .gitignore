@@ -13,17 +13,15 @@ all_nta_questions.json
 all_nta_questions_sorted.json
 all_extracted_latex_questions.json
 all_nta_questions_latex.json
+extracted_*.json
 physics_questions.json
 chemistry_questions.json
 mathematics_questions.json
 questions_by_subject.json
 *_questions.json
 
-# Keep the diagrams folder structure but not the files
-!downloads/
-!downloads/diagrams/
-downloads/diagrams/*.png
-downloads/diagrams/*.jpg
+# Diagrams and downloaded images
+downloads/diagrams/
 downloads/question_images/
 
 # Misc
