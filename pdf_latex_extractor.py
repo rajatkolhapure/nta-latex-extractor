@@ -91,20 +91,62 @@ def hex_to_bgr(hex_str: str):
     return (b, g, r)
 
 
+def fix_latex_json(raw: str) -> str:
+    """
+    Scans raw JSON string and safely doubles all LaTeX backslashes inside string literals,
+    preserving escaped quotes (\") and already-escaped backslashes (\\).
+    """
+    out = []
+    in_string = False
+    i = 0
+    n = len(raw)
+    while i < n:
+        c = raw[i]
+        if c == '"':
+            slash_count = 0
+            j = i - 1
+            while j >= 0 and raw[j] == '\\':
+                slash_count += 1
+                j -= 1
+            if slash_count % 2 == 0:
+                in_string = not in_string
+            out.append(c)
+            i += 1
+        elif in_string and c == '\\':
+            if i + 1 < n and raw[i + 1] in ('"', '\\'):
+                out.append(c)
+                out.append(raw[i + 1])
+                i += 2
+            else:
+                out.append('\\\\')
+                i += 1
+        else:
+            out.append(c)
+            i += 1
+    return "".join(out)
+
+
 def safe_json_loads(text: str) -> dict:
     text = text.strip()
-    if text.startswith("```json"):
-        text = text[7:]
-    if text.startswith("```"):
-        text = text[3:]
-    if text.endswith("```"):
-        text = text[:-3]
+    if text.startswith("```json"): text = text[7:]
+    if text.startswith("```"): text = text[3:]
+    if text.endswith("```"): text = text[:-3]
     text = text.strip()
+
     try:
-        return json.loads(text)
+        return json.loads(text, strict=False)
     except Exception:
-        fixed = re.sub(r'\\(?![/"\\bfnrtu])', r'\\\\', text)
+        pass
+
+    try:
+        fixed = fix_latex_json(text)
         return json.loads(fixed, strict=False)
+    except Exception:
+        pass
+
+    # Secondary cleanup: escape unescaped control chars and backslashes
+    cleaned = re.sub(r'\\(?![/"\\bfnrtu])', r'\\\\', text)
+    return json.loads(cleaned, strict=False)
 
 
 def process_and_save_diagram_crop(
@@ -210,11 +252,16 @@ def call_gemini_page(page_img_b64: str, api_key: str, model: str = "gemini-3.5-f
                 if not parts or "text" not in parts[0]:
                     last_err = f"Model {cur_model}: empty text"
                     continue
-                data = safe_json_loads(parts[0]["text"].strip())
-                questions = data.get("questions", [])
-                for q in questions:
-                    q["_used_model"] = cur_model
-                return questions
+                try:
+                    data = safe_json_loads(parts[0]["text"].strip())
+                    questions = data.get("questions", [])
+                    for q in questions:
+                        q["_used_model"] = cur_model
+                    return questions
+                except Exception as parse_err:
+                    last_err = f"Model {cur_model}: JSON parse error: {parse_err}"
+                    print(f"  [!] {last_err}")
+                    continue
             elif resp.status_code == 429:
                 last_err = f"Model {cur_model} 429 Quota Exceeded"
                 continue
