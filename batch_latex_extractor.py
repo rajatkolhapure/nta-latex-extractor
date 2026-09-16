@@ -75,7 +75,7 @@ def detect_and_crop_diagram_cut_to_cut(
     question_text: str = "",
     save_path: str = None,
     bg_mode: str = "transparent",
-    stroke_color: str = "#1e40af" # default crisp navy blue
+    stroke_color: str = "#ffffff" # default crisp white (dynamic for light/dark mode)
 ):
     """
     Deterministic layout-based diagram detection and cut-to-cut cropping.
@@ -329,7 +329,7 @@ def crop_option_regions(
     diag_dir: Path,
     stem: str,
     bg_mode: str = "transparent",
-    stroke_color: str = "#1e40af"
+    stroke_color: str = "#ffffff"
 ) -> dict:
     """
     Splits the options zone of an image into individual option crops.
@@ -561,7 +561,7 @@ def main():
     parser = argparse.ArgumentParser(description="Batch LaTeX & Cut-to-Cut Diagram Extractor")
     parser.add_argument("--gemini-key", default=os.getenv("GEMINI_API_KEY"), help="API Key")
     parser.add_argument("--limit", type=int, default=0, help="Max questions to process (0 = all)")
-    parser.add_argument("--stroke-color", default="#1e40af", help="Stroke color hex (e.g. #1e40af navy, #000000 black, #ffffff white)")
+    parser.add_argument("--stroke-color", default="#ffffff", help="Stroke color hex (e.g. #ffffff white, #000000 black, #1e40af navy)")
     parser.add_argument("--bg-mode", default="transparent", choices=["transparent", "white", "dark"], help="Background mode")
     parser.add_argument("--input-json", default="all_nta_questions.json", help="Input questions file")
     parser.add_argument("--output-json", default="all_extracted_latex_questions.json", help="Output JSON file")

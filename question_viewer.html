@@ -37,9 +37,101 @@
     .katex-display {
       margin: 0.75rem 0 !important;
     }
+
+    /* Diagram Dynamic Styling */
+    .diagram-frame {
+      background-color: #090d16;
+      border: 1px solid #334155;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .diagram-img {
+      filter: none;
+      transition: filter 0.2s ease;
+    }
+
+    /* Light Theme Overrides */
+    body.light-theme {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+    body.light-theme header {
+      border-color: #e2e8f0 !important;
+    }
+    body.light-theme header h1 {
+      color: #0f172a !important;
+    }
+    body.light-theme header p {
+      color: #64748b !important;
+    }
+    body.light-theme .card-bg {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.06) !important;
+    }
+    body.light-theme .card-header-border {
+      border-color: #f1f5f9 !important;
+    }
+    body.light-theme .latex-content {
+      color: #1e293b !important;
+    }
+    body.light-theme .badge-topic {
+      background-color: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+      color: #334155 !important;
+    }
+    body.light-theme .badge-subtopic {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      color: #64748b !important;
+    }
+    body.light-theme .bar-panel {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      color: #334155 !important;
+    }
+    body.light-theme .input-ctrl {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #1e293b !important;
+    }
+    body.light-theme .diagram-frame {
+      background-color: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+    }
+    /* Dynamic Diagram Invert: turns pure white strokes into pure black strokes cleanly! */
+    body.light-theme .diagram-img {
+      filter: invert(1) !important;
+    }
+    body.light-theme .table-container th {
+      background-color: #f1f5f9 !important;
+      color: #1e3a8a !important;
+      border-color: #cbd5e1 !important;
+    }
+    body.light-theme .table-container td {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border-color: #cbd5e1 !important;
+    }
+    body.light-theme .table-container tr:nth-child(even) td {
+      background-color: #f8fafc !important;
+    }
+    body.light-theme .table-wrapper {
+      background-color: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+    }
+    body.light-theme .opt-default {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      color: #1e293b !important;
+    }
+    body.light-theme .opt-badge-default {
+      background-color: #e2e8f0 !important;
+      color: #475569 !important;
+    }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased transition-colors duration-200">
   <div class="max-w-6xl mx-auto px-4 py-8">
     
     <!-- Top Bar -->
@@ -49,13 +141,18 @@
           <span class="text-blue-500">⚛</span> NTA Exam Question & LaTeX Explorer
         </h1>
         <p class="text-slate-400 text-sm mt-1">
-          Supports LaTeX Math, Observation Tables, HD Diagrams & Option Structures
+          Supports LaTeX Math, Observation Tables, HD Diagrams & Dynamic Dark/Light Modes
         </p>
       </div>
 
       <div class="flex flex-wrap items-center gap-3">
+        <!-- Theme Toggle -->
+        <button id="themeToggleBtn" onclick="toggleTheme()" class="input-ctrl bg-slate-800 border border-slate-700 hover:border-slate-500 rounded-lg px-3 py-2 text-sm font-medium transition flex items-center gap-1.5 shadow-sm">
+          <span id="themeIcon">☀️</span> <span id="themeLabel">Light Mode</span>
+        </button>
+
         <!-- Dataset Selector -->
-        <select id="datasetSelector" onchange="switchDataset()" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+        <select id="datasetSelector" onchange="switchDataset()" class="input-ctrl bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
           <option value="test_q30.json">🔬 Test: Q30 Meter Bridge</option>
           <option value="extracted_physics.json">Extracted Physics</option>
           <option value="extracted_chemistry.json">Extracted Chemistry</option>
@@ -65,28 +162,28 @@
         </select>
 
         <!-- Subject Filter -->
-        <select id="subjectFilter" onchange="applyFilters()" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+        <select id="subjectFilter" onchange="applyFilters()" class="input-ctrl bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
           <option value="ALL">All Subjects</option>
           <option value="Physics">Physics</option>
           <option value="Chemistry">Chemistry</option>
           <option value="Mathematics">Mathematics</option>
         </select>
 
-        <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search topic or paper..." class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 w-44" />
+        <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search topic or paper..." class="input-ctrl bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 w-44" />
       </div>
     </header>
 
     <!-- Pagination & Stats Bar -->
-    <div class="flex items-center justify-between bg-slate-800/60 border border-slate-800 rounded-xl px-4 py-3 mb-6">
+    <div class="bar-panel flex items-center justify-between bg-slate-800/60 border border-slate-800 rounded-xl px-4 py-3 mb-6">
       <div id="statsText" class="text-xs text-slate-400 font-medium">
         Loading...
       </div>
       <div class="flex items-center gap-2">
-        <button onclick="changePage(-1)" id="prevBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-semibold rounded-lg border border-slate-700 transition">
+        <button onclick="changePage(-1)" id="prevBtn" class="input-ctrl px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-semibold rounded-lg border border-slate-700 transition">
           &larr; Previous
         </button>
         <span id="pageIndicator" class="text-xs text-slate-300 font-mono px-2">Page 1 of 1</span>
-        <button onclick="changePage(1)" id="nextBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-semibold rounded-lg border border-slate-700 transition">
+        <button onclick="changePage(1)" id="nextBtn" class="input-ctrl px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-semibold rounded-lg border border-slate-700 transition">
           Next &rarr;
         </button>
       </div>
@@ -105,6 +202,20 @@
     let currentPage = 1;
     const pageSize = 10;
     let currentDataset = 'test_q30.json';
+    let isLightMode = false;
+
+    function toggleTheme() {
+      isLightMode = !isLightMode;
+      document.body.classList.toggle('light-theme', isLightMode);
+      document.getElementById('themeIcon').innerText = isLightMode ? '🌙' : '☀️';
+      document.getElementById('themeLabel').innerText = isLightMode ? 'Dark Mode' : 'Light Mode';
+      localStorage.setItem('viewer_theme', isLightMode ? 'light' : 'dark');
+    }
+
+    // Load saved theme
+    if (localStorage.getItem('viewer_theme') === 'light') {
+      toggleTheme();
+    }
 
     async function switchDataset() {
       currentDataset = document.getElementById('datasetSelector').value;
@@ -189,8 +300,8 @@
         const isExtracted = Boolean(q.latexQuestion);
 
         // Badges
-        const topicBadge = q.topic ? `<span class="text-xs font-medium text-slate-300 bg-slate-800 px-2 py-1 rounded-md border border-slate-700">${q.topic}</span>` : '';
-        const subTopicBadge = q.subTopic ? `<span class="text-xs text-slate-400 bg-slate-900/60 px-2 py-1 rounded-md border border-slate-800">${q.subTopic}</span>` : '';
+        const topicBadge = q.topic ? `<span class="badge-topic text-xs font-medium text-slate-300 bg-slate-800 px-2 py-1 rounded-md border border-slate-700">${q.topic}</span>` : '';
+        const subTopicBadge = q.subTopic ? `<span class="badge-subtopic text-xs text-slate-400 bg-slate-900/60 px-2 py-1 rounded-md border border-slate-800">${q.subTopic}</span>` : '';
         
         let diffBadge = '';
         if (q.difficulty) {
@@ -228,8 +339,8 @@
           if (q.hasDiagram && q.diagramPath) {
             bodyHtml += `
               <div class="my-4 flex justify-center">
-                <div class="bg-white rounded-xl p-3 shadow-md border border-slate-300 inline-block">
-                  <img src="${q.diagramPath}" alt="Diagram Q${q.questionNumber}" class="max-h-72 object-contain" loading="lazy" />
+                <div class="diagram-frame rounded-xl p-3 shadow-md inline-block">
+                  <img src="${q.diagramPath}" alt="Diagram Q${q.questionNumber}" class="diagram-img max-h-72 object-contain" loading="lazy" />
                 </div>
               </div>
             `;
@@ -239,7 +350,7 @@
           if (q.hasTable && q.tableHtml) {
             bodyHtml += `
               <div class="table-container my-5 flex justify-center">
-                <div class="overflow-x-auto bg-slate-950/70 p-4 rounded-xl border border-slate-700 shadow-lg">
+                <div class="table-wrapper overflow-x-auto bg-slate-950/70 p-4 rounded-xl border border-slate-700 shadow-lg">
                   ${q.tableHtml}
                 </div>
               </div>
@@ -271,8 +382,8 @@
               if (optDiagramPath) {
                 optionContent = `
                   <div class="flex flex-col items-center py-2 w-full">
-                    <div class="bg-white p-2 rounded-lg inline-block shadow-sm">
-                      <img src="${optDiagramPath}" alt="Option ${optKey}" class="max-h-28 object-contain" loading="lazy" />
+                    <div class="diagram-frame p-2 rounded-lg inline-block shadow-sm">
+                      <img src="${optDiagramPath}" alt="Option ${optKey}" class="diagram-img max-h-28 object-contain" loading="lazy" />
                     </div>
                     ${optText && !optText.startsWith('[') ? `<span class="mt-1.5 text-xs text-slate-300 latex-content">${optText}</span>` : ''}
                   </div>
@@ -282,8 +393,8 @@
               }
 
               return `
-                <div class="flex items-start p-3 rounded-xl border ${isCorrect ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300' : 'border-slate-700 bg-slate-900/40 text-slate-300'} text-xs transition">
-                  <span class="w-5 h-5 rounded-full flex items-center justify-center font-bold mr-2 text-[11px] shrink-0 mt-0.5 ${isCorrect ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400'}">
+                <div class="flex items-start p-3 rounded-xl border ${isCorrect ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300' : 'opt-default border-slate-700 bg-slate-900/40 text-slate-300'} text-xs transition">
+                  <span class="w-5 h-5 rounded-full flex items-center justify-center font-bold mr-2 text-[11px] shrink-0 mt-0.5 ${isCorrect ? 'bg-emerald-500 text-slate-950' : 'opt-badge-default bg-slate-800 text-slate-400'}">
                     ${optKey}
                   </span>
                   <div class="flex-1">${optionContent}</div>
@@ -295,14 +406,14 @@
         `;
 
         return `
-          <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl hover:border-slate-600 transition">
-            <div class="flex flex-wrap items-center justify-between border-b border-slate-700/60 pb-3 mb-4 gap-2">
+          <div class="card-bg bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl hover:border-slate-600 transition">
+            <div class="card-header-border flex flex-wrap items-center justify-between border-b border-slate-700/60 pb-3 mb-4 gap-2">
               <div class="flex flex-wrap items-center gap-2">
                 ${examBadge}
                 <span class="text-xs font-semibold px-2.5 py-1 rounded-lg border ${subjectColor}">
                   ${q.subject || 'Unclassified'}
                 </span>
-                <span class="text-xs font-medium text-slate-400 bg-slate-900/60 px-2 py-1 rounded-md border border-slate-800 font-mono">
+                <span class="badge-topic text-xs font-medium text-slate-400 bg-slate-900/60 px-2 py-1 rounded-md border border-slate-800 font-mono">
                   Q${q.questionNumber}
                 </span>
                 ${diffBadge}
