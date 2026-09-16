@@ -8,7 +8,7 @@ A deterministic pipeline that extracts **NTA JEE/NEET exam questions** from scan
 
 ---
 
-## ✨ Features
+##  Features
 
 | Feature | Description |
 |---|---|
@@ -17,11 +17,11 @@ A deterministic pipeline that extracts **NTA JEE/NEET exam questions** from scan
 | 🎨 **Custom styling** | Navy blue / transparent / dark background modes |
 | 🔌 **Dual backend** | Cloud (Gemini API, free tier) **or** Local (Ollama on GPU) |
 | 🔁 **Resume support** | Batch processing with checkpoint — survives quota limits |
-| ⚡ **Zero GPU required** | Cloud mode works on any laptop using the free Gemini API |
+| ⚡ **Zero GPU required** | Cloud mode works on any windows device using the free Gemini API |
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 questions/
@@ -32,15 +32,15 @@ questions/
 ├── preview_server.py            # Local web viewer server
 ├── question_viewer.html         # Web UI for browsing questions
 ├── nta_extractor/               # NTA scraping modules
-├── all_nta_questions.json       # Full dataset (2,999 questions)
+├── all_nta_questions.json       # Full dataset (2,999 questions)[not included in repo]
 └── downloads/
-    ├── question_images/         # Downloaded exam images (~3000 JPG/PNG)
+    ├── question_images/         # Downloaded exam images (~3000 JPG/PNG)[not included in repo]
     └── diagrams/                # Extracted cut-to-cut diagrams
 ```
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### 1. Clone & Install Dependencies
 
@@ -54,12 +54,12 @@ pip install opencv-python numpy requests pillow
 
 | Backend | Best For | Cost | Setup |
 |---|---|---|---|
-| ☁️ **Gemini API (Cloud)** | Quick start, any laptop | Free (20 req/day) | Just an API key |
-| 🖥️ **Ollama (Local GPU)** | Unlimited, private | Free forever | RTX 4070+ recommended |
+|  **Gemini API (Cloud)** | Quick start, any laptop | Free (20 req/day) | Just an API key |
+|  **Ollama (Local GPU)** | Unlimited, private | Free forever | RTX 4070+ recommended |
 
 ---
 
-## ☁️ Option A — Cloud API (Gemini, Free Tier)
+##  Option A — Cloud API (Gemini, Free Tier)
 
 Get a free API key at **[aistudio.google.com](https://aistudio.google.com)** (no credit card needed).
 
@@ -86,7 +86,7 @@ python batch_latex_extractor.py \
 
 ---
 
-## 🖥️ Option B — Local GPU (Ollama + Qwen2.5-VL)
+##  Option B — Local GPU (Ollama + Qwen2.5-VL)
 
 Run **completely offline** on your RTX 4070 laptop GPU. No API key, no rate limits, no data leaves your machine.
 
@@ -174,7 +174,7 @@ Expected: ~6 GB VRAM usage, ~80–100% GPU load during inference.
 
 ---
 
-## 🎨 Diagram Output Styles
+##  Diagram Output Styles
 
 Control diagram appearance with `--bg-mode` and `--stroke-color`:
 
@@ -187,7 +187,7 @@ Control diagram appearance with `--bg-mode` and `--stroke-color`:
 
 ---
 
-## 🧠 How Diagram Detection Works
+##  How Diagram Detection Works
 
 The CV pipeline is **fully deterministic** — no AI needed for cropping:
 
@@ -200,7 +200,7 @@ The CV pipeline is **fully deterministic** — no AI needed for cropping:
 
 ---
 
-## 📊 Dataset
+##  Dataset
 
 - **2,999 questions** from NTA JEE Main papers (2019–2022)
 - **Subjects**: Physics, Chemistry, Mathematics
@@ -214,7 +214,7 @@ python run_extractor.py
 
 ---
 
-## 📋 Output Schema
+##  Output Schema
 
 Each processed question in `all_extracted_latex_questions.json`:
 
@@ -239,7 +239,7 @@ Each processed question in `all_extracted_latex_questions.json`:
 
 ---
 
-## 🔧 Troubleshooting
+##  Troubleshooting
 
 | Problem | Fix |
 |---|---|
@@ -251,6 +251,6 @@ Each processed question in `all_extracted_latex_questions.json`:
 
 ---
 
-## 📄 License
+##  License
 
 MIT © Rajat Kolhapure
