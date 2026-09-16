@@ -240,6 +240,9 @@ def detect_and_crop_diagram_cut_to_cut(
     crop_gray = gray[final_y1:final_y2, final_x1:final_x2]
     ch, cw = raw_crop.shape[:2]
 
+    # Compute ink mask from grayscale crop (before upscaling)
+    ink_mask = np.clip((245.0 - crop_gray.astype(float)) / 160.0, 0.0, 1.0)
+
     # --- SUPER-RESOLUTION UPSCALING (2.5x) & ANTI-ALIASING ---
     # Eliminates scanned pixelation and delivers crisp vector-like curves on 1080p/4K displays
     scale = 2.5
@@ -514,7 +517,25 @@ def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-3.1-flas
         try:
             resp = requests.post(url, json=payload, timeout=90)
             if resp.status_code == 200:
-                text = resp.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+                rj = resp.json()
+                # Safely navigate response structure — may be missing if blocked by safety filters
+                candidates = rj.get("candidates", [])
+                if not candidates:
+                    last_err = f"Model {cur_model}: empty candidates (possibly blocked by safety filter)"
+                    print(f"  [!] {last_err}")
+                    continue
+                content = candidates[0].get("content")
+                if not content or "parts" not in content:
+                    finish = candidates[0].get("finishReason", "UNKNOWN")
+                    last_err = f"Model {cur_model}: no content/parts in response (finishReason={finish})"
+                    print(f"  [!] {last_err}")
+                    continue
+                parts = content["parts"]
+                if not parts or "text" not in parts[0]:
+                    last_err = f"Model {cur_model}: parts empty or missing text"
+                    print(f"  [!] {last_err}")
+                    continue
+                text = parts[0]["text"].strip()
                 data = safe_json_loads(text)
                 data["_used_model"] = cur_model
                 return data
@@ -527,8 +548,8 @@ def call_gemini_api(image_path: str, api_key: str, model: str = "gemini-3.1-flas
             else:
                 last_err = f"Gemini API Error {resp.status_code}: {resp.text}"
                 continue
-        except requests.exceptions.Timeout:
-            last_err = f"Model {cur_model} timed out. Trying next model..."
+        except requests.exceptions.RequestException as e:
+            last_err = f"Model {cur_model} network error: {e}"
             print(f"  [!] {last_err}")
             continue
 
