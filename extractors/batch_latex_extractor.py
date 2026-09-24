@@ -21,27 +21,29 @@ DATA_DIR = PROJECT_ROOT / "data"
 DIAGRAM_DIR = PROJECT_ROOT / "downloads" / "diagrams"
 DIAGRAM_DIR.mkdir(parents=True, exist_ok=True)
 
-PROMPT = """You are an expert LaTeX OCR and Exam Digitization engine preparing academic problem sheets.
-Extract the question text, all 4 options, subject, topic, subtopic, and rich content metadata from the provided NTA exam question image. Maintain 100% mathematical precision for all numbers, variables, formulas, options, and tables. If needed, lightly smooth English phrasing to avoid automated recitation blocks.
+PROMPT = """You are an expert LaTeX OCR and Exam Digitization engine preparing academic problem sheets, with special proficiency in Chemistry (Organic, Inorganic, and Physical).
+Extract the question text, all 4 options, subject, topic, subtopic, and rich content metadata from the provided NTA exam question image. Maintain 100% mathematical and chemical precision for all formulas, reaction equations, resonance structures, stereochemistry, reagents, numbers, and tables.
 
 Rules:
-1. Wrap all mathematical variables, symbols, numbers with units, and equations in LaTeX:
+1. Wrap all mathematical variables, symbols, chemical formulas, and equations in LaTeX:
    - Inline math: $...$
    - Block equations: $$...$$
-2. Transcribe Greek symbols (\\alpha, \\beta, \\lambda, \\Omega, \\mu) and sub/superscripts precisely.
+2. Transcribe chemical equations, arrows (\\rightarrow, \\rightleftharpoons), catalysts, and conditions precisely.
 3. Classify the question accurately:
    - "subject": Exactly one of ["Physics", "Chemistry", "Mathematics"]
-   - "topic": Standard JEE/NEET chapter or major topic (e.g. "Current Electricity", "Conic Sections - Hyperbola", "Organic Reaction Mechanisms", "Thermodynamics", "Capacitance & Dielectrics", "Vectors & 3D Geometry", "Equilibrium")
-   - "subTopic": The specific concept tested (e.g. "Kirchhoff's Laws & Nodal Analysis", "Eccentricity & Latus Rectum", "Peroxide Effect on Alkenes", "Dielectric Medium", "Equilibrium Constant")
+   - "topic": Standard JEE/NEET chapter or major topic (e.g. "General Organic Chemistry", "Coordination Compounds", "Chemical Kinetics", "Thermodynamics", "Electrochemistry", "Periodic Table & Periodicity")
+   - "subTopic": The specific concept tested (e.g. "SN1/SN2 Mechanism", "Crystal Field Theory", "Molar Conductivity", "Buffer Solutions")
    - "difficulty": Exactly one of ["Easy", "Medium", "Hard"] reflecting typical exam difficulty.
    - "exam": Exactly one of ["JEE_MAIN", "MHT_CET"].
 4. Detect tables:
    - "hasTable": true if a data table appears anywhere in the question body (not options).
    - "tableHtml": If hasTable is true, transcribe the ENTIRE table as a valid HTML <table> string with <thead>/<tbody>/<tr>/<th>/<td> tags. Wrap any math inside cells in $...$. If hasTable is false, set tableHtml to null.
-5. Detect drawn structural diagrams in options (common in Chemistry):
-   - "optionsHaveDiagrams": true if ANY option contains a drawn chemical structure, circuit diagram, or geometric figure that cannot be expressed as plain text or LaTeX.
+5. Detect drawn structural diagrams and chemical reactions (crucial for Chemistry):
+   - "hasDiagram": true if the question body contains a chemical structure, reaction scheme, mechanism, apparatus, or graph.
+   - "diagramBoundingBox": [ymin, xmin, ymax, xmax] normalized 0-1000 coordinates if hasDiagram is true, else null.
+   - "optionsHaveDiagrams": true if ANY option contains a drawn chemical structure, reaction product, or geometric figure.
    - For each option in latexOptions, set "hasDiagram": true if THAT specific option has a drawn structure, false otherwise.
-   - If an option has a drawn structure, set its "latex" to a short description in square brackets, e.g. "[benzene ring with -OH substituent]".
+   - If an option has a drawn structure, set its "latex" to a descriptive fallback in square brackets, e.g. "[benzene ring with -NO2]".
 6. Output strictly valid JSON matching this schema:
 {
   "subject": "Physics | Chemistry | Mathematics",
@@ -51,13 +53,15 @@ Rules:
   "exam": "JEE_MAIN | MHT_CET",
   "hasTable": false,
   "tableHtml": null,
+  "hasDiagram": false,
+  "diagramBoundingBox": null,
   "optionsHaveDiagrams": false,
   "latexQuestion": "...",
   "latexOptions": [
-    {"key": "1", "latex": "...", "hasDiagram": false},
-    {"key": "2", "latex": "...", "hasDiagram": false},
-    {"key": "3", "latex": "...", "hasDiagram": false},
-    {"key": "4", "latex": "...", "hasDiagram": false}
+    {"key": "1", "latex": "...", "hasDiagram": false, "bbox": null},
+    {"key": "2", "latex": "...", "hasDiagram": false, "bbox": null},
+    {"key": "3", "latex": "...", "hasDiagram": false, "bbox": null},
+    {"key": "4", "latex": "...", "hasDiagram": false, "bbox": null}
   ]
 }"""
 

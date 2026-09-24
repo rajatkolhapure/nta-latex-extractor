@@ -17,85 +17,46 @@
       margin: 0 auto;
     }
     .table-container th, .table-container td {
-      border: 1px solid #475569;
-      padding: 0.6rem 1.25rem;
+      border: 1px solid #334155;
+      padding: 8px 12px;
       text-align: center;
     }
     .table-container th {
       background-color: #1e293b;
-      color: #93c5fd;
-      font-weight: 700;
-      letter-spacing: 0.025em;
+      color: #94a3b8;
+      font-weight: 600;
     }
-    .table-container td {
-      color: #f1f5f9;
-      background-color: #0f172a;
+    .table-container tr:nth-child(even) {
+      background-color: rgba(30, 41, 59, 0.5);
     }
-    .table-container tr:nth-child(even) td {
-      background-color: #1e293b;
+    .light-theme {
+      background-color: #f8fafc;
+      color: #0f172a;
     }
-    .katex-display {
-      margin: 0.75rem 0 !important;
-    }
-
-    /* Diagram Dynamic Styling */
-    .diagram-frame {
-      background-color: #090d16;
-      border: 1px solid #334155;
-      transition: background-color 0.2s ease, border-color 0.2s ease;
-    }
-    .diagram-img {
-      filter: none;
-      transition: filter 0.2s ease;
-    }
-
-    /* Light Theme Overrides */
-    body.light-theme {
-      background-color: #f8fafc !important;
-      color: #0f172a !important;
-    }
-    body.light-theme header {
-      border-color: #e2e8f0 !important;
-    }
-    body.light-theme header h1 {
-      color: #0f172a !important;
-    }
-    body.light-theme header p {
-      color: #64748b !important;
-    }
-    body.light-theme .card-bg {
+    .light-theme .card-bg {
       background-color: #ffffff !important;
       border-color: #e2e8f0 !important;
-      color: #0f172a !important;
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.06) !important;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
     }
-    body.light-theme .card-header-border {
+    .light-theme .card-header-border {
       border-color: #f1f5f9 !important;
     }
-    body.light-theme .latex-content {
-      color: #1e293b !important;
-    }
-    body.light-theme .badge-topic {
+    .light-theme .badge-topic {
       background-color: #f1f5f9 !important;
-      border-color: #cbd5e1 !important;
-      color: #334155 !important;
-    }
-    body.light-theme .badge-subtopic {
-      background-color: #f8fafc !important;
       border-color: #e2e8f0 !important;
       color: #64748b !important;
     }
-    body.light-theme .bar-panel {
+    .light-theme .bar-panel {
       background-color: #ffffff !important;
       border-color: #e2e8f0 !important;
       color: #334155 !important;
     }
-    body.light-theme .input-ctrl {
+    .light-theme .input-ctrl {
       background-color: #ffffff !important;
       border-color: #cbd5e1 !important;
       color: #1e293b !important;
     }
-    body.light-theme .diagram-frame {
+    .light-theme .diagram-frame {
       background-color: #f1f5f9 !important;
       border-color: #cbd5e1 !important;
     }
@@ -113,110 +74,137 @@
       color: #0f172a !important;
       border-color: #cbd5e1 !important;
     }
-    body.light-theme .table-container tr:nth-child(even) td {
-      background-color: #f8fafc !important;
-    }
-    body.light-theme .table-wrapper {
-      background-color: #f8fafc !important;
-      border-color: #cbd5e1 !important;
-    }
-    body.light-theme .opt-default {
+    .opt-default { background-color: rgba(15, 23, 42, 0.6); }
+    .light-theme .opt-default {
       background-color: #f8fafc !important;
       border-color: #e2e8f0 !important;
-      color: #1e293b !important;
+      color: #334155 !important;
     }
-    body.light-theme .opt-badge-default {
+    .light-theme .opt-badge-default {
       background-color: #e2e8f0 !important;
-      color: #475569 !important;
+      color: #64748b !important;
+    }
+    .verified-card {
+      border-color: #10b981 !important;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.1) !important;
+    }
+    .light-theme .verified-card {
+      border-color: #10b981 !important;
+      background-color: #f0fdf4 !important;
+    }
+    .flagged-card {
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.15) !important;
+    }
+    .light-theme .flagged-card {
+      border-color: #ef4444 !important;
+      background-color: #fef2f2 !important;
     }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased transition-colors duration-200">
+<body class="bg-slate-950 text-slate-200 min-h-screen font-sans selection:bg-blue-500/30 transition-colors duration-300">
   <div class="max-w-6xl mx-auto px-4 py-8">
-    
-    <!-- Top Bar -->
     <header class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-6 mb-6 gap-4">
       <div>
         <h1 class="text-2xl font-bold text-white flex items-center gap-2">
           NTA Exam Question & LaTeX Explorer
         </h1>
         <p class="text-slate-400 text-sm mt-1">
-          Supports LaTeX Math, Observation Tables, HD Diagrams & Dynamic Dark/Light Modes
+          Supports LaTeX Math, Observation Tables, HD Diagrams & Human Verification
         </p>
       </div>
-
       <div class="flex flex-wrap items-center gap-3">
-        <!-- Theme Toggle -->
         <button id="themeToggleBtn" onclick="toggleTheme()" class="input-ctrl bg-slate-800 border border-slate-700 hover:border-slate-500 rounded-lg px-3 py-2 text-sm font-medium transition flex items-center gap-1.5 shadow-sm">
-          <span id="themeLabel">Light Mode</span>
+          <span id="themeLabel">Light Theme</span>
         </button>
-
-        <!-- Dataset Selector -->
-        <select id="datasetSelector" onchange="switchDataset()" class="input-ctrl bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
-          <option value="data/extracted_physics.json">Extracted Physics</option>
-          <option value="data/extracted_chemistry.json">Extracted Chemistry</option>
-          <option value="data/extracted_mathematics.json">Extracted Mathematics</option>
-          <option value="data/test_q30.json">Test: Q30 Meter Bridge</option>
-          <option value="data/all_nta_questions.json">Raw NTA Scans (Original)</option>
-        </select>
-
-        <!-- Subject Filter -->
-        <select id="subjectFilter" onchange="applyFilters()" class="input-ctrl bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
-          <option value="ALL">All Subjects</option>
-          <option value="Physics">Physics</option>
-          <option value="Chemistry">Chemistry</option>
-          <option value="Mathematics">Mathematics</option>
-        </select>
-
-        <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search topic or paper..." class="input-ctrl bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 w-44" />
       </div>
     </header>
 
-    <!-- Pagination & Stats Bar -->
-    <div class="bar-panel flex items-center justify-between bg-slate-800/60 border border-slate-800 rounded-xl px-4 py-3 mb-6">
-      <div id="statsText" class="text-xs text-slate-400 font-medium">
-        Loading...
+    <div class="bar-panel flex flex-wrap items-center justify-between bg-slate-800/60 border border-slate-800 rounded-xl px-4 py-3 mb-6 gap-3">
+      <div class="flex flex-wrap items-center gap-2">
+        <select id="datasetSelector" onchange="switchDataset()" class="input-ctrl bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          <option value="data/extracted_physics.json">Physics</option>
+          <option value="data/extracted_chemistry.json">Chemistry</option>
+          <option value="data/extracted_mathematics.json">Mathematics</option>
+        </select>
+        <input type="text" id="searchInput" oninput="onSearchInput()" placeholder="Search topic, subtopic, text..." class="input-ctrl bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500 w-48 md:w-64">
+        <select id="difficultyFilter" onchange="renderCurrentPage()" class="input-ctrl bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          <option value="">All Difficulties</option>
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
+        </select>
+        <label class="flex items-center gap-1.5 cursor-pointer text-sm text-slate-400 hover:text-slate-200">
+          <input type="checkbox" id="showOnlyFlagged" onchange="renderCurrentPage()" class="w-4 h-4 accent-rose-500 border-slate-600 rounded bg-slate-800 focus:ring-2 focus:ring-rose-500">
+          Show only flagged
+        </label>
+        <span id="statsText" class="text-xs text-slate-500 font-mono hidden md:inline ml-2"></span>
       </div>
       <div class="flex items-center gap-2">
-        <button onclick="changePage(-1)" id="prevBtn" class="input-ctrl px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-semibold rounded-lg border border-slate-700 transition">
-          &larr; Previous
-        </button>
-        <span id="pageIndicator" class="text-xs text-slate-300 font-mono px-2">Page 1 of 1</span>
-        <button onclick="changePage(1)" id="nextBtn" class="input-ctrl px-3 py-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-semibold rounded-lg border border-slate-700 transition">
-          Next &rarr;
-        </button>
+        <button onclick="changePage(-1)" class="input-ctrl bg-slate-800 border border-slate-700 hover:border-slate-500 rounded-lg p-2 transition shadow-sm">Prev</button>
+        <span id="pageIndicator" class="text-sm font-medium px-2">Page 1</span>
+        <button onclick="changePage(1)" class="input-ctrl bg-slate-800 border border-slate-700 hover:border-slate-500 rounded-lg p-2 transition shadow-sm">Next</button>
       </div>
     </div>
 
-    <!-- Questions Feed -->
     <div id="questionsContainer" class="space-y-6">
       <div class="text-center py-12 text-slate-500">Loading dataset...</div>
     </div>
-
   </div>
 
   <script>
     let allQuestions = [];
     let filteredQuestions = [];
+    let verifications = {};
     let currentPage = 1;
     const pageSize = 10;
     let currentDataset = 'data/extracted_physics.json';
     let isLightMode = false;
 
+    function vKey(pId, qNum) { return `${pId}_${qNum}`; }
+
+    async function loadVerifications() {
+      try {
+        const r = await fetch('/data/verifications.json');
+        if (r.ok) verifications = await r.json();
+      } catch (_) {}
+    }
+
+    async function postVerification(q, status) {
+      try {
+        await fetch('/api/verify', {
+          method: 'POST',
+          body: JSON.stringify({
+            paperId: q.paperId,
+            questionNumber: q.questionNumber,
+            status: status,
+            diagramPath: q.diagramPath || null,
+          }),
+        });
+      } catch (_) {}
+    }
+
+    function toggleVerification(btn, paperId, questionNumber, diagramPath, targetStatus = 'verified') {
+      console.log("toggleVerification called:", paperId, questionNumber, targetStatus);
+      const key = vKey(paperId, questionNumber);
+      const currentStatus = verifications[key]?.status;
+      const newStatus = currentStatus === targetStatus ? 'pending' : targetStatus;
+
+      if (newStatus === 'pending') delete verifications[key];
+      else verifications[key] = { status: newStatus, diagramPath: diagramPath || null };
+
+      postVerification({ paperId, questionNumber, diagramPath }, newStatus);
+      renderCurrentPage();
+    }
+
     function toggleTheme() {
       isLightMode = !isLightMode;
       document.body.classList.toggle('light-theme', isLightMode);
-      const label = document.getElementById('themeLabel');
-      if (label) {
-        label.innerText = isLightMode ? 'Dark Theme' : 'Light Theme';
-      }
+      document.getElementById('themeLabel').innerText = isLightMode ? 'Dark Theme' : 'Light Theme';
       localStorage.setItem('viewer_theme', isLightMode ? 'light' : 'dark');
     }
 
-    // Load saved theme
-    if (localStorage.getItem('viewer_theme') === 'light') {
-      toggleTheme();
-    }
+    if (localStorage.getItem('viewer_theme') === 'light') toggleTheme();
 
     async function switchDataset() {
       currentDataset = document.getElementById('datasetSelector').value;
@@ -226,263 +214,128 @@
     function resolveMediaSrc(p) {
       if (!p) return '';
       p = String(p).replace(/\\/g, '/');
-      if (p.startsWith('http://') || p.startsWith('https://') || p.startsWith('data:')) return p;
-      if (p.startsWith('file:///')) {
-        const dlIdx = p.indexOf('/downloads/');
-        if (dlIdx !== -1) {
-          return p.substring(dlIdx);
-        }
-      }
-      p = p.replace(/^\.?\//, '');
-      return '/' + p;
+      if (p.startsWith('http') || p.startsWith('data:')) return p;
+      return '/' + p.replace(/^\.?\//, '');
     }
 
     async function loadDataset() {
       const container = document.getElementById('questionsContainer');
-      container.innerHTML = `<div class="text-center py-12 text-slate-500">Loading ${currentDataset}...</div>`;
+      container.innerHTML = `<div class="text-center py-12 text-slate-500">Loading...</div>`;
+      await loadVerifications();
       try {
-        const basename = currentDataset.replace(/^.*[\\\/]/, '');
-        const candidates = [
-          currentDataset,
-          `/${currentDataset.replace(/^\/+/, '')}`,
-          `/data/${basename}`,
-          `../data/${basename}`,
-          `data/${basename}`,
-          basename
-        ];
-        let resp = null;
-        for (const u of candidates) {
-          try {
-            const r = await fetch(u);
-            if (r.ok) {
-              resp = r;
-              break;
-            }
-          } catch (_) {}
-        }
-        if (!resp) {
-          throw new Error(`File not found: ${currentDataset}`);
-        }
+        const resp = await fetch('/' + currentDataset.replace(/^\//,''));
         allQuestions = await resp.json();
         filteredQuestions = [...allQuestions];
         currentPage = 1;
-        applyFilters();
-      } catch (err) {
-        container.innerHTML = 
-          `<div class="p-6 bg-slate-800/80 border border-slate-700 text-slate-300 rounded-2xl text-center">
-            <p class="text-amber-400 font-semibold mb-2">Dataset not yet created: <code>${currentDataset}</code></p>
-            <p class="text-xs text-slate-400">Run the extractor for this subject first, or switch to <code>data/all_nta_questions.json</code> to view original scanned questions.</p>
-          </div>`;
-        document.getElementById('statsText').innerText = `0 questions loaded`;
-        document.getElementById('pageIndicator').innerText = `Page 0 of 0`;
-        document.getElementById('prevBtn').disabled = true;
-        document.getElementById('nextBtn').disabled = true;
+        renderCurrentPage();
+      } catch (e) {
+        container.innerHTML = `<div class="text-red-400 p-4">Error: ${e.message}</div>`;
       }
     }
 
-    function applyFilters() {
-      const sub = document.getElementById('subjectFilter').value;
-      const search = document.getElementById('searchInput').value.toLowerCase().trim();
-
-      filteredQuestions = allQuestions.filter(q => {
-        const matchSub = sub === 'ALL' || (q.subject && q.subject.toLowerCase() === sub.toLowerCase());
-        const matchSearch = !search || 
-          (q.paperTitle && q.paperTitle.toLowerCase().includes(search)) || 
-          (q.topic && q.topic.toLowerCase().includes(search)) || 
-          (q.subTopic && q.subTopic.toLowerCase().includes(search)) || 
-          (q.latexQuestion && q.latexQuestion.toLowerCase().includes(search)) || 
-          (q.exam && q.exam.toLowerCase().includes(search)) ||
-          String(q.questionNumber).includes(search);
-        return matchSub && matchSearch;
-      });
-
-      currentPage = 1;
-      renderCurrentPage();
-    }
-
     function changePage(delta) {
-      const maxPage = Math.ceil(filteredQuestions.length / pageSize) || 1;
-      currentPage = Math.max(1, Math.min(maxPage, currentPage + delta));
+      const max = Math.ceil(filteredQuestions.length / pageSize) || 1;
+      currentPage = Math.max(1, Math.min(max, currentPage + delta));
       renderCurrentPage();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function onSearchInput() {
+      currentPage = 1;
+      renderCurrentPage();
+    }
+
     function renderCurrentPage() {
+      const onlyFlagged = document.getElementById('showOnlyFlagged')?.checked;
+      const searchText = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+      const selectedDifficulty = document.getElementById('difficultyFilter')?.value || '';
+
+      let workingQuestions = allQuestions;
+
+      if (onlyFlagged) {
+        workingQuestions = workingQuestions.filter(q => verifications[vKey(q.paperId, q.questionNumber)]?.status === 'needs_fix');
+      }
+
+      if (selectedDifficulty) {
+        workingQuestions = workingQuestions.filter(q => String(q.difficulty || '').toLowerCase() === selectedDifficulty.toLowerCase());
+      }
+
+      if (searchText) {
+        workingQuestions = workingQuestions.filter(q => {
+          const topic = String(q.topic || '').toLowerCase();
+          const subTopic = String(q.subTopic || '').toLowerCase();
+          const text = String(q.latexQuestion || q.questionText || '').toLowerCase();
+          const paperTitle = String(q.paperTitle || '').toLowerCase();
+          return topic.includes(searchText) || subTopic.includes(searchText) || text.includes(searchText) || paperTitle.includes(searchText);
+        });
+      }
+
+      filteredQuestions = workingQuestions;
       const total = filteredQuestions.length;
-      const maxPage = Math.ceil(total / pageSize) || 1;
       const startIdx = (currentPage - 1) * pageSize;
       const endIdx = Math.min(startIdx + pageSize, total);
       const slice = filteredQuestions.slice(startIdx, endIdx);
 
-      document.getElementById('statsText').innerText = `Showing ${total ? startIdx + 1 : 0}-${endIdx} of ${total} questions (${currentDataset})`;
-      document.getElementById('pageIndicator').innerText = `Page ${currentPage} of ${maxPage}`;
-      document.getElementById('prevBtn').disabled = currentPage <= 1;
-      document.getElementById('nextBtn').disabled = currentPage >= maxPage;
+      document.getElementById('pageIndicator').innerText = `Page ${currentPage} / ${Math.ceil(total/pageSize) || 1}`;
+      document.getElementById('statsText').innerText = `Showing ${total?startIdx+1:0}-${endIdx} of ${total}${onlyFlagged ? ' (flagged only)' : ''}`;
 
       const container = document.getElementById('questionsContainer');
-      if (!slice.length) {
-        container.innerHTML = `<div class="text-center py-12 text-slate-500">No questions matched the filter.</div>`;
-        return;
-      }
-
-      container.innerHTML = slice.map((q, idx) => {
-        const subjectColor = q.subject === 'Physics' ? 'text-blue-400 bg-blue-500/10 border-blue-500/20' :
-                             q.subject === 'Chemistry' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' :
-                             'text-purple-400 bg-purple-500/10 border-purple-500/20';
-
-        const isExtracted = Boolean(q.latexQuestion);
-
-        // Badges
-        const topicBadge = q.topic ? `<span class="badge-topic text-xs font-medium text-slate-300 bg-slate-800 px-2 py-1 rounded-md border border-slate-700">${q.topic}</span>` : '';
-        const subTopicBadge = q.subTopic ? `<span class="badge-subtopic text-xs text-slate-400 bg-slate-900/60 px-2 py-1 rounded-md border border-slate-800">${q.subTopic}</span>` : '';
-        
-        let diffBadge = '';
-        if (q.difficulty) {
-          const d = String(q.difficulty).toLowerCase();
-          const diffColor = d === 'easy' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' :
-                            d === 'hard' ? 'text-rose-400 bg-rose-500/10 border-rose-500/30' :
-                            'text-amber-400 bg-amber-500/10 border-amber-500/30';
-          diffBadge = `<span class="text-xs font-semibold px-2 py-0.5 rounded border ${diffColor}">${q.difficulty}</span>`;
-        }
-
-        let examBadge = '';
-        if (q.exam) {
-          const isCet = String(q.exam).toUpperCase().includes('CET');
-          const examColor = isCet ? 'text-amber-400 bg-amber-500/10 border-amber-500/30' : 'text-blue-400 bg-blue-500/10 border-blue-500/30';
-          examBadge = `<span class="text-[11px] font-bold px-2 py-0.5 rounded border ${examColor}">${q.exam}</span>`;
-        }
-
-        const modelBadge = q.extractedVia ? `<span class="text-[10px] text-slate-500 font-mono bg-slate-950/60 px-1.5 py-0.5 rounded border border-slate-800">${q.extractedVia}</span>` : '';
-
-        // Question body rendering (LaTeX or Raw Image)
-        let bodyHtml = '';
-        if (isExtracted) {
-          const cleanQuestion = (q.latexQuestion || '')
-            .replace(/\\n/g, '\n')
-            .replace(/\n{3,}/g, '\n\n')
-            .trim();
-
-          bodyHtml += `
-            <div class="latex-content text-sm text-slate-200 leading-relaxed mb-4 whitespace-pre-line">
-              ${cleanQuestion}
-            </div>
-          `;
-
-          // Diagram rendering (if question body has a diagram)
-          if (q.hasDiagram && q.diagramPath) {
-            bodyHtml += `
-              <div class="my-4 flex justify-center">
-                <div class="diagram-frame rounded-xl p-3 shadow-md inline-block">
-                  <img src="${resolveMediaSrc(q.diagramPath)}" alt="Diagram Q${q.questionNumber}" class="diagram-img max-h-72 object-contain" loading="lazy" />
-                </div>
-              </div>
-            `;
-          }
-
-          // Table rendering (if question has a data table)
-          if (q.hasTable && q.tableHtml) {
-            bodyHtml += `
-              <div class="table-container my-5 flex justify-center">
-                <div class="table-wrapper overflow-x-auto bg-slate-950/70 p-4 rounded-xl border border-slate-700 shadow-lg">
-                  ${q.tableHtml}
-                </div>
-              </div>
-            `;
-          }
-
-        } else if (q.localImagePath) {
-          bodyHtml += `
-            <div class="mb-5 bg-white p-3 rounded-xl inline-block shadow-inner">
-              <img src="${resolveMediaSrc(q.localImagePath)}" alt="Question ${q.questionNumber}" class="max-h-72 object-contain rounded" loading="lazy" />
-            </div>
-          `;
-        }
-
-        // Options rendering
-        let optionsHtml = '';
-        const optionsList = q.latexOptions && q.latexOptions.length ? q.latexOptions : (q.options || []);
-        const optDiagramsMap = q.optionDiagrams || {};
-
-        optionsHtml = `
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-            ${optionsList.map(opt => {
-              const optKey = String(opt.key || '');
-              const isCorrect = (q.correctOptions || []).map(String).includes(optKey);
-              const optDiagramPath = optDiagramsMap[optKey];
-              const optText = opt.latex || opt.text || '';
-
-              let optionContent = '';
-              if (optDiagramPath) {
-                optionContent = `
-                  <div class="flex flex-col items-center py-2 w-full">
-                    <div class="diagram-frame p-2 rounded-lg inline-block shadow-sm">
-                      <img src="${resolveMediaSrc(optDiagramPath)}" alt="Option ${optKey}" class="diagram-img max-h-28 object-contain" loading="lazy" />
-                    </div>
-                    ${optText && !optText.startsWith('[') ? `<span class="mt-1.5 text-xs text-slate-300 latex-content">${optText}</span>` : ''}
-                  </div>
-                `;
-              } else {
-                optionContent = `<span class="latex-content">${optText}</span>`;
-              }
-
-              return `
-                <div class="flex items-start p-3 rounded-xl border ${isCorrect ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300' : 'opt-default border-slate-700 bg-slate-900/40 text-slate-300'} text-xs transition">
-                  <span class="w-5 h-5 rounded-full flex items-center justify-center font-bold mr-2 text-[11px] shrink-0 mt-0.5 ${isCorrect ? 'bg-emerald-500 text-slate-950' : 'opt-badge-default bg-slate-800 text-slate-400'}">
-                    ${optKey}
-                  </span>
-                  <div class="flex-1">${optionContent}</div>
-                  ${isCorrect ? '<span class="ml-2 text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-mono shrink-0">Answer Key</span>' : ''}
-                </div>
-              `;
-            }).join('')}
-          </div>
-        `;
+      container.innerHTML = slice.map(q => {
+        const key = vKey(q.paperId, q.questionNumber);
+        const v = verifications[key];
+        const isFlagged = v?.status === 'needs_fix';
+        const isVerified = v?.status === 'verified';
+        const vClass = isFlagged ? 'flagged-card' : (isVerified ? 'verified-card' : '');
+        const btnClass = isFlagged ? 'bg-rose-600 text-white border-rose-500' : (isVerified ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-slate-700/50 text-slate-400 border-slate-600');
+        const btnText = isFlagged ? '✗ Flagged' : (isVerified ? '✓ Verified' : 'Flag');
 
         return `
-          <div class="card-bg bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl hover:border-slate-600 transition">
-            <div class="card-header-border flex flex-wrap items-center justify-between border-b border-slate-700/60 pb-3 mb-4 gap-2">
-              <div class="flex flex-wrap items-center gap-2">
-                ${examBadge}
-                <span class="text-xs font-semibold px-2.5 py-1 rounded-lg border ${subjectColor}">
-                  ${q.subject || 'Unclassified'}
-                </span>
-                <span class="badge-topic text-xs font-medium text-slate-400 bg-slate-900/60 px-2 py-1 rounded-md border border-slate-800 font-mono">
-                  Q${q.questionNumber}
-                </span>
-                ${diffBadge}
-                ${topicBadge}
-                ${subTopicBadge}
-                <span class="text-xs text-slate-500">
-                  Paper ${q.paperId}
-                </span>
+          <div class="card-bg ${vClass} bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6 shadow-xl transition">
+            <div class="flex flex-wrap justify-between items-center border-b border-slate-700/60 pb-3 mb-4 gap-2">
+              <div class="flex flex-wrap gap-2 items-center">
+                <span class="text-xs font-bold px-2 py-1 bg-slate-900 border border-slate-700 rounded-md">Q${q.questionNumber}</span>
+                <span class="text-xs text-slate-500">ID: ${q.paperId}</span>
+                ${q.topic ? `<span class="text-[11px] px-2 py-0.5 bg-blue-950/60 border border-blue-800/60 text-blue-300 rounded">Topic: ${q.topic}</span>` : ''}
+                ${q.subTopic ? `<span class="text-[11px] px-2 py-0.5 bg-purple-950/60 border border-purple-800/60 text-purple-300 rounded">Sub: ${q.subTopic}</span>` : ''}
+                ${q.difficulty ? `<span class="text-[11px] px-2 py-0.5 bg-amber-950/60 border border-amber-800/60 text-amber-300 rounded">${q.difficulty}</span>` : ''}
               </div>
-              <div class="flex items-center gap-2">
-                ${modelBadge}
-                <div class="text-xs font-mono text-slate-400">
-                  +${q.marks || 4} / -${q.negativeMarks || 1}
-                </div>
+              <div class="flex gap-2 items-center">
+                <button type="button" onclick="toggleVerification(this, '${q.paperId}', '${q.questionNumber}', '${(q.diagramPath || '').replace(/\\/g, '\\\\')}', 'needs_fix')" class="text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 rounded-full border transition ${isFlagged ? 'bg-rose-600 text-white border-rose-500' : 'bg-slate-700/50 text-slate-400 border-slate-600 hover:border-rose-500'}">
+                  ${isFlagged ? '✗ Flagged' : 'Flag Error'}
+                </button>
+                <button type="button" onclick="toggleVerification(this, '${q.paperId}', '${q.questionNumber}', '${(q.diagramPath || '').replace(/\\/g, '\\\\')}', 'verified')" class="text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 rounded-full border transition ${isVerified ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-slate-700/50 text-slate-400 border-slate-600 hover:border-emerald-500'}">
+                  ${isVerified ? '✓ Verified' : 'Verify'}
+                </button>
               </div>
             </div>
 
-            <!-- Question Body & Rich Media -->
-            ${bodyHtml}
+            <div class="prose prose-invert max-w-none text-slate-200">
+              ${q.latexQuestion || q.questionText || 'No text'}
+            </div>
 
-            <!-- Options Grid -->
-            ${optionsHtml}
+            ${q.hasDiagram ? `
+              <div class="my-4 flex justify-center">
+                <div class="diagram-frame rounded-xl p-3 shadow-md inline-block">
+                  <img src="${resolveMediaSrc(q.diagramPath)}" class="diagram-img max-h-72" />
+                </div>
+              </div>` : ''}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+              ${(q.latexOptions || []).map(opt => `
+                <div class="p-3 rounded-xl border border-slate-700 bg-slate-900/40 text-xs">
+                  <span class="font-bold mr-2 text-slate-500">${opt.key}.</span> ${opt.latex}
+                </div>
+              `).join('')}
+            </div>
           </div>
         `;
       }).join('');
-
-      // Trigger KaTeX rendering across all math spans
-      renderMathInElement(container, {
-        delimiters: [
-          {left: '$$', right: '$$', display: true},
-          {left: '$', right: '$', display: false},
-          {left: '\\(', right: '\\)', display: false},
-          {left: '\\[', right: '\\]', display: true}
-        ],
-        throwOnError: false
-      });
+      renderMathInElement(container, { delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+      ], throwOnError: false });
     }
 
     window.addEventListener('DOMContentLoaded', loadDataset);
