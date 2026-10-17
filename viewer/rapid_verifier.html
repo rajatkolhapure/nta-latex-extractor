@@ -93,6 +93,7 @@
       </div>
 
       <div class="flex items-center gap-2">
+        <span id="saveStatusPill" class="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-800 border border-slate-600 text-slate-500">Loading...</span>
         <button id="themeToggleBtn" onclick="toggleTheme()" class="input-ctrl bg-slate-800 border border-slate-700 hover:border-slate-500 rounded px-2.5 py-1 text-xs font-medium transition">
           <span id="themeLabel">Light Theme</span>
         </button>
@@ -261,6 +262,21 @@
 
     function vKey(pId, qNum) { return `${pId}_${qNum}`; }
 
+    function sanitizeLatex(str) {
+      if (!str) return '';
+      let s = String(str);
+      s = s.replace(/\\\\\[\d*pt\]/gi, '');
+      s = s.replace(/\\begin\{center\}\s*(\\text\{)?\[.*?(?:diagram|circuit|graph|figure|plot).*?\]\}?\s*\\end\{center\}/gis, '');
+      s = s.replace(/\\\[\s*\\text\{(\[.*?(?:diagram|circuit|graph|figure|plot).*?\])\}\s*\\\]/gis, '');
+      s = s.replace(/\[(?:Circuit\s+diagram|Diagram\s+showing|velocity-time\s+graph|Figure\s+showing|Logic\s+Circuit|circuit\s+diagram|Graph\s+of|Graph\s+showing).*?\]/gis, '');
+      s = s.replace(/\\begin\{center\}/gi, '').replace(/\\end\{center\}/gi, '');
+      s = s.replace(/\\begin\{tabular\}(\{[^}]*\})([\s\S]*?)\\end\{tabular\}/gi, (match, align, body) => {
+        const cleanBody = body.replace(/\$/g, '');
+        return `$$\\begin{array}${align}${cleanBody}\\end{array}$$`;
+      });
+      return s.trim();
+    }
+
     function resolveMediaSrc(p) {
       if (!p) return '';
       p = String(p).replace(/\\/g, '/');
@@ -273,16 +289,57 @@
       return '/' + p.replace(/^\.?\//, '');
     }
 
+    const LS_KEY = 'nta_verifications';
+
+    function setSaveStatus(state) {
+      const el = document.getElementById('saveStatusPill');
+      if (!el) return;
+      if (state === 'saved') {
+        el.innerText = 'Saved';
+        el.className = 'px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-950/80 border border-emerald-800 text-emerald-400';
+      } else if (state === 'saving') {
+        el.innerText = 'Saving...';
+        el.className = 'px-2 py-0.5 rounded text-[11px] font-mono bg-slate-800 border border-slate-600 text-slate-400';
+      } else {
+        el.innerText = 'Save failed - stored locally';
+        el.className = 'px-2 py-0.5 rounded text-[11px] font-mono bg-rose-950/80 border border-rose-800 text-rose-400';
+      }
+    }
+
+    function saveToLocalStorage() {
+      try { localStorage.setItem(LS_KEY, JSON.stringify(verifications)); } catch (_) {}
+    }
+
+    function loadFromLocalStorage() {
+      try { const r = localStorage.getItem(LS_KEY); return r ? JSON.parse(r) : null; } catch (_) { return null; }
+    }
+
     async function loadVerifications() {
+      // Always load from localStorage first — instant and reliable across reloads
+      const local = loadFromLocalStorage();
+      if (local) verifications = local;
+
+      // Then try server; merge server + local (local wins for any conflicts,
+      // since it may have entries not yet flushed to disk)
       try {
-        const r = await fetch('/data/verifications.json');
-        if (r.ok) verifications = await r.json();
-      } catch (_) {}
+        const r = await fetch('/data/verifications.json?t=' + Date.now());
+        if (r.ok) {
+          const serverData = await r.json();
+          verifications = Object.assign({}, serverData, local || {});
+          saveToLocalStorage();
+          setSaveStatus('saved');
+        }
+      } catch (_) {
+        if (local && Object.keys(local).length > 0) setSaveStatus('error');
+      }
     }
 
     async function postVerification(q, status) {
+      // Always write to localStorage immediately — survives server being down
+      saveToLocalStorage();
+      setSaveStatus('saving');
       try {
-        await fetch('/api/verify', {
+        const resp = await fetch('/api/verify', {
           method: 'POST',
           body: JSON.stringify({
             paperId: q.paperId,
@@ -291,7 +348,10 @@
             diagramPath: q.diagramPath || null,
           }),
         });
-      } catch (_) {}
+        setSaveStatus(resp.ok ? 'saved' : 'error');
+      } catch (_) {
+        setSaveStatus('error');
+      }
     }
 
     function toggleTheme() {
@@ -437,7 +497,7 @@
       }
 
       const qArea = document.getElementById('latexQuestionArea');
-      qArea.innerHTML = q.latexQuestion || q.questionText || '<span class="text-slate-500 italic">No text</span>';
+      qArea.innerHTML = sanitizeLatex(q.latexQuestion || q.questionText || '<span class="text-slate-500 italic">No text</span>');
 
       const tableSec = document.getElementById('tableSection');
       if (q.hasTable && q.tableHtml) {
@@ -467,7 +527,7 @@
         return `
           <div class="p-2.5 rounded-lg border ${optClass} flex items-start gap-2">
             <span class="font-bold ${isCorrect ? 'text-emerald-400' : 'text-slate-500'}">${opt.key}.</span>
-            <div class="flex-1">${opt.latex || ''}</div>
+            <div class="flex-1">${sanitizeLatex(opt.latex || '')}</div>
           </div>
         `;
       }).join('');
@@ -505,8 +565,10 @@
         reviewCountThisSession++;
       }
 
+      // Always save to localStorage first so reloads never lose progress
       postVerification(q, status);
 
+      // Flash feedback
       const ws = document.getElementById('workspaceArea');
       ws.classList.remove('flash-verified', 'flash-flagged');
       void ws.offsetWidth;
@@ -517,8 +579,16 @@
 
       const qFilter = document.getElementById('queueFilter').value;
       if (qFilter === 'unreviewed' && status !== 'pending') {
+        // Remove from the in-memory unreviewed queue immediately
         activeQueue.splice(currentIndex, 1);
         if (currentIndex >= activeQueue.length) currentIndex = Math.max(0, activeQueue.length - 1);
+        renderCurrent();
+      } else if (qFilter === 'all') {
+        // In "all" mode: just advance; re-render shows updated status badge
+        if (currentIndex < activeQueue.length - 1) {
+          currentIndex++;
+        }
+        // If we're at the very end, stay and just re-render (shows new status)
         renderCurrent();
       } else {
         nextQuestion();
@@ -536,6 +606,15 @@
       if (currentIndex < activeQueue.length - 1) {
         currentIndex++;
         renderCurrent();
+      } else if (activeQueue.length > 0) {
+        // At the end — show a subtle indicator but don't loop
+        const label = document.getElementById('queuePositionLabel');
+        if (label) {
+          label.innerText = `End of queue (${activeQueue.length} total)`;
+          setTimeout(() => {
+            label.innerText = `${currentIndex + 1} / ${activeQueue.length}`;
+          }, 1500);
+        }
       }
     }
 
