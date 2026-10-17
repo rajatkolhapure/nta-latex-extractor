@@ -38,12 +38,12 @@ Rules:
 4. Detect tables:
    - "hasTable": true if a data table appears anywhere in the question body (not options).
    - "tableHtml": If hasTable is true, transcribe the ENTIRE table as a valid HTML <table> string with <thead>/<tbody>/<tr>/<th>/<td> tags. Wrap any math inside cells in $...$. If hasTable is false, set tableHtml to null.
-5. Detect drawn structural diagrams and chemical reactions (crucial for Chemistry):
-   - "hasDiagram": true if the question body contains a chemical structure, reaction scheme, mechanism, apparatus, or graph.
+5. Detect drawn structural diagrams (circuits, graphs, optical/ray diagrams, geometric figures) in question body:
+   - IMPORTANT: Chemical reactions, equations, reaction mechanisms, reagents, and chemical formulas must NOT be classified or treated as diagrams (`hasDiagram: false`). They must be fully transcribed and rendered using standard LaTeX formatting in `latexQuestion`.
+   - "hasDiagram": true if the question body contains a drawn diagram, circuit, graph, or apparatus. Set false for text, tables, and chemical reactions/equations.
    - "diagramBoundingBox": [ymin, xmin, ymax, xmax] normalized 0-1000 coordinates if hasDiagram is true, else null.
-   - "optionsHaveDiagrams": true if ANY option contains a drawn chemical structure, reaction product, or geometric figure.
-   - For each option in latexOptions, set "hasDiagram": true if THAT specific option has a drawn structure, false otherwise.
-   - If an option has a drawn structure, set its "latex" to a descriptive fallback in square brackets, e.g. "[benzene ring with -NO2]".
+   - "optionsHaveDiagrams": true if ANY option contains a drawn diagram/figure (excluding text/LaTeX chemical formulas).
+   - For each option in latexOptions, set "hasDiagram": true if THAT specific option has a drawn diagram, false otherwise.
 6. Output strictly valid JSON matching this schema:
 {
   "subject": "Physics | Chemistry | Mathematics",
@@ -89,7 +89,7 @@ def detect_and_crop_diagram_cut_to_cut(
     the diagram block strictly above the 'Options :' header without any text lines.
     """
     # 1. Semantic Check: Questions with diagrams reference the visual
-    fig_pattern = r'\b(figure|fig|diagram|circuit|graph|plot|shown below|shown in|as shown|chart|given in|structure|curve|reaction|reactions|scheme|product[s]?)\b'
+    fig_pattern = r'\b(figure|fig|diagram|circuit|graph|plot|shown below|shown in|as shown|chart|given in|curve)\b'
     mentions_fig = bool(re.search(fig_pattern, question_text, re.IGNORECASE)) if question_text else True
 
     if not mentions_fig:
@@ -139,7 +139,7 @@ def detect_and_crop_diagram_cut_to_cut(
     blocks = [(b[0], b[1]) for b in merged]
 
     # Identify the main diagram block:
-    diag_idx = None
+    valid_diag_indices = []
     for i, (b_start, b_end) in enumerate(blocks):
         b_h = b_end - b_start
         # Support diagrams anywhere from top (b_start >= 0) to 85% of image
@@ -182,11 +182,16 @@ def detect_and_crop_diagram_cut_to_cut(
             if is_text_paragraph:
                 continue  # skip this block, it's typeset text
 
-            diag_idx = i
-            break
+            valid_diag_indices.append(i)
 
-    if diag_idx is None:
+    if not valid_diag_indices:
         return False, None
+
+    if len(valid_diag_indices) > 1:
+        print("   [!] Validation Error: Question features multiple diagrams in question body. Skipping question.")
+        return False, "multiple"
+
+    diag_idx = valid_diag_indices[0]
 
     # Check upward expansion for satellite labels (like 'P' at apex)
     start_idx = diag_idx
@@ -729,7 +734,7 @@ def main():
 
             # Step 3: Option region cropping when Gemini says options have drawn structures
             option_diagrams = {}
-            if opts_have_diag:
+            if opts_have_diag and not args.skip_option_diagrams:
                 option_diagrams = crop_option_regions(
                     img_path=img_path,
                     opts_latex=opts_latex,

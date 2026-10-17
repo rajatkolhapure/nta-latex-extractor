@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NTA Rapid Question Verifier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <style>
+    .table-container table {
+      border-collapse: collapse;
+      min-width: 260px;
+      font-size: 0.85rem;
+      margin: 0 auto;
+    }
+    .table-container th, .table-container td {
+      border: 1px solid #334155;
+      padding: 6px 10px;
+      text-align: center;
+    }
+    .table-container th {
+      background-color: #1e293b;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    .table-container tr:nth-child(even) {
+      background-color: rgba(30, 41, 59, 0.5);
+    }
+    .light-theme {
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .light-theme .panel-bg {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
+    }
+    .light-theme .bar-panel {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      color: #334155 !important;
+    }
+    .light-theme .input-ctrl {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #1e293b !important;
+    }
+    .light-theme .diagram-frame {
+      background-color: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+    }
+    body.light-theme .diagram-img {
+      filter: invert(1) !important;
+    }
+    .opt-correct {
+      border-color: #10b981 !important;
+      background-color: rgba(16, 185, 129, 0.12) !important;
+    }
+    .light-theme .opt-correct {
+      background-color: #d1fae5 !important;
+      border-color: #10b981 !important;
+      color: #065f46 !important;
+    }
+    .flash-verified {
+      animation: flash-green 0.3s ease-out;
+    }
+    .flash-flagged {
+      animation: flash-red 0.3s ease-out;
+    }
+    @keyframes flash-green {
+      0% { box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.6); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    @keyframes flash-red {
+      0% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.6); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .zoom-fit { max-height: calc(100vh - 240px); width: auto; object-fit: contain; }
+    .zoom-orig { max-height: none; width: 100%; object-fit: contain; }
+    .zoom-2x { width: 180%; max-width: none; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen font-sans selection:bg-blue-500/30 transition-colors duration-200">
+  <div class="max-w-[1700px] mx-auto px-3 py-3 flex flex-col h-screen max-h-screen">
+
+    <header class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 mb-2 gap-2 text-sm">
+      <div class="flex items-center gap-3">
+        <span class="font-bold text-white tracking-wide text-base">NTA Rapid Verifier</span>
+        <span class="text-xs text-slate-500 hidden sm:inline">Split-screen human audit console</span>
+        <a href="/viewer/question_viewer.html" class="text-xs text-blue-400 hover:text-blue-300 underline ml-2">Back to Explorer View</a>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="themeToggleBtn" onclick="toggleTheme()" class="input-ctrl bg-slate-800 border border-slate-700 hover:border-slate-500 rounded px-2.5 py-1 text-xs font-medium transition">
+          <span id="themeLabel">Light Theme</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="bar-panel flex flex-wrap items-center justify-between bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 mb-2 gap-2 text-xs">
+      <div class="flex flex-wrap items-center gap-2">
+        <label class="font-medium text-slate-400">Dataset:</label>
+        <select id="datasetSelector" onchange="switchDataset()" class="input-ctrl bg-slate-800 border border-slate-700 rounded px-2 py-1 text-slate-200 font-medium focus:outline-none focus:border-blue-500">
+          <option value="data/extracted_physics.json">Physics</option>
+          <option value="data/extracted_chemistry.json">Chemistry</option>
+          <option value="data/extracted_mathematics.json">Mathematics</option>
+        </select>
+
+        <label class="font-medium text-slate-400 ml-2">Queue:</label>
+        <select id="queueFilter" onchange="applyQueueFilter()" class="input-ctrl bg-slate-800 border border-slate-700 rounded px-2 py-1 text-slate-200 font-medium focus:outline-none focus:border-blue-500">
+          <option value="all">All Questions</option>
+          <option value="unreviewed" selected>Unreviewed Only</option>
+          <option value="flagged">Flagged Only</option>
+          <option value="verified">Verified Only</option>
+        </select>
+
+        <span class="text-slate-600">|</span>
+
+        <label class="text-slate-400">Jump to #:</label>
+        <input type="number" id="jumpInput" min="1" onkeydown="if(event.key==='Enter')jumpToQuestion()" class="input-ctrl w-16 bg-slate-800 border border-slate-700 rounded px-1.5 py-0.5 text-center text-slate-200 focus:outline-none focus:border-blue-500">
+        <button onclick="jumpToQuestion()" class="input-ctrl bg-slate-800 border border-slate-700 hover:border-slate-500 rounded px-2 py-0.5 text-slate-300">Go</button>
+      </div>
+
+      <div class="flex items-center gap-3 font-mono">
+        <span id="verifiedCountPill" class="px-2 py-0.5 bg-emerald-950/80 border border-emerald-800/80 text-emerald-300 rounded">Verified: 0</span>
+        <span id="flaggedCountPill" class="px-2 py-0.5 bg-rose-950/80 border border-rose-800/80 text-rose-300 rounded">Flagged: 0</span>
+        <span id="remainingPill" class="px-2 py-0.5 bg-slate-800 border border-slate-700 text-slate-300 rounded">Remaining: 0</span>
+        <span id="velocityPill" class="text-slate-400 hidden md:inline">Rate: 0 Q/min</span>
+      </div>
+    </div>
+
+    <div class="w-full bg-slate-800/80 h-1.5 rounded-full overflow-hidden mb-2">
+      <div id="progressBar" class="bg-emerald-500 h-full transition-all duration-200" style="width: 0%"></div>
+    </div>
+
+    <div id="workspaceArea" class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-3 min-h-0 overflow-hidden">
+      
+      <div class="panel-bg flex flex-col bg-slate-900 border border-slate-800 rounded-xl p-3 min-h-0 overflow-hidden shadow-lg">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Original Paper Source Image</span>
+          <div class="flex items-center gap-1 text-[11px]">
+            <button onclick="setImageZoom('fit')" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 hover:border-slate-500">Fit</button>
+            <button onclick="setImageZoom('orig')" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 hover:border-slate-500">100%</button>
+            <button onclick="setImageZoom('2x')" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 hover:border-slate-500">Zoom</button>
+            <a id="openRawImageLink" href="#" target="_blank" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-blue-400 hover:border-slate-500 ml-1">Open</a>
+          </div>
+        </div>
+
+        <div id="sourceImageContainer" class="flex-1 flex items-center justify-center overflow-auto rounded-lg bg-slate-950 p-2 border border-slate-800/80 relative">
+          <img id="sourceImage" src="" alt="Source Question Image" class="zoom-fit transition-all duration-150"
+               onerror="this.style.display='none'; document.getElementById('imageErrorMsg').style.display='block';">
+          <div id="imageErrorMsg" style="display:none;" class="text-center text-slate-500 text-xs p-6">
+            Source image not found locally.<br>
+            <span id="sourceImageMissingPath" class="font-mono text-[10px] text-slate-600 block mt-1"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-bg flex flex-col bg-slate-900 border border-slate-800 rounded-xl p-3 min-h-0 overflow-y-auto shadow-lg">
+        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 mb-3 gap-2">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span id="badgeQNum" class="text-xs font-bold px-2 py-0.5 bg-blue-950 border border-blue-700 text-blue-300 rounded">Q--</span>
+            <span id="badgeSubject" class="text-xs px-2 py-0.5 bg-slate-800 border border-slate-700 text-slate-300 rounded">--</span>
+            <span id="badgeExam" class="text-xs px-2 py-0.5 bg-purple-950 border border-purple-800 text-purple-300 rounded">--</span>
+            <span id="badgeDiff" class="text-xs px-2 py-0.5 rounded">--</span>
+            <span id="badgeTopic" class="text-xs px-2 py-0.5 bg-slate-800 border border-slate-700 text-slate-400 rounded max-w-xs truncate">--</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="badgePaperId" class="text-[11px] font-mono text-slate-500">--</span>
+            <span id="currentStatusBadge" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-slate-700 bg-slate-800 text-slate-400">Pending</span>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">LaTeX Question</div>
+          <div id="latexQuestionArea" class="prose prose-invert max-w-none text-slate-100 text-sm leading-relaxed p-3 rounded-lg bg-slate-950/70 border border-slate-800">
+            --
+          </div>
+        </div>
+
+        <div id="tableSection" style="display:none;" class="mb-4">
+          <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Extracted Table</div>
+          <div id="tableContent" class="table-container overflow-x-auto p-2 bg-slate-950/70 border border-slate-800 rounded-lg"></div>
+        </div>
+
+        <div id="diagramSection" style="display:none;" class="mb-4">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Extracted Diagram Crop</span>
+            <span id="diagramPathLabel" class="text-[10px] font-mono text-slate-500 truncate max-w-xs"></span>
+          </div>
+          <div class="diagram-frame rounded-lg p-2 bg-slate-950/70 border border-slate-800 flex justify-center">
+            <img id="diagramImage" src="" alt="Extracted Diagram" class="diagram-img max-h-56 object-contain"
+                 onerror="this.style.display='none'; document.getElementById('diagramMissingMsg').style.display='block';">
+            <span id="diagramMissingMsg" style="display:none;" class="text-xs text-rose-400 italic p-4">Diagram image failed to load</span>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Options</div>
+          <div id="optionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+          </div>
+        </div>
+
+        <div id="extraDetails" class="mt-auto pt-2 border-t border-slate-800/80 text-[11px] text-slate-500 flex flex-wrap gap-x-4 gap-y-1 font-mono">
+          <span id="detailSubtopic"></span>
+          <span id="detailMarks"></span>
+          <span id="detailType"></span>
+          <span id="detailExtractedVia"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bar-panel mt-2 py-2 px-4 bg-slate-900 border border-slate-800 rounded-xl flex flex-wrap items-center justify-between gap-3 text-xs shadow-lg">
+      <div class="flex items-center gap-2">
+        <button onclick="prevQuestion()" class="input-ctrl bg-slate-800 border border-slate-700 hover:border-slate-500 text-slate-200 px-3 py-1.5 rounded font-medium transition">
+          &larr; Prev (Left / B)
+        </button>
+        <span id="queuePositionLabel" class="font-mono text-slate-300 px-2 font-bold">0 / 0</span>
+        <button onclick="nextQuestion()" class="input-ctrl bg-slate-800 border border-slate-700 hover:border-slate-500 text-slate-200 px-3 py-1.5 rounded font-medium transition">
+          Next (N) &rarr;
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="markCurrent('verified')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2 rounded-lg border border-emerald-400 transition shadow-md flex items-center gap-1.5">
+          <span>[V / Space] Verify &amp; Advance</span>
+        </button>
+        <button onclick="markCurrent('needs_fix')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-4 py-2 rounded-lg border border-rose-400 transition shadow-md flex items-center gap-1.5">
+          <span>[F / X] Flag Error</span>
+        </button>
+        <button onclick="markCurrent('pending')" class="bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 px-3 py-2 rounded-lg border border-slate-700 transition">
+          [U] Reset
+        </button>
+      </div>
+
+      <div class="text-[11px] text-slate-500 hidden xl:flex items-center gap-3 font-mono">
+        <span>[V] Verify</span>
+        <span>[F] Flag</span>
+        <span>[&larr;/&rarr;] Step</span>
+        <span>[Z] Undo</span>
+        <span>[D] Theme</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let allQuestions = [];
+    let activeQueue = [];
+    let currentIndex = 0;
+    let verifications = {};
+    let currentDataset = 'data/extracted_physics.json';
+    let isLightMode = false;
+    let currentZoom = 'fit';
+
+    let reviewCountThisSession = 0;
+    let sessionStartTime = Date.now();
+    let historyStack = [];
+
+    function vKey(pId, qNum) { return `${pId}_${qNum}`; }
+
+    function resolveMediaSrc(p) {
+      if (!p) return '';
+      p = String(p).replace(/\\/g, '/');
+      if (p.startsWith('http') || p.startsWith('data:')) return p;
+      if (p.startsWith('file:///')) {
+        const idx = p.indexOf('/downloads/');
+        if (idx !== -1) return p.substring(idx);
+        return '';
+      }
+      return '/' + p.replace(/^\.?\//, '');
+    }
+
+    async function loadVerifications() {
+      try {
+        const r = await fetch('/data/verifications.json');
+        if (r.ok) verifications = await r.json();
+      } catch (_) {}
+    }
+
+    async function postVerification(q, status) {
+      try {
+        await fetch('/api/verify', {
+          method: 'POST',
+          body: JSON.stringify({
+            paperId: q.paperId,
+            questionNumber: q.questionNumber,
+            status: status,
+            diagramPath: q.diagramPath || null,
+          }),
+        });
+      } catch (_) {}
+    }
+
+    function toggleTheme() {
+      isLightMode = !isLightMode;
+      document.body.classList.toggle('light-theme', isLightMode);
+      document.getElementById('themeLabel').innerText = isLightMode ? 'Dark Theme' : 'Light Theme';
+      localStorage.setItem('viewer_theme', isLightMode ? 'light' : 'dark');
+    }
+    if (localStorage.getItem('viewer_theme') === 'light') toggleTheme();
+
+    async function switchDataset() {
+      currentDataset = document.getElementById('datasetSelector').value;
+      await loadDataset();
+    }
+
+    async function loadDataset() {
+      await loadVerifications();
+      try {
+        const resp = await fetch('/' + currentDataset.replace(/^\//,''));
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        allQuestions = await resp.json();
+        sessionStartTime = Date.now();
+        reviewCountThisSession = 0;
+        applyQueueFilter();
+      } catch (e) {
+        alert('Error loading dataset: ' + e.message);
+      }
+    }
+
+    function applyQueueFilter() {
+      const mode = document.getElementById('queueFilter').value;
+      if (mode === 'all') {
+        activeQueue = [...allQuestions];
+      } else if (mode === 'unreviewed') {
+        activeQueue = allQuestions.filter(q => !verifications[vKey(q.paperId, q.questionNumber)]);
+      } else if (mode === 'flagged') {
+        activeQueue = allQuestions.filter(q => verifications[vKey(q.paperId, q.questionNumber)]?.status === 'needs_fix');
+      } else if (mode === 'verified') {
+        activeQueue = allQuestions.filter(q => verifications[vKey(q.paperId, q.questionNumber)]?.status === 'verified');
+      }
+
+      currentIndex = 0;
+      updateStats();
+      renderCurrent();
+    }
+
+    function updateStats() {
+      const total = allQuestions.length;
+      let vCount = 0;
+      let fCount = 0;
+
+      for (const q of allQuestions) {
+        const st = verifications[vKey(q.paperId, q.questionNumber)]?.status;
+        if (st === 'verified') vCount++;
+        else if (st === 'needs_fix') fCount++;
+      }
+
+      const remaining = total - (vCount + fCount);
+      const pct = total ? Math.round(((vCount + fCount) / total) * 100) : 0;
+
+      document.getElementById('verifiedCountPill').innerText = `Verified: ${vCount}`;
+      document.getElementById('flaggedCountPill').innerText = `Flagged: ${fCount}`;
+      document.getElementById('remainingPill').innerText = `Remaining: ${remaining}`;
+      document.getElementById('progressBar').style.width = `${pct}%`;
+
+      const elapsedMins = (Date.now() - sessionStartTime) / 60000;
+      if (elapsedMins > 0.1 && reviewCountThisSession > 0) {
+        const rate = Math.round(reviewCountThisSession / elapsedMins);
+        document.getElementById('velocityPill').innerText = `Rate: ${rate} Q/min`;
+      }
+    }
+
+    function setImageZoom(mode) {
+      currentZoom = mode;
+      const img = document.getElementById('sourceImage');
+      img.className = 'transition-all duration-150 ' + (
+        mode === 'orig' ? 'zoom-orig' : (mode === '2x' ? 'zoom-2x' : 'zoom-fit')
+      );
+    }
+
+    function renderCurrent() {
+      if (!activeQueue.length) {
+        document.getElementById('queuePositionLabel').innerText = '0 / 0';
+        document.getElementById('latexQuestionArea').innerHTML = '<div class="p-8 text-center text-slate-500">No questions in this queue.</div>';
+        document.getElementById('optionsGrid').innerHTML = '';
+        document.getElementById('sourceImage').style.display = 'none';
+        document.getElementById('imageErrorMsg').style.display = 'block';
+        return;
+      }
+
+      if (currentIndex < 0) currentIndex = 0;
+      if (currentIndex >= activeQueue.length) currentIndex = activeQueue.length - 1;
+
+      const q = activeQueue[currentIndex];
+      const key = vKey(q.paperId, q.questionNumber);
+      const v = verifications[key];
+      const status = v?.status || 'pending';
+
+      document.getElementById('queuePositionLabel').innerText = `${currentIndex + 1} / ${activeQueue.length}`;
+
+      const statusBadge = document.getElementById('currentStatusBadge');
+      if (status === 'verified') {
+        statusBadge.innerText = 'Verified';
+        statusBadge.className = 'text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-emerald-500 bg-emerald-950 text-emerald-300';
+      } else if (status === 'needs_fix') {
+        statusBadge.innerText = 'Flagged';
+        statusBadge.className = 'text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-rose-500 bg-rose-950 text-rose-300';
+      } else {
+        statusBadge.innerText = 'Pending';
+        statusBadge.className = 'text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-slate-700 bg-slate-800 text-slate-400';
+      }
+
+      document.getElementById('badgeQNum').innerText = `Q${q.questionNumber}`;
+      document.getElementById('badgeSubject').innerText = q.subject || '--';
+      document.getElementById('badgeExam').innerText = q.exam || q.targetExam || '--';
+      
+      const diffBadge = document.getElementById('badgeDiff');
+      diffBadge.innerText = q.difficulty || 'Medium';
+      const dl = (q.difficulty || '').toLowerCase();
+      diffBadge.className = 'text-xs px-2 py-0.5 rounded ' + (
+        dl === 'easy' ? 'bg-emerald-950 border border-emerald-700 text-emerald-300' :
+        dl === 'hard' ? 'bg-rose-950 border border-rose-700 text-rose-300' :
+        'bg-yellow-950 border border-yellow-700 text-yellow-300'
+      );
+
+      document.getElementById('badgeTopic').innerText = q.topic || 'No topic';
+      document.getElementById('badgePaperId').innerText = q.paperId || '';
+
+      const sourceImg = document.getElementById('sourceImage');
+      const errorMsg = document.getElementById('imageErrorMsg');
+      const rawImgPath = q.localImagePath || q.imageUrl;
+      const resolvedImg = resolveMediaSrc(rawImgPath);
+
+      if (resolvedImg) {
+        sourceImg.src = resolvedImg;
+        sourceImg.style.display = 'block';
+        errorMsg.style.display = 'none';
+        document.getElementById('openRawImageLink').href = resolvedImg;
+      } else {
+        sourceImg.style.display = 'none';
+        errorMsg.style.display = 'block';
+        document.getElementById('sourceImageMissingPath').innerText = rawImgPath || 'Path missing';
+      }
+
+      const qArea = document.getElementById('latexQuestionArea');
+      qArea.innerHTML = q.latexQuestion || q.questionText || '<span class="text-slate-500 italic">No text</span>';
+
+      const tableSec = document.getElementById('tableSection');
+      if (q.hasTable && q.tableHtml) {
+        tableSec.style.display = 'block';
+        document.getElementById('tableContent').innerHTML = q.tableHtml;
+      } else {
+        tableSec.style.display = 'none';
+      }
+
+      const diagSec = document.getElementById('diagramSection');
+      if (q.hasDiagram && q.diagramPath) {
+        diagSec.style.display = 'block';
+        const dImg = document.getElementById('diagramImage');
+        dImg.src = resolveMediaSrc(q.diagramPath);
+        dImg.style.display = 'block';
+        document.getElementById('diagramMissingMsg').style.display = 'none';
+        document.getElementById('diagramPathLabel').innerText = q.diagramPath;
+      } else {
+        diagSec.style.display = 'none';
+      }
+
+      const correctKeys = (q.correctOptions || []).map(String);
+      const optsGrid = document.getElementById('optionsGrid');
+      optsGrid.innerHTML = (q.latexOptions || []).map(opt => {
+        const isCorrect = correctKeys.includes(String(opt.key));
+        const optClass = isCorrect ? 'opt-correct' : 'bg-slate-950/60 border-slate-800 text-slate-300';
+        return `
+          <div class="p-2.5 rounded-lg border ${optClass} flex items-start gap-2">
+            <span class="font-bold ${isCorrect ? 'text-emerald-400' : 'text-slate-500'}">${opt.key}.</span>
+            <div class="flex-1">${opt.latex || ''}</div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('detailSubtopic').innerText = q.subTopic ? `Sub: ${q.subTopic}` : '';
+      document.getElementById('detailMarks').innerText = q.marks ? `Marks: +${q.marks}/${q.negativeMarks || 0}` : '';
+      document.getElementById('detailType').innerText = q.type ? `Type: ${q.type}` : '';
+      document.getElementById('detailExtractedVia').innerText = q.extractedVia ? `Via: ${q.extractedVia}` : '';
+
+      if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(document.getElementById('workspaceArea'), {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$',  right: '$',  display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    async function markCurrent(status) {
+      if (!activeQueue.length) return;
+      const q = activeQueue[currentIndex];
+      const key = vKey(q.paperId, q.questionNumber);
+      const oldState = verifications[key]?.status || 'pending';
+
+      historyStack.push({ index: currentIndex, question: q, oldStatus: oldState });
+
+      if (status === 'pending') {
+        delete verifications[key];
+      } else {
+        verifications[key] = { status: status, diagramPath: q.diagramPath || null };
+        reviewCountThisSession++;
+      }
+
+      postVerification(q, status);
+
+      const ws = document.getElementById('workspaceArea');
+      ws.classList.remove('flash-verified', 'flash-flagged');
+      void ws.offsetWidth;
+      if (status === 'verified') ws.classList.add('flash-verified');
+      else if (status === 'needs_fix') ws.classList.add('flash-flagged');
+
+      updateStats();
+
+      const qFilter = document.getElementById('queueFilter').value;
+      if (qFilter === 'unreviewed' && status !== 'pending') {
+        activeQueue.splice(currentIndex, 1);
+        if (currentIndex >= activeQueue.length) currentIndex = Math.max(0, activeQueue.length - 1);
+        renderCurrent();
+      } else {
+        nextQuestion();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderCurrent();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentIndex < activeQueue.length - 1) {
+        currentIndex++;
+        renderCurrent();
+      }
+    }
+
+    function jumpToQuestion() {
+      const val = parseInt(document.getElementById('jumpInput').value, 10);
+      if (!isNaN(val) && val >= 1 && val <= activeQueue.length) {
+        currentIndex = val - 1;
+        renderCurrent();
+        document.getElementById('jumpInput').value = '';
+      }
+    }
+
+    function undoLast() {
+      if (!historyStack.length) return;
+      const last = historyStack.pop();
+      const key = vKey(last.question.paperId, last.question.questionNumber);
+
+      if (last.oldStatus === 'pending') {
+        delete verifications[key];
+      } else {
+        verifications[key] = { status: last.oldStatus, diagramPath: last.question.diagramPath || null };
+      }
+      postVerification(last.question, last.oldStatus);
+
+      applyQueueFilter();
+      currentIndex = Math.min(last.index, activeQueue.length - 1);
+      renderCurrent();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+        if (e.key === 'Escape') document.activeElement.blur();
+        return;
+      }
+
+      if (e.key === 'v' || e.key === 'V' || e.key === ' ') {
+        e.preventDefault();
+        markCurrent('verified');
+      } else if (e.key === 'f' || e.key === 'F' || e.key === 'x' || e.key === 'X') {
+        e.preventDefault();
+        markCurrent('needs_fix');
+      } else if (e.key === 'ArrowRight' || e.key === 'n' || e.key === 'N') {
+        e.preventDefault();
+        nextQuestion();
+      } else if (e.key === 'ArrowLeft' || e.key === 'b' || e.key === 'B') {
+        e.preventDefault();
+        prevQuestion();
+      } else if (e.key === 'u' || e.key === 'U') {
+        e.preventDefault();
+        markCurrent('pending');
+      } else if (e.key === 'z' || e.key === 'Z') {
+        e.preventDefault();
+        undoLast();
+      } else if (e.key === 'd' || e.key === 'D') {
+        e.preventDefault();
+        toggleTheme();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', loadDataset);
+  </script>
+</body>
+</html>

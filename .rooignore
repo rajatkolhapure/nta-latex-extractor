@@ -1,0 +1,21 @@
+Code
+Text# Dependencies & Build artifactsNode_modules/
+Client/dist/
+Dist/
+Build/
+.next/
+.cache/# Scraper dumps & heavy assets (CRITICAL for cbt-core)Extractors/nta_extractor/output/
+Extractors/pdf_dumps/
+Extractors/**/temp/
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.webp# Lockfiles & Prisma generated enginesPackage-lock.json
+Pnpm-lock.yaml
+Yarn.lock
+Prisma/client/
+*.sqlite
+*.log# Sensitive environment variables.env
+.env.*

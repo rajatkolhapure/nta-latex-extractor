@@ -52,11 +52,13 @@ questions/
 |-- tests/                       # Evaluation and test harnesses
 |   `-- test_latex_extractor.py  # Single-image test script
 |-- tools/                       # Utility scripts
+|   |-- process_flagged.py       # Evaluation and report tool for flagged questions
 |   |-- run_extractor.py         # NTA scraper CLI runner
 |   `-- sort_by_subject.py       # Subject-wise splitter and sorter
-|-- viewer/                      # Browser inspection interface
-|   |-- preview_server.py        # Local HTTP server with asset routing
-|   `-- question_viewer.html     # KaTeX question viewer application
+|-- viewer/                      # Browser inspection interfaces
+|   |-- preview_server.py        # Local HTTP server with asset routing and verification API
+|   |-- question_viewer.html     # KaTeX card-based question explorer application
+|   `-- rapid_verifier.html      # High-speed side-by-side keyboard-driven human auditor
 |-- requirements.txt             # Python dependency specifications
 |-- README.md                    # Project documentation
 `-- .gitignore                   # Git exclusion rules
@@ -153,15 +155,48 @@ Run extraction entirely offline without API keys or rate limits using an RTX GPU
    python extractors/extract_latex_local.py --limit 10 --subject Physics
    ```
 
-### 5. Launch the Question Viewer
+### 5. Human Verification and Quality Audit
 
-Browse questions, check LaTeX math formatting, inspect observation tables, and review cropped diagrams:
+Start the local preview server:
 
 ```bash
 python viewer/preview_server.py
 ```
 
-The server opens `http://localhost:8000/viewer/question_viewer.html` in your default browser.
+The server provides two complementary interfaces:
+
+#### 5.1 Rapid Split-Screen Verifier (High-Speed Audit)
+
+Designed for rapid, high-throughput human verification (40 to 60 questions per minute) with zero mouse interaction required:
+
+- URL: `http://localhost:8000/viewer/rapid_verifier.html`
+- **True Side-by-Side Comparison**: Original cropped source image on the left; AI-transcribed LaTeX math, options, and diagrams on the right.
+- **Single-Key Keyboard Flow**:
+  - `V` or `Space` or `Right Arrow`: Verify and auto-advance to next question.
+  - `F` or `X` or `Down Arrow`: Flag question as error (needs fix) and auto-advance.
+  - `Left Arrow` or `B`: Step back to previous question.
+  - `U`: Reset verification status to pending.
+  - `Z`: Undo previous action.
+  - `D`: Toggle dark/light theme.
+- **Unreviewed Queue Filter**: Automatically skips already-verified questions so you never repeat work.
+- **Velocity Tracker & HUD**: Displays real-time review pace (questions/minute), total reviewed, and progress percentage.
+
+#### 5.2 Card Explorer View
+
+Designed for multi-card browsing, searching, and filtering:
+
+- URL: `http://localhost:8000/viewer/question_viewer.html`
+- Full-text search across question statements, topics, and subtopics.
+- Difficulty and flagged-only filters.
+- Batch pagination (10 questions per page) and expandable metadata panels.
+
+#### 5.3 Inspecting Flagged Questions
+
+Review verification statistics and extract a clean list of questions requiring re-processing:
+
+```bash
+python tools/process_flagged.py
+```
 
 ### 6. NTA Portal Question Scraper
 
