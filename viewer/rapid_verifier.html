@@ -519,24 +519,14 @@
         diagSec.style.display = 'none';
       }
 
-      const correctKeys = (q.correctOptions || []).map(String);
-      const optsGrid = document.getElementById('optionsGrid');
-      optsGrid.innerHTML = (q.latexOptions || []).map(opt => {
-        const isCorrect = correctKeys.includes(String(opt.key));
-        const optClass = isCorrect ? 'opt-correct' : 'bg-slate-950/60 border-slate-800 text-slate-300';
-        return `
-          <div class="p-2.5 rounded-lg border ${optClass} flex items-start gap-2">
-            <span class="font-bold ${isCorrect ? 'text-emerald-400' : 'text-slate-500'}">${opt.key}.</span>
-            <div class="flex-1">${sanitizeLatex(opt.latex || '')}</div>
-          </div>
-        `;
-      }).join('');
-
       document.getElementById('detailSubtopic').innerText = q.subTopic ? `Sub: ${q.subTopic}` : '';
       document.getElementById('detailMarks').innerText = q.marks ? `Marks: +${q.marks}/${q.negativeMarks || 0}` : '';
       document.getElementById('detailType').innerText = q.type ? `Type: ${q.type}` : '';
       document.getElementById('detailExtractedVia').innerText = q.extractedVia ? `Via: ${q.extractedVia}` : '';
 
+      renderOptionsGrid(q);
+
+      // Render KaTeX for question text and table areas
       if (typeof renderMathInElement !== 'undefined') {
         renderMathInElement(document.getElementById('workspaceArea'), {
           delimiters: [
@@ -547,6 +537,78 @@
           ],
           throwOnError: false
         });
+      }
+
+      // Auto-crop on demand: if this question is flagged and has no option crops, fetch them silently
+      if (status === 'needs_fix') {
+        const hasCrops = q.optionDiagrams && Object.values(q.optionDiagrams).some(v => !!v);
+        if (!hasCrops) {
+          fetchOptionCrops(q);
+        }
+      }
+    }
+
+    function renderOptionsGrid(q) {
+      const correctKeys = (q.correctOptions || []).map(String);
+      const optsGrid = document.getElementById('optionsGrid');
+      const opts = (q.latexOptions && q.latexOptions.length) ? q.latexOptions : (q.options || []);
+
+      optsGrid.innerHTML = opts.map(opt => {
+        const key = String(opt.key || '');
+        const isCorrect = correctKeys.includes(key);
+        const optClass = isCorrect ? 'opt-correct' : 'bg-slate-950/60 border-slate-800 text-slate-300';
+        const cropPath = q.optionDiagrams && q.optionDiagrams[key];
+
+        let content;
+        if (cropPath) {
+          const src = '/' + cropPath.replace(/\\/g, '/');
+          content = `<img src="${src}" class="diagram-img mt-1 max-w-full rounded" style="max-height:160px;object-fit:contain;" onerror="this.style.display='none'">`;
+        } else {
+          content = `<div class="flex-1">${sanitizeLatex(opt.latex || opt.text || '')}</div>`;
+        }
+
+        return `
+          <div class="p-2.5 rounded-lg border ${optClass} flex items-start gap-2">
+            <span class="font-bold ${isCorrect ? 'text-emerald-400' : 'text-slate-500'}">${key}.</span>
+            ${content}
+          </div>
+        `;
+      }).join('');
+
+      if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(optsGrid, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$',  right: '$',  display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    async function fetchOptionCrops(q) {
+      try {
+        const resp = await fetch('/api/crop-options', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            paperId: q.paperId,
+            questionNumber: q.questionNumber,
+            subject: q.subject
+          })
+        });
+        if (!resp.ok) return;
+        const data = await resp.json();
+        if (!data.optionDiagrams) return;
+        // Merge crops into the in-memory question object
+        q.optionDiagrams = data.optionDiagrams;
+        q.optionsHaveDiagrams = Object.values(data.optionDiagrams).some(v => !!v);
+        // Re-render the options grid with the new crops
+        renderOptionsGrid(q);
+      } catch (e) {
+        console.warn('[crop-options] fetch failed:', e);
       }
     }
 
