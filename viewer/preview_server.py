@@ -3,7 +3,16 @@ import socketserver
 import webbrowser
 import json
 import os
+import sys
 from pathlib import Path
+
+# Import crop_option_regions from the extractors package
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "extractors"))
+try:
+    from batch_latex_extractor import crop_option_regions
+    _CROP_AVAILABLE = True
+except Exception:
+    _CROP_AVAILABLE = False
 
 PORT = 8000
 REPO_ROOT = Path(__file__).resolve().parent.parent if (Path(__file__).resolve().parent.name == "viewer") else Path(__file__).resolve().parent
@@ -64,6 +73,92 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 self.send_response(500)
                 self.end_headers()
                 self.wfile.write(str(e).encode())
+            return
+        elif self.path == "/api/crop-options":
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            try:
+                if not _CROP_AVAILABLE:
+                    raise RuntimeError("crop_option_regions not available (import failed)")
+
+                data = json.loads(post_data)
+                paper_id = str(data.get('paperId', ''))
+                q_num = str(data.get('questionNumber', ''))
+                subject = data.get('subject', 'Physics')
+
+                # Locate subject JSON
+                subj_file = REPO_ROOT / "data" / f"extracted_{subject.lower()}.json"
+                if not subj_file.exists():
+                    raise FileNotFoundError(f"Subject file not found: {subj_file.name}")
+
+                with open(subj_file, 'r', encoding='utf-8') as f:
+                    questions = json.load(f)
+
+                # Find the question record
+                q_rec = next(
+                    (q for q in questions
+                     if str(q.get('paperId')) == paper_id
+                     and str(q.get('questionNumber')) == q_num),
+                    None
+                )
+                if q_rec is None:
+                    raise ValueError(f"Question {paper_id}_{q_num} not found in {subject}")
+
+                # Resolve local image path
+                local_path = q_rec.get('localImagePath', '')
+                img_path = str(REPO_ROOT / local_path.lstrip('./').lstrip('/'))
+
+                stem = Path(img_path).stem
+
+                # Build opts_latex — fall back to 4-way crop for filtered_fallback questions
+                opts_latex = q_rec.get('latexOptions') or []
+                if not opts_latex:
+                    opts_latex = [
+                        {"key": "1", "hasDiagram": True},
+                        {"key": "2", "hasDiagram": True},
+                        {"key": "3", "hasDiagram": True},
+                        {"key": "4", "hasDiagram": True},
+                    ]
+
+                diag_dir = REPO_ROOT / "downloads" / "diagrams" / subject / "options"
+                diag_dir.mkdir(parents=True, exist_ok=True)
+
+                result = crop_option_regions(
+                    img_path=img_path,
+                    opts_latex=opts_latex,
+                    diag_dir=diag_dir,
+                    stem=stem,
+                    bg_mode="transparent",
+                    stroke_color="#ffffff"
+                )
+
+                # Write result back into the subject JSON
+                q_rec["optionDiagrams"] = result
+                if any(v for v in result.values()):
+                    q_rec["optionsHaveDiagrams"] = True
+                with open(subj_file, 'w', encoding='utf-8') as f:
+                    json.dump(questions, f, indent=2, ensure_ascii=False)
+
+                # Build relative forward-slash paths for the HTTP client
+                rel_result = {}
+                for k, v in result.items():
+                    if v:
+                        try:
+                            rel_result[k] = str(Path(v).relative_to(REPO_ROOT)).replace("\\", "/")
+                        except ValueError:
+                            rel_result[k] = str(v).replace("\\", "/")
+                    else:
+                        rel_result[k] = None
+
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"optionDiagrams": rel_result}).encode())
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
             return
         self.send_response(404)
         self.end_headers()
