@@ -41,8 +41,9 @@ def process_flagged_questions():
 
     if flagged:
         print("\nFlagged Questions List:")
-        for key in flagged:
-            print(f" - {key}")
+        for key, info in flagged.items():
+            reason = info.get("reason", "No reason specified")
+            print(f" - {key:12} : {reason}")
     print("==================================================")
 
 

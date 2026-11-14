@@ -41,12 +41,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 q_num = str(data.get('questionNumber'))
                 status = data.get('status')
                 diag_path = data.get('diagramPath')
+                reason = data.get('reason')
 
                 # Load existing
                 verifications = {}
                 if VERIFICATIONS_FILE.exists():
                     try:
-                        with open(VERIFICATIONS_FILE, 'r') as f:
+                        with open(VERIFICATIONS_FILE, 'r', encoding='utf-8') as f:
                             verifications = json.load(f)
                     except: pass
 
@@ -55,15 +56,20 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     if key in verifications:
                         del verifications[key]
                 else:
-                    verifications[key] = {
+                    record = {
                         "status": status,
                         "diagramPath": diag_path
                     }
+                    if reason:
+                        record["reason"] = str(reason).strip()
+                    elif key in verifications and "reason" in verifications[key] and status == verifications[key].get("status"):
+                        record["reason"] = verifications[key]["reason"]
+                    verifications[key] = record
 
                 # Save
                 VERIFICATIONS_FILE.parent.mkdir(parents=True, exist_ok=True)
-                with open(VERIFICATIONS_FILE, 'w') as f:
-                    json.dump(verifications, f, indent=2)
+                with open(VERIFICATIONS_FILE, 'w', encoding='utf-8') as f:
+                    json.dump(verifications, f, indent=2, ensure_ascii=False)
 
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
