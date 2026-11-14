@@ -440,7 +440,12 @@
 
     function applyQueueFilter() {
       const mode = document.getElementById('queueFilter').value;
-      if (mode === 'all') {
+      const isReExtractedDataset = currentDataset.includes('re_extracted_flagged');
+
+      if (isReExtractedDataset && mode === 'unreviewed') {
+        // In the isolated re-extracted dataset, show all questions by default so user can audit them
+        activeQueue = [...allQuestions];
+      } else if (mode === 'all') {
         activeQueue = [...allQuestions];
       } else if (mode === 'unreviewed') {
         activeQueue = allQuestions.filter(q => !verifications[vKey(q.paperId, q.questionNumber)]);
