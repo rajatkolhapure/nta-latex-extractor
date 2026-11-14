@@ -214,14 +214,12 @@ def detect_and_crop_diagram_cut_to_cut(
     if not valid_diag_indices:
         return False, None
 
-    if len(valid_diag_indices) > 1:
-        print("   [!] Validation Error: Question features multiple diagrams in question body. Skipping question.")
-        return False, "multiple"
-
-    diag_idx = valid_diag_indices[0]
+    # If multiple visual components are found (e.g. connected apparatus, two bulbs, multi-branch circuit),
+    # encompass them together rather than dropping the diagram entirely.
+    start_idx = valid_diag_indices[0]
+    end_idx = valid_diag_indices[-1]
 
     # Check upward expansion for satellite labels (like 'P' at apex)
-    start_idx = diag_idx
     if start_idx > 0:
         prev_start, prev_end = blocks[start_idx - 1]
         gap_up = blocks[start_idx][0] - prev_end
@@ -236,7 +234,6 @@ def detect_and_crop_diagram_cut_to_cut(
                     start_idx -= 1
 
     # Check downward expansion for satellite labels (like '<- d/2 -><- d/2 ->')
-    end_idx = diag_idx
     if end_idx < len(blocks) - 1:
         next_start, next_end = blocks[end_idx + 1]
         gap_down = next_start - blocks[end_idx][1]

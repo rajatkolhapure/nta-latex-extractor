@@ -339,6 +339,11 @@
         if (idx !== -1) return p.substring(idx);
         return '';
       }
+      // If absolute Windows path (e.g. C:/Users/.../downloads/diagrams/...)
+      const dlIdx = p.toLowerCase().indexOf('/downloads/');
+      if (dlIdx !== -1) {
+        return p.substring(dlIdx);
+      }
       return '/' + p.replace(/^\.?\//, '');
     }
 
@@ -631,7 +636,7 @@
 
         let content;
         if (cropPath) {
-          const src = '/' + cropPath.replace(/\\/g, '/');
+          const src = resolveMediaSrc(cropPath);
           content = `<img src="${src}" class="diagram-img mt-1 max-w-full rounded" style="max-height:160px;object-fit:contain;" onerror="this.style.display='none'">`;
         } else {
           content = `<div class="flex-1">${sanitizeLatex(opt.latex || opt.text || '')}</div>`;
