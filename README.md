@@ -8,11 +8,52 @@ An automated engineering pipeline that extracts NTA JEE, NEET, and MHT-CET exam 
 
 - **Mathematical LaTeX Transcription**: Converts complex mathematical symbols, Greek notation, matrices, roots, fractions, and chemical reaction notation into LaTeX expressions.
 - **Deterministic Diagram Extraction**: Combines semantic text triggers with computer vision ink-projection analysis to crop diagrams cleanly without surrounding text lines.
+- **Option Diagram & Structure Cropping**: Detects visual option choices (capacitor networks, circuits, chemical reaction options, and graphs) and crops individual quadrant-level sub-images with automatic browser viewer rendering.
 - **Sub-pixel Diagram Upscaling & Anti-aliasing**: Upscales diagram crops by 2.5x using Lanczos4 interpolation with slight Gaussian smoothing and threshold-based stroke isolation.
 - **Dynamic Subject Routing**: Automatically routes extracted questions into subject-specific datasets (Physics, Chemistry, Mathematics).
 - **Dual Processing Engines**: Supports cloud vision models (Gemini 3.5 Flash Lite with automated fallback chain) and offline GPU acceleration (Ollama with Qwen2.5-VL).
 - **Stateful Resumption**: Automatically tracks processed records and skips previously completed questions across interruptions and rate limits.
-- **Interactive Question Explorer**: Local browser-based UI with live KaTeX math rendering, observation table formatting, dark/light theme switching, and diagram inspection.
+- **Interactive Question Explorer & Rapid Verifier**: Local browser-based UI with live KaTeX math rendering, side-by-side split screen verification, on-demand option cropping, dark/light theme switching, and keyboard auditing.
+
+---
+
+## Dataset Extraction & Verification Status
+
+Summary of the question digitization progress across the master dataset:
+
+### Overall Progress
+
+| Metric | Count | Percentage of Scraped Pool |
+| :--- | :--- | :--- |
+| **Total Scraped Question Pool** | **2,999** | 100.0% |
+| **Total Extracted Questions** | **1,756** | **58.6%** |
+| ↳ *Clean High-Fidelity Extractions* | **1,749** | **99.6%** (of extracted) |
+| ↳ *Recitation Filter Fallbacks* | **7** | **0.4%** (of extracted) |
+| **Questions Pending Extraction** | **1,243** | **41.4%** |
+
+### Subject Breakdown
+
+```
+Scraped Pool (2,999)
+├── Chemistry    : 621 / 1,016 extracted [████████████░░░░░░░░] 61.1%
+├── Physics      : 590 / 1,054 extracted [███████████░░░░░░░░░] 56.0%
+└── Mathematics  : 545 /   929 extracted [███████████░░░░░░░░░] 58.7%
+```
+
+| Subject | Raw Scraped | Extracted | Extraction % | High Quality | Fallbacks | Question Diagrams | Option Diagrams | HTML Tables |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Chemistry** | 1,016 | 621 | 61.1% | 621 (100%) | 0 | 47 | 26 | 6 |
+| **Physics** | 1,054 | 590 | 56.0% | 583 (98.8%) | 7 | 115 | 10 | 3 |
+| **Mathematics** | 929 | 545 | 58.7% | 545 (100%) | 0 | 6 | 1 | 0 |
+| **Total** | **2,999** | **1,756** | **58.6%** | **1,749 (99.6%)** | **7** | **168** | **37** | **9** |
+
+### Human Audit & Verification (Rapid Verifier)
+
+Sampled questions audited using the split-screen rapid verifier (`http://localhost:8000/viewer/rapid_verifier.html`):
+
+- **Sample Audited**: 90 questions
+- **Approved / Verified (`verified`)**: 76 questions (**84.4%** clean first-pass accuracy)
+- **Flagged for Correction (`needs_fix`)**: 14 questions (**15.6%** flagged, primarily due to diagram-in-options or recitation filter blocks)
 
 ---
 
