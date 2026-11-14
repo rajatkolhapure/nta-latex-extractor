@@ -214,6 +214,21 @@
       await loadDataset();
     }
 
+    function sanitizeLatex(str) {
+      if (!str) return '';
+      let s = String(str);
+      s = s.replace(/\\\\\[\d*pt\]/gi, '');
+      s = s.replace(/\\begin\{center\}\s*(\\text\{)?\[.*?(?:diagram|circuit|graph|figure|plot).*?\]\}?\s*\\end\{center\}/gis, '');
+      s = s.replace(/\\\[\s*\\text\{(\[.*?(?:diagram|circuit|graph|figure|plot).*?\])\}\s*\\\]/gis, '');
+      s = s.replace(/\[(?:Circuit\s+diagram|Diagram\s+showing|velocity-time\s+graph|Figure\s+showing|Logic\s+Circuit|circuit\s+diagram|Graph\s+of|Graph\s+showing).*?\]/gis, '');
+      s = s.replace(/\\begin\{center\}/gi, '').replace(/\\end\{center\}/gi, '');
+      s = s.replace(/\\begin\{tabular\}(\{[^}]*\})([\s\S]*?)\\end\{tabular\}/gi, (match, align, body) => {
+        const cleanBody = body.replace(/\$/g, '');
+        return `$$\\begin{array}${align}${cleanBody}\\end{array}$$`;
+      });
+      return s.trim();
+    }
+
     function resolveMediaSrc(p) {
       if (!p) return '';
       p = String(p).replace(/\\/g, '/');
@@ -313,7 +328,7 @@
             </div>
 
             <div class="prose prose-invert max-w-none text-slate-200">
-              ${q.latexQuestion || q.questionText || 'No text'}
+              ${sanitizeLatex(q.latexQuestion || q.questionText || 'No text')}
             </div>
 
             ${q.hasDiagram ? `
@@ -326,7 +341,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
               ${(q.latexOptions || []).map(opt => `
                 <div class="p-3 rounded-xl border border-slate-700 bg-slate-900/40 text-xs">
-                  <span class="font-bold mr-2 text-slate-500">${opt.key}.</span> ${opt.latex}
+                  <span class="font-bold mr-2 text-slate-500">${opt.key}.</span> ${sanitizeLatex(opt.latex)}
                 </div>
               `).join('')}
             </div>

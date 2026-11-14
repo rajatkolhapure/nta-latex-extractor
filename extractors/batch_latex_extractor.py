@@ -38,12 +38,14 @@ Rules:
 4. Detect tables:
    - "hasTable": true if a data table appears anywhere in the question body (not options).
    - "tableHtml": If hasTable is true, transcribe the ENTIRE table as a valid HTML <table> string with <thead>/<tbody>/<tr>/<th>/<td> tags. Wrap any math inside cells in $...$. If hasTable is false, set tableHtml to null.
+   - If an option contains a truth table or tabular grid, transcribe it inside that option's "latex" using KaTeX math array syntax wrapped in math delimiters: "$$\\begin{array}{cc|c} ... \\end{array}$$". NEVER use "\\begin{tabular}".
 5. Detect drawn structural diagrams (circuits, graphs, optical/ray diagrams, geometric figures) in question body:
    - IMPORTANT: Chemical reactions, equations, reaction mechanisms, reagents, and chemical formulas must NOT be classified or treated as diagrams (`hasDiagram: false`). They must be fully transcribed and rendered using standard LaTeX formatting in `latexQuestion`.
    - "hasDiagram": true if the question body contains a drawn diagram, circuit, graph, or apparatus. Set false for text, tables, and chemical reactions/equations.
    - "diagramBoundingBox": [ymin, xmin, ymax, xmax] normalized 0-1000 coordinates if hasDiagram is true, else null.
    - "optionsHaveDiagrams": true if ANY option contains a drawn diagram/figure (excluding text/LaTeX chemical formulas).
    - For each option in latexOptions, set "hasDiagram": true if THAT specific option has a drawn diagram, false otherwise.
+   - DO NOT describe diagrams or insert placeholder alt-text in "latexQuestion" (e.g. NEVER output "[Circuit diagram containing...]", "\\begin{center}", or diagram summaries). The diagram is cropped and displayed separately. Transcribe ONLY the actual textual words of the question.
 6. Output strictly valid JSON matching this schema:
 {
   "subject": "Physics | Chemistry | Mathematics",
@@ -64,6 +66,31 @@ Rules:
     {"key": "4", "latex": "...", "hasDiagram": false, "bbox": null}
   ]
 }"""
+
+
+def sanitize_latex_text(text: str) -> str:
+    if not text:
+        return ""
+    s = re.sub(r'\\\\\[\d*pt\]', '', text)
+    s = re.sub(r'\\begin\{center\}\s*(\\text\{)?\[.*?(?:diagram|circuit|graph|figure|plot).*?\]\}?\s*\\end\{center\}', '', s, flags=re.IGNORECASE | re.DOTALL)
+    s = re.sub(r'\\\[\s*\\text\{(\[.*?(?:diagram|circuit|graph|figure|plot).*?\])\}\s*\\\]', '', s, flags=re.IGNORECASE | re.DOTALL)
+    s = re.sub(r'\[(?:Circuit\s+diagram|Diagram\s+showing|velocity-time\s+graph|Figure\s+showing|Logic\s+Circuit|circuit\s+diagram|Graph\s+of|Graph\s+showing).*?\]', '', s, flags=re.IGNORECASE | re.DOTALL)
+    s = re.sub(r'\\begin\{center\}', '', s, flags=re.IGNORECASE)
+    s = re.sub(r'\\end\{center\}', '', s, flags=re.IGNORECASE)
+    s = re.sub(r'\s*<br\s*/?>\s*<br\s*/?>\s*$', '', s)
+    return s.strip()
+
+
+def sanitize_tabular_to_array(text: str) -> str:
+    if not text:
+        return ""
+    def repl_tabular(m):
+        # m.group(1) is the alignment spec including braces, e.g. {cc|c}
+        # m.group(2) is the body; strip any $ signs from column headers
+        align = m.group(1)
+        body = m.group(2).replace('$', '')
+        return '$$\\begin{array}' + align + body + '\\end{array}$$'
+    return re.sub(r'\\begin\{tabular\}(\{[^}]*\})([\s\S]*?)\\end\{tabular\}', repl_tabular, text, flags=re.IGNORECASE).strip()
 
 
 def hex_to_bgr(hex_str: str):
@@ -752,16 +779,24 @@ def main():
                 else:
                     exam_val = q.get("targetExam") or "JEE_MAIN"
 
+            clean_q_latex = sanitize_latex_text(q_latex)
+            clean_opts_latex = []
+            for opt in opts_latex:
+                opt_copy = dict(opt)
+                if "latex" in opt_copy:
+                    opt_copy["latex"] = sanitize_tabular_to_array(opt_copy["latex"])
+                clean_opts_latex.append(opt_copy)
+
             q_record = dict(q)
             q_record["subject"] = subj
             q_record["topic"] = topic
             q_record["subTopic"] = subtopic
             q_record["difficulty"] = difficulty
             q_record["exam"] = exam_val
-            q_record["latexQuestion"] = q_latex
+            q_record["latexQuestion"] = clean_q_latex
             q_record["hasTable"] = has_table
             q_record["tableHtml"] = table_html
-            q_record["latexOptions"] = opts_latex
+            q_record["latexOptions"] = clean_opts_latex
             q_record["hasDiagram"] = has_diag
             q_record["diagramPath"] = str(diag_save_path) if has_diag else None
             q_record["diagramBBox"] = [int(c) for c in bbox] if has_diag else None
