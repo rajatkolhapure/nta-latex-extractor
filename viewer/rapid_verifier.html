@@ -88,13 +88,19 @@
     }
     #sourceImageContainer:active { cursor: grabbing; }
     #imageWrapper {
-      /* Trick: min-width 100% + margin auto = centered when small,
-         freely scrollable in both directions when larger than container */
       position: relative;
       display: flex;
       justify-content: center;
       min-width: 100%;
       width: max-content;
+    }
+    #cropSelectionBox {
+      border: 2px dashed #0284c7 !important;
+      outline: 1px dashed rgba(255, 255, 255, 0.95) !important;
+      background-color: rgba(14, 165, 233, 0.22) !important;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.85), inset 0 0 0 1px rgba(0, 0, 0, 0.5) !important;
+      pointer-events: none;
+      z-index: 25;
     }
   </style>
 </head>
@@ -574,6 +580,40 @@
         img.style.maxHeight = 'none';
         if (pill) pill.innerText = `${Math.round(currentZoomScale * 100)}%`;
       }
+      syncCropSelectionToZoom();
+    }
+
+    function syncCropSelectionToZoom() {
+      if (!currentSelection) return;
+      const img = document.getElementById('sourceImage');
+      const selBox = document.getElementById('cropSelectionBox');
+      const toolbar = document.getElementById('cropActionToolbar');
+      if (!img || !selBox || selBox.classList.contains('hidden')) return;
+
+      const scaleX = (img.clientWidth || img.offsetWidth || 1) / (img.naturalWidth || 1);
+      const scaleY = (img.clientHeight || img.offsetHeight || 1) / (img.naturalHeight || 1);
+
+      const dispX = Math.round(currentSelection.x * scaleX);
+      const dispY = Math.round(currentSelection.y * scaleY);
+      const dispW = Math.round(currentSelection.w * scaleX);
+      const dispH = Math.round(currentSelection.h * scaleY);
+
+      selBox.style.left = `${dispX}px`;
+      selBox.style.top = `${dispY}px`;
+      selBox.style.width = `${dispW}px`;
+      selBox.style.height = `${dispH}px`;
+
+      if (toolbar && toolbar.style.display !== 'none') {
+        const overlay = document.getElementById('cropOverlay');
+        const overlayRect = overlay ? overlay.getBoundingClientRect() : { height: 1000, width: 1000 };
+        let barTop = dispY + dispH + 10;
+        if (barTop + 90 > overlayRect.height) {
+          barTop = Math.max(5, dispY - 80);
+        }
+        let barLeft = Math.max(5, Math.min(overlayRect.width - 290, dispX));
+        toolbar.style.left = `${barLeft}px`;
+        toolbar.style.top = `${barTop}px`;
+      }
     }
 
     function resetZoomToFit() {
@@ -601,13 +641,14 @@
         currentZoomScale = curW / natW;
         isFitMode = false;
       }
-      currentZoomScale = Math.max(0.4, Math.min(3.5, currentZoomScale + delta));
+      currentZoomScale = Math.max(0.3, Math.min(4.0, currentZoomScale + delta));
       applyZoom();
     }
 
     function initZoomAndPan() {
       const container = document.getElementById('sourceImageContainer');
       const img = document.getElementById('sourceImage');
+      const overlay = document.getElementById('cropOverlay');
       if (!container || !img) return;
 
       // Mouse wheel zoom (natural smooth scroll wheel support)
@@ -627,7 +668,6 @@
 
         // Focal zoom: keep the point under the cursor stationary
         const rect = container.getBoundingClientRect();
-        // position of cursor relative to scroll content
         const mouseContentX = e.clientX - rect.left + container.scrollLeft;
         const mouseContentY = e.clientY - rect.top + container.scrollTop;
         const ratio = currentZoomScale / oldScale;
@@ -638,40 +678,78 @@
         container.scrollTop = mouseContentY * ratio - (e.clientY - rect.top);
       }, { passive: false });
 
-      // Click and drag to pan when NOT in crop mode
+      // Pan drag state
       let isPanning = false;
+      let isMiddlePanning = false;
       let panStartX = 0;
       let panStartY = 0;
       let startScrollX = 0;
       let startScrollY = 0;
 
+      function startMiddlePan(e) {
+        e.preventDefault();
+        isMiddlePanning = true;
+        panStartX = e.clientX;
+        panStartY = e.clientY;
+        startScrollX = container.scrollLeft;
+        startScrollY = container.scrollTop;
+        container.style.cursor = 'grabbing';
+      }
+
       container.addEventListener('mousedown', (e) => {
-        if (isCropMode) return;
-        if (e.button === 0 || e.button === 1) { // Left or middle click
+        if (e.button === 1) { // Middle click always pans
+          startMiddlePan(e);
+          return;
+        }
+        if (!isCropMode && e.button === 0) { // Left click pans when not cropping
+          e.preventDefault();
           isPanning = true;
           panStartX = e.clientX;
           panStartY = e.clientY;
           startScrollX = container.scrollLeft;
           startScrollY = container.scrollTop;
           container.style.cursor = 'grabbing';
-          e.preventDefault();
         }
       });
 
+      if (overlay) {
+        overlay.addEventListener('mousedown', (e) => {
+          if (e.button === 1) { // Middle click inside crop overlay also pans!
+            startMiddlePan(e);
+          }
+        });
+      }
+
       window.addEventListener('mousemove', (e) => {
-        if (!isPanning || isCropMode) return;
-        const dx = e.clientX - panStartX;
-        const dy = e.clientY - panStartY;
-        container.scrollLeft = startScrollX - dx;
-        container.scrollTop = startScrollY - dy;
+        if (isMiddlePanning || (isPanning && !isCropMode)) {
+          e.preventDefault();
+          const dx = e.clientX - panStartX;
+          const dy = e.clientY - panStartY;
+          container.scrollLeft = startScrollX - dx;
+          container.scrollTop = startScrollY - dy;
+        }
       });
 
-      window.addEventListener('mouseup', () => {
+      window.addEventListener('mouseup', (e) => {
+        if (isMiddlePanning) {
+          isMiddlePanning = false;
+          container.style.cursor = isCropMode ? 'crosshair' : 'grab';
+        }
         if (isPanning) {
           isPanning = false;
           if (!isCropMode) container.style.cursor = 'grab';
         }
       });
+
+      // Prevent browser autoscroll icon on middle click
+      container.addEventListener('auxclick', (e) => {
+        if (e.button === 1) e.preventDefault();
+      });
+      if (overlay) {
+        overlay.addEventListener('auxclick', (e) => {
+          if (e.button === 1) e.preventDefault();
+        });
+      }
     }
 
     function setImageZoom(mode) {
@@ -949,8 +1027,9 @@
         if (barTop + 100 > overlayRect.height) {
           barTop = Math.max(5, selY - 85);
         }
-        let barLeft = Math.max(5, Math.min(overlayRect.width - 280, selX));
+        let barLeft = Math.max(5, Math.min(overlayRect.width - 290, selX));
 
+        renderCropToolbarContent();
         toolbar.style.left = `${barLeft}px`;
         toolbar.style.top = `${barTop}px`;
         toolbar.style.display = 'flex';
@@ -972,11 +1051,45 @@
       });
     }
 
+    function renderCropToolbarContent() {
+      const toolbar = document.getElementById('cropActionToolbar');
+      if (!toolbar) return;
+      toolbar.innerHTML = `
+        <div class="flex items-center justify-between text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+          <span>Assign Selection As:</span>
+          <span id="cropCoordsInfo" class="font-mono text-slate-500"></span>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" onclick="submitManualCrop('diagram')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded shadow-sm flex items-center gap-1 transition">
+            <span>📌 Diagram</span>
+          </button>
+          <button type="button" onclick="submitManualCrop('option_1')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+            1️⃣ Opt 1
+          </button>
+          <button type="button" onclick="submitManualCrop('option_2')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+            2️⃣ Opt 2
+          </button>
+          <button type="button" onclick="submitManualCrop('option_3')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+            3️⃣ Opt 3
+          </button>
+          <button type="button" onclick="submitManualCrop('option_4')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+            4️⃣ Opt 4
+          </button>
+          <button type="button" onclick="cancelCropSelection()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition">
+            ✕ Cancel
+          </button>
+        </div>
+      `;
+    }
+
     function cancelCropSelection() {
       const selBox = document.getElementById('cropSelectionBox');
       const toolbar = document.getElementById('cropActionToolbar');
       if (selBox) selBox.classList.add('hidden');
-      if (toolbar) toolbar.style.display = 'none';
+      if (toolbar) {
+        toolbar.style.display = 'none';
+        renderCropToolbarContent();
+      }
       currentSelection = null;
     }
 
@@ -987,7 +1100,6 @@
       }
       const q = activeQueue[currentIndex];
       const toolbar = document.getElementById('cropActionToolbar');
-      const originalBtnsHtml = toolbar.innerHTML;
 
       toolbar.innerHTML = `<div class="p-2 text-sky-400 font-mono text-xs flex items-center gap-2"><span>⏳</span> Cropping...</div>`;
 
@@ -996,6 +1108,7 @@
           paperId: q.paperId,
           questionNumber: q.questionNumber,
           subject: q.subject,
+          dataset: currentDataset,
           target: target,
           bbox: [currentSelection.x, currentSelection.y, currentSelection.w, currentSelection.h]
         };
@@ -1035,8 +1148,9 @@
         cancelCropSelection();
         setSaveStatus('saved');
       } catch (err) {
+        renderCropToolbarContent();
         alert('Manual crop failed: ' + err.message);
-        toolbar.innerHTML = originalBtnsHtml;
+      }
       }
     }
 
