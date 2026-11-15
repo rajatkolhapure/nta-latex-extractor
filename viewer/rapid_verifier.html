@@ -77,9 +77,17 @@
       0% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.6); }
       100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
-    .zoom-fit { max-height: calc(100vh - 240px); width: auto; object-fit: contain; }
-    .zoom-orig { max-height: none; width: 100%; object-fit: contain; }
-    .zoom-2x { width: 180%; max-width: none; }
+    .zoom-fit { max-height: calc(100vh - 240px); width: auto; max-width: 100%; object-fit: contain; display: block; }
+    #sourceImageContainer {
+      cursor: grab;
+      align-items: flex-start !important;
+      justify-content: center;
+      overflow: auto !important;
+      position: relative;
+      scrollbar-width: thin;
+    }
+    #sourceImageContainer:active { cursor: grabbing; }
+    #imageWrapper { display: inline-block; vertical-align: top; }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen font-sans selection:bg-blue-500/30 transition-colors duration-200">
@@ -181,9 +189,11 @@
         <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
           <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Original Paper Source Image</span>
           <div class="flex items-center gap-1 text-[11px]">
-            <button onclick="setImageZoom('fit')" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 hover:border-slate-500">Fit</button>
-            <button onclick="setImageZoom('orig')" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 hover:border-slate-500">100%</button>
-            <button onclick="setImageZoom('2x')" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 hover:border-slate-500">Zoom</button>
+            <button onclick="resetZoomToFit()" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 hover:border-slate-500 font-medium" title="Fit to Viewport">Fit</button>
+            <button onclick="adjustZoom(-0.15)" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 hover:border-slate-500 font-bold" title="Zoom Out">−</button>
+            <span id="zoomLevelPill" class="px-1 text-[10px] font-mono text-slate-400 min-w-[34px] text-center">Fit</span>
+            <button onclick="adjustZoom(0.15)" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 hover:border-slate-500 font-bold" title="Zoom In">+</button>
+            <button onclick="setZoom100()" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 hover:border-slate-500 font-medium" title="100% Original Size">100%</button>
             <a id="openRawImageLink" href="#" target="_blank" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-blue-400 hover:border-slate-500 ml-1">Open</a>
             <button id="cropToggleBtn" onclick="toggleManualCropMode()" class="input-ctrl px-2.5 py-0.5 bg-blue-600 hover:bg-blue-500 text-white rounded font-medium ml-2 transition flex items-center gap-1 shadow-sm">
               <span>✂️</span> <span id="cropToggleLabel">Crop Tool</span>
@@ -191,9 +201,9 @@
           </div>
         </div>
 
-        <div id="sourceImageContainer" class="flex-1 flex items-center justify-center overflow-auto rounded-lg bg-slate-950 p-2 border border-slate-800/80 relative">
+        <div id="sourceImageContainer" class="flex-1 overflow-auto rounded-lg bg-slate-950 p-3 border border-slate-800/80 relative flex justify-center items-start cursor-grab">
           <div id="imageWrapper" class="relative inline-block select-none">
-            <img id="sourceImage" src="" alt="Source Question Image" class="zoom-fit transition-all duration-150 block"
+            <img id="sourceImage" src="" alt="Source Question Image" class="zoom-fit block"
                  onerror="this.style.display='none'; document.getElementById('imageErrorMsg').style.display='block';">
             
             <!-- Crop Interactive Overlay -->
@@ -341,7 +351,6 @@
     let verifications = {};
     let currentDataset = 'data/extracted_physics.json';
     let isLightMode = false;
-    let currentZoom = 'fit';
 
     let reviewCountThisSession = 0;
     let sessionStartTime = Date.now();
@@ -532,12 +541,134 @@
       }
     }
 
-    function setImageZoom(mode) {
-      currentZoom = mode;
+    let currentZoomScale = 1.0;
+    let isFitMode = true;
+
+    function applyZoom() {
       const img = document.getElementById('sourceImage');
-      img.className = 'transition-all duration-150 ' + (
-        mode === 'orig' ? 'zoom-orig' : (mode === '2x' ? 'zoom-2x' : 'zoom-fit')
-      );
+      const pill = document.getElementById('zoomLevelPill');
+      if (!img) return;
+
+      if (isFitMode) {
+        img.className = 'zoom-fit block transition-all duration-100';
+        img.style.width = '';
+        img.style.maxWidth = '';
+        img.style.height = '';
+        img.style.maxHeight = '';
+        if (pill) pill.innerText = 'Fit';
+      } else {
+        img.className = 'block transition-none';
+        const baseWidth = img.naturalWidth || 600;
+        const targetWidth = Math.round(baseWidth * currentZoomScale);
+        img.style.width = `${targetWidth}px`;
+        img.style.maxWidth = 'none';
+        img.style.height = 'auto';
+        img.style.maxHeight = 'none';
+        if (pill) pill.innerText = `${Math.round(currentZoomScale * 100)}%`;
+      }
+    }
+
+    function resetZoomToFit() {
+      isFitMode = true;
+      currentZoomScale = 1.0;
+      applyZoom();
+      const container = document.getElementById('sourceImageContainer');
+      if (container) {
+        container.scrollTop = 0;
+        container.scrollLeft = 0;
+      }
+    }
+
+    function setZoom100() {
+      isFitMode = false;
+      currentZoomScale = 1.0;
+      applyZoom();
+    }
+
+    function adjustZoom(delta) {
+      const img = document.getElementById('sourceImage');
+      if (isFitMode && img) {
+        const curW = img.clientWidth || img.naturalWidth || 600;
+        const natW = img.naturalWidth || 600;
+        currentZoomScale = curW / natW;
+        isFitMode = false;
+      }
+      currentZoomScale = Math.max(0.4, Math.min(3.5, currentZoomScale + delta));
+      applyZoom();
+    }
+
+    function initZoomAndPan() {
+      const container = document.getElementById('sourceImageContainer');
+      const img = document.getElementById('sourceImage');
+      if (!container || !img) return;
+
+      // Mouse wheel zoom (natural smooth scroll wheel support)
+      container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.15 : -0.15;
+
+        if (isFitMode) {
+          const curW = img.clientWidth || img.naturalWidth || 600;
+          const natW = img.naturalWidth || 600;
+          currentZoomScale = curW / natW;
+          isFitMode = false;
+        }
+
+        const oldScale = currentZoomScale;
+        currentZoomScale = Math.max(0.4, Math.min(3.5, currentZoomScale + delta));
+
+        // Focal zoom centered on mouse cursor
+        const rect = container.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left + container.scrollLeft;
+        const mouseY = e.clientY - rect.top + container.scrollTop;
+        const ratio = currentZoomScale / oldScale;
+
+        applyZoom();
+
+        container.scrollLeft = mouseX * ratio - (e.clientX - rect.left);
+        container.scrollTop = mouseY * ratio - (e.clientY - rect.top);
+      }, { passive: false });
+
+      // Click and drag to pan when NOT in crop mode
+      let isPanning = false;
+      let panStartX = 0;
+      let panStartY = 0;
+      let startScrollX = 0;
+      let startScrollY = 0;
+
+      container.addEventListener('mousedown', (e) => {
+        if (isCropMode) return;
+        if (e.button === 0 || e.button === 1) { // Left or middle click
+          isPanning = true;
+          panStartX = e.clientX;
+          panStartY = e.clientY;
+          startScrollX = container.scrollLeft;
+          startScrollY = container.scrollTop;
+          container.style.cursor = 'grabbing';
+          e.preventDefault();
+        }
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isPanning || isCropMode) return;
+        const dx = e.clientX - panStartX;
+        const dy = e.clientY - panStartY;
+        container.scrollLeft = startScrollX - dx;
+        container.scrollTop = startScrollY - dy;
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isPanning) {
+          isPanning = false;
+          if (!isCropMode) container.style.cursor = 'grab';
+        }
+      });
+    }
+
+    function setImageZoom(mode) {
+      if (mode === 'fit') resetZoomToFit();
+      else if (mode === 'orig') setZoom100();
+      else adjustZoom(0.3);
     }
 
     function renderCurrent() {
@@ -607,6 +738,7 @@
         sourceImg.style.display = 'block';
         errorMsg.style.display = 'none';
         document.getElementById('openRawImageLink').href = resolvedImg;
+        resetZoomToFit();
       } else {
         sourceImg.style.display = 'none';
         errorMsg.style.display = 'block';
@@ -654,14 +786,6 @@
           ],
           throwOnError: false
         });
-      }
-
-      // Auto-crop on demand: if this question is flagged and has no option crops, fetch them silently
-      if (status === 'needs_fix') {
-        const hasCrops = q.optionDiagrams && Object.values(q.optionDiagrams).some(v => !!v);
-        if (!hasCrops) {
-          fetchOptionCrops(q);
-        }
       }
     }
 
@@ -822,9 +946,9 @@
         toolbar.style.top = `${barTop}px`;
         toolbar.style.display = 'flex';
 
-        // Scale factors
-        const scaleX = img.naturalWidth / img.clientWidth;
-        const scaleY = img.naturalHeight / img.clientHeight;
+        // Scale factors: overlay fills the displayed image exactly, so clientWidth/Height is correct
+        const scaleX = img.naturalWidth / (img.clientWidth || img.offsetWidth || 1);
+        const scaleY = img.naturalHeight / (img.clientHeight || img.offsetHeight || 1);
         const natW = Math.round(selW * scaleX);
         const natH = Math.round(selH * scaleY);
         const coordsEl = document.getElementById('cropCoordsInfo');
@@ -856,7 +980,7 @@
       const toolbar = document.getElementById('cropActionToolbar');
       const originalBtnsHtml = toolbar.innerHTML;
 
-      toolbar.innerHTML = `<div class="p-2 text-sky-400 font-mono text-xs flex items-center gap-2"><span>⏳</span> Cropping &amp; Enhancing...</div>`;
+      toolbar.innerHTML = `<div class="p-2 text-sky-400 font-mono text-xs flex items-center gap-2"><span>⏳</span> Cropping...</div>`;
 
       try {
         const payload = {
@@ -1102,6 +1226,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       initCropOverlay();
+      initZoomAndPan();
       loadDataset();
     });
   </script>
