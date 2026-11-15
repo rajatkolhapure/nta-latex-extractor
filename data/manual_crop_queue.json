@@ -60,9 +60,14 @@
         "hasDiagram": false
       }
     ],
-    "hasDiagram": false,
-    "diagramPath": null,
-    "diagramBBox": null,
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_6_20190918144902.png",
+    "diagramBBox": [
+      3,
+      360,
+      372,
+      505
+    ],
     "optionsHaveDiagrams": false,
     "optionDiagrams": {},
     "extractedVia": "gemini-3.5-flash-lite (prompt_1)",
@@ -144,10 +149,10 @@
     "hasDiagram": true,
     "diagramPath": "downloads/diagrams/Physics/diagram_3_20190930104529.png",
     "diagramBBox": [
-      680,
-      23,
-      1440,
-      758
+      22,
+      137,
+      338,
+      392
     ],
     "optionsHaveDiagrams": false,
     "optionDiagrams": {},
@@ -236,10 +241,10 @@
     ],
     "optionsHaveDiagrams": true,
     "optionDiagrams": {
-      "1": null,
+      "1": "downloads/diagrams/Physics/options/option_1_16_20191003120524.png",
       "2": "downloads/diagrams/Physics/options/option_2_16_20191003120524.png",
-      "3": null,
-      "4": null
+      "3": "downloads/diagrams/Physics/options/option_3_16_20191003120524.png",
+      "4": "downloads/diagrams/Physics/options/option_4_16_20191003120524.png"
     },
     "extractedVia": "gemini-3.5-flash-lite (prompt_1)",
     "aiAnomalyReport": {
@@ -325,7 +330,7 @@
     "optionDiagrams": {
       "1": "downloads/diagrams/Physics/options/option_1_6_20191003123741.png",
       "2": "downloads/diagrams/Physics/options/option_2_6_20191003123741.png",
-      "3": null,
+      "3": "downloads/diagrams/Physics/options/option_3_6_20191003123741.png",
       "4": "downloads/diagrams/Physics/options/option_4_6_20191003123741.png"
     },
     "extractedVia": "gemini-3.5-flash-lite (prompt_1)",
@@ -414,7 +419,7 @@
     "optionsHaveDiagrams": true,
     "optionDiagrams": {
       "1": "downloads/diagrams/Physics/options/option_1_9_20191003123746.png",
-      "2": null,
+      "2": "downloads/diagrams/Physics/options/option_2_9_20191003123746.png",
       "3": "downloads/diagrams/Physics/options/option_3_9_20191003123746.png",
       "4": "downloads/diagrams/Physics/options/option_4_9_20191003123746.png"
     },
@@ -493,9 +498,14 @@
         "hasDiagram": false
       }
     ],
-    "hasDiagram": false,
-    "diagramPath": null,
-    "diagramBBox": null,
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_15_20191118121650.png",
+    "diagramBBox": [
+      17,
+      142,
+      136,
+      264
+    ],
     "optionsHaveDiagrams": false,
     "optionDiagrams": {},
     "extractedVia": "gemini-3.5-flash-lite (prompt_1)",
@@ -579,9 +589,9 @@
     "optionsHaveDiagrams": true,
     "optionDiagrams": {
       "1": "downloads/diagrams/Physics/options/option_1_3_20191118121624.png",
-      "2": null,
+      "2": "downloads/diagrams/Physics/options/option_2_3_20191118121624.png",
       "3": "downloads/diagrams/Physics/options/option_3_3_20191118121624.png",
-      "4": null
+      "4": "downloads/diagrams/Physics/options/option_4_3_20191118121624.png"
     },
     "extractedVia": "gemini-3.5-flash-lite (prompt_1)",
     "aiAnomalyReport": {
@@ -659,9 +669,14 @@
         "hasDiagram": false
       }
     ],
-    "hasDiagram": false,
-    "diagramPath": null,
-    "diagramBBox": null,
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_7_20191118121632.png",
+    "diagramBBox": [
+      2,
+      188,
+      167,
+      345
+    ],
     "optionsHaveDiagrams": false,
     "optionDiagrams": {},
     "extractedVia": "gemini-3.5-flash-lite (prompt_1)",

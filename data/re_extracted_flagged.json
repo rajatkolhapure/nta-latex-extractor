@@ -1,0 +1,2824 @@
+[
+  {
+    "paperId": "133",
+    "paperTitle": "Paper1",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 14,
+    "topic": "Electrostatics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/133/1/14_20190918144847.png",
+    "localImagePath": "./downloads/question_images/14_20190918144847.png",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "4"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Electric Field and Gauss's Law",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A solid ball of radius $R$ has a charge density $\\rho$ given by $\\rho = \\rho_0 \\left(1 - \\frac{r}{R}\\right)$ for $0 \\le r \\le R$. The electric field outside the ball is :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\frac{\\rho_0 R^3}{\\epsilon_0 r^2}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$\\frac{\\rho_0 R^3}{12 \\epsilon_0 r^2}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$\\frac{4 \\rho_0 R^3}{3 \\epsilon_0 r^2}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$\\frac{3 \\rho_0 R^3}{4 \\epsilon_0 r^2}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "133",
+    "paperTitle": "Paper1",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 20,
+    "topic": "Electromagnetic Induction",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/133/1/20_20190918144835.png",
+    "localImagePath": "./downloads/question_images/20_20190918144835.png",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "4"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Motional Electromotive Force",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A copper rod of mass $m$ slides under gravity on two smooth parallel rails, with separation $l$ and set at an angle of $\\theta$ with the horizontal. At the bottom, rails are joined by a resistance $R$. There is a uniform magnetic field $B$ normal to the plane of the rails, as shown in the figure. The terminal speed of the copper rod is :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\frac{m g R \\tan \\theta}{B^2 l^2}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$\\frac{m g R \\cot \\theta}{B^2 l^2}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$\\frac{m g R \\sin \\theta}{B^2 l^2}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$\\frac{m g R \\cos \\theta}{B^2 l^2}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_20_20190918144835.png",
+    "diagramBBox": [
+      12,
+      12,
+      306,
+      223
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "133",
+    "paperTitle": "Paper1",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 23,
+    "topic": "Wave Optics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/133/1/23_20190918144830.png",
+    "localImagePath": "./downloads/question_images/23_20190918144830.png",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "4"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Polarization",
+    "difficulty": "Hard",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A plane polarized light is incident on a polarizer with its pass axis making angle $\\theta$ with $x$-axis, as shown in the figure. At four different values of $\\theta$, $\\theta = 8^\\circ, 38^\\circ, 188^\\circ$ and $218^\\circ$, the observed intensities are same. What is the angle between the direction of polarization and $x$-axis ?",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$98^\\circ$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$128^\\circ$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$203^\\circ$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$45^\\circ$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_23_20190918144830.png",
+    "diagramBBox": [
+      21,
+      210,
+      274,
+      445
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "133",
+    "paperTitle": "Paper1",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 25,
+    "topic": "Atoms",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/133/1/25_20190918144826.png",
+    "localImagePath": "./downloads/question_images/25_20190918144826.png",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "4"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Bohr's Model for Hydrogen-like Atoms",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "Muon ($\\mu^-$) is a negatively charged ($|q| = |e|$) particle with a mass $m_{\\mu} = 200\\,m_e$, where $m_e$ is the mass of the electron and $e$ is the electronic charge. If $\\mu^-$ is bound to a proton to form a hydrogen-like atom, identify the correct statements.<br>**(A)** Radius of the muonic orbit is $200$ times smaller than that of the electron.<br>**(B)** The speed of the $\\mu^-$ in the $n^{\\text{th}}$ orbit is $\\frac{1}{200}$ times that of the electron in the $n^{\\text{th}}$ orbit.<br>**(C)** The ionization energy of muonic atom is $200$ times more than that of an hydrogen atom.<br>**(D)** The momentum of the muon in the $n^{\\text{th}}$ orbit is $200$ times more than that of the electron.",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$(\\text{A}), (\\text{B}), (\\text{D})$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$(\\text{A}), (\\text{C}), (\\text{D})$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$(\\text{B}), (\\text{D})$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$(\\text{C}), (\\text{D})$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "133",
+    "paperTitle": "Paper1",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 6,
+    "topic": "Rotational Motion",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/133/1/6_20190918144902.png",
+    "localImagePath": "./downloads/question_images/6_20190918144902.png",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "4"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Conservation of Angular Momentum",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A thin uniform bar of length $L$ and mass $8\\text{ m}$ lies on a smooth horizontal table. Two point masses $m$ and $2\\text{ m}$ are moving in the same horizontal plane from opposite sides of the bar with speeds $2v$ and $v$ respectively. The masses stick to the bar after collision at a distance $\\frac{L}{3}$ and $\\frac{L}{6}$ respectively from the centre of the bar. If the bar starts rotating about its center of mass as a result of collision, the angular speed of the bar will be :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\frac{v}{5L}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$\\frac{6v}{5L}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$\\frac{3v}{5L}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$\\frac{v}{6L}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_6_20190918144902.png",
+    "diagramBBox": [
+      3,
+      360,
+      372,
+      505
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "138",
+    "paperTitle": "PAPER1 15-04-18 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 20,
+    "topic": "Electromagnetic Oscillations",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/138/1/20_20190919112303.PNG",
+    "localImagePath": "./downloads/question_images/20_20190919112303.PNG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "LC Oscillations",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "An ideal capacitor of capacitance $0.2\\text{ }\\mu\\text{F}$ is charged to a potential difference of $10\\text{ V}$. The charging battery is then disconnected. The capacitor is then connected to an ideal inductor of self inductance $0.5\\text{ mH}$. The current at a time when the potential difference across the capacitor is $5\\text{ V}$, is :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$0.34\\text{ A}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$0.25\\text{ A}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$0.17\\text{ A}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$0.15\\text{ A}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "138",
+    "paperTitle": "PAPER1 15-04-18 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 5,
+    "topic": "Ray Optics and Optical Instruments",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/138/1/5_20190919112330.PNG",
+    "localImagePath": "./downloads/question_images/5_20190919112330.PNG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Reflection from Spherical Mirrors",
+    "difficulty": "Hard",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A particle is oscillating on the X-axis with an amplitude $2\\text{ cm}$ about the point $x_0 = 10\\text{ cm}$, with a frequency $\\omega$. A concave mirror of focal length $5\\text{ cm}$ is placed at the origin (see figure). Identify the correct statements.\\n(A) The image executes periodic motion.\\n(B) The image executes non-periodic motion.\\n(C) The turning points of the image are asymmetric w.r.t. the image of the point at $x = 10\\text{ cm}$.\\n(D) The distance between the turning points of the oscillation of the image is $\\frac{100}{21}\\text{ cm}$.",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$(A), (D)$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$(A), (C), (D)$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$(B), (D)$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$(B), (C)$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_5_20190919112330.png",
+    "diagramBBox": [
+      11,
+      99,
+      205,
+      151
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "140",
+    "paperTitle": "PAPER 1 16-04-18 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 10,
+    "topic": "Thermodynamics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/140/1/10_20190919115235.PNG",
+    "localImagePath": "./downloads/question_images/10_20190919115235.PNG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "4"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "First Law of Thermodynamics and PV Processes",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "One mole of an ideal monoatomic gas is taken along the path $ABCA$ as shown in the PV diagram. The maximum temperature attained by the gas along the path $BC$ is given by :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\frac{25}{16} \\frac{P_o V_o}{R}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$\\frac{25}{8} \\frac{P_o V_o}{R}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$\\frac{25}{4} \\frac{P_o V_o}{R}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$\\frac{5}{8} \\frac{P_o V_o}{R}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_10_20190919115235.png",
+    "diagramBBox": [
+      12,
+      106,
+      245,
+      296
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "140",
+    "paperTitle": "PAPER 1 16-04-18 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 15,
+    "topic": "Current Electricity",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/140/1/15_20190919115227.PNG",
+    "localImagePath": "./downloads/question_images/15_20190919115227.PNG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "4"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Temperature Dependence of Resistance",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A heating element has a resistance of $100\\;\\Omega$ at room temperature. When it is connected to a supply of $220\\text{ V}$, a steady current of $2\\text{ A}$ passes in it and temperature is $500^{\\circ}\\text{C}$ more than room temperature. What is the temperature coefficient of resistance of the heating element ?",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$0.5 \\times 10^{-4}\\;^{\\circ}\\text{C}^{-1}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$5 \\times 10^{-4}\\;^{\\circ}\\text{C}^{-1}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$1 \\times 10^{-4}\\;^{\\circ}\\text{C}^{-1}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$2 \\times 10^{-4}\\;^{\\circ}\\text{C}^{-1}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "140",
+    "paperTitle": "PAPER 1 16-04-18 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 17,
+    "topic": "Current Electricity and Capacitors",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/140/1/17_20190919115224.PNG",
+    "localImagePath": "./downloads/question_images/17_20190919115224.PNG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "4"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "RC Circuits",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "In the following circuit, the switch $S$ is closed at $t=0$. The charge on the capacitor $C_1$ as a function of time will be given by $\\left(C_{eq} = \\frac{C_1 C_2}{C_1 + C_2}\\right)$",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$C_1 E \\left[1 - \\exp\\left(-tR/C_1\\right)\\right]$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$C_2 E \\left[1 - \\exp\\left(-t/RC_2\\right)\\right]$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$C_{eq} E \\left[1 - \\exp\\left(-t/RC_{eq}\\right)\\right]$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$C_{eq} E \\exp\\left(-t/RC_{eq}\\right)$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_17_20190919115224.png",
+    "diagramBBox": [
+      13,
+      135,
+      237,
+      256
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "140",
+    "paperTitle": "PAPER 1 16-04-18 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 23,
+    "topic": "Wave Optics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/140/1/23_20190919115213.PNG",
+    "localImagePath": "./downloads/question_images/23_20190919115213.PNG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "4"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Polarization",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "Unpolarized light of intensity $I$ is incident on a system of two polarizers, $A$ followed by $B$. The intensity of emergent light is $I/2$. If a third polarizer $C$ is placed between $A$ and $B$, the intensity of emergent light is reduced to $I/3$. The angle between the polarizers $A$ and $C$ is $\\theta$. Then :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\cos\\theta = \\left(\\frac{2}{3}\\right)^{1/2}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$\\cos\\theta = \\left(\\frac{2}{3}\\right)^{1/4}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$\\cos\\theta = \\left(\\frac{1}{3}\\right)^{1/2}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$\\cos\\theta = \\left(\\frac{1}{3}\\right)^{1/4}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "140",
+    "paperTitle": "PAPER 1 16-04-18 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 5,
+    "topic": "Oscillations",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/140/1/5_20190919115244.PNG",
+    "localImagePath": "./downloads/question_images/5_20190919115244.PNG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "4"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Simple Harmonic Motion and Collisions",
+    "difficulty": "Hard",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "An oscillator of mass $M$ is at rest in its equilibrium position in a potential $V = \\frac{1}{2} k(x-X)^2$. A particle of mass $m$ comes from right with speed $u$ and collides completely inelastically with $M$ and sticks to it. This process repeats every time the oscillator crosses its equilibrium position. The amplitude of oscillations after $13$ collisions is : ($M=10$, $m=5$, $u=1$, $k=1$)",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\frac{1}{\\sqrt{3}}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$\\frac{1}{2}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$\\frac{2}{3}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$\\sqrt{\\frac{3}{5}}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "140",
+    "paperTitle": "PAPER 1 16-04-18 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 7,
+    "topic": "Rotational Motion",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/140/1/7_20190919115241.PNG",
+    "localImagePath": "./downloads/question_images/7_20190919115241.PNG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "4"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Moment of Inertia and Parallel Axis Theorem",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A thin circular disk is in the $xy$ plane as shown in the figure. The ratio of its moment of inertia about $z$ and $z'$ axes will be :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$1 : 3$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$1 : 4$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$1 : 5$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$1 : 2$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_7_20190919115241.png",
+    "diagramBBox": [
+      11,
+      80,
+      226,
+      257
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "143",
+    "paperTitle": "PAPER 1 03-04-17",
+    "targetExam": "JEE_MAIN",
+    "subject": "Chemistry",
+    "questionNumber": 2,
+    "topic": "Chemical Thermodynamics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/143/1/2_20190919141011.jpg",
+    "localImagePath": "./downloads/question_images/2_20190919141011.jpg",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Enthalpy of Formation and Hess's Law",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "Given the thermochemical equations :<br>$\\text{C}_{\\text{(graphite)}} + \\text{O}_2(g) \\rightarrow \\text{CO}_2(g);\\quad \\Delta_r H^{\\circ} = -393.5\\text{ kJ mol}^{-1}$<br>$\\text{H}_2(g) + \\frac{1}{2}\\text{O}_2(g) \\rightarrow \\text{H}_2\\text{O}(l);\\quad \\Delta_r H^{\\circ} = -285.8\\text{ kJ mol}^{-1}$<br>$\\text{CO}_2(g) + 2\\text{H}_2\\text{O}(l) \\rightarrow \\text{CH}_4(g) + 2\\text{O}_2(g);\\quad \\Delta_r H^{\\circ} = +890.3\\text{ kJ mol}^{-1}$<br>Based on the above thermochemical equations, the value of $\\Delta_r H^{\\circ}$ at $298\\text{ K}$ for the reaction :<br>$\\text{C}_{\\text{(graphite)}} + 2\\text{H}_2(g) \\rightarrow \\text{CH}_4(g)$ will be :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$+144.0\\text{ kJ mol}^{-1}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$-74.8\\text{ kJ mol}^{-1}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$-144.1\\text{ kJ mol}^{-1}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$+74.8\\text{ kJ mol}^{-1}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "145",
+    "paperTitle": "PAPER 1 03-04-16",
+    "targetExam": "JEE_MAIN",
+    "subject": "Chemistry",
+    "questionNumber": 1,
+    "topic": "States of Matter",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/145/1/1_20190919145115.jpg",
+    "localImagePath": "./downloads/question_images/1_20190919145115.jpg",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Ideal Gas Law",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "Two closed bulbs of equal volume $(V)$ containing an ideal gas initially at pressure $p_i$ and temperature $T_1$ are connected through a narrow tube of negligible volume as shown in the figure below. The temperature of one of the bulbs is then raised to $T_2$. The final pressure $P_f$ is:",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$2p_i \\left( \\frac{T_2}{T_1 + T_2} \\right)$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$2p_i \\left( \\frac{T_1 T_2}{T_1 + T_2} \\right)$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$p_i \\left( \\frac{T_1 T_2}{T_1 + T_2} \\right)$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$2p_i \\left( \\frac{T_1}{T_1 + T_2} \\right)$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Chemistry/diagram_1_20190919145115.png",
+    "diagramBBox": [
+      8,
+      358,
+      333,
+      451
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.1-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "145",
+    "paperTitle": "PAPER 1 03-04-16",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 30,
+    "topic": "Dual Nature of Radiation and Matter",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/145/1/30_20190919145023.jpg",
+    "localImagePath": "./downloads/question_images/30_20190919145023.jpg",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "De Broglie Wavelength",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A stream of electrons from a heat filament was passed between two charge plates kept at a potential difference $V$ esu. If $e$ and $m$ are charge and mass of an electron, respectively, then the value of $\\frac{h}{\\lambda}$ (where $\\lambda$ is wavelength associated with electron wave) is given by:",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\sqrt{meV}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$\\sqrt{2meV}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$meV$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$2meV$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "148",
+    "paperTitle": "PAPER 1 09-01-2019 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 14,
+    "topic": "Electrostatic Potential and Capacitance",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/148/1/14_20191003150620.JPG",
+    "localImagePath": "./downloads/question_images/14_20191003150620.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "3"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Capacitor with Dielectric",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A parallel plate capacitor with square plates is filled with four dielectrics of dielectric constants $K_1$, $K_2$, $K_3$, $K_4$ arranged as shown in the figure. The effective dielectric constant $K$ will be :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$K = \\frac{(K_1 + K_2)(K_3 + K_4)}{K_1 + K_2 + K_3 + K_4}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$K = \\frac{(K_1 + K_3)(K_2 + K_4)}{K_1 + K_2 + K_3 + K_4}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$K = \\frac{(K_1 + K_4)(K_2 + K_3)}{2(K_1 + K_2 + K_3 + K_4)}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$K = \\frac{(K_1 + K_2)(K_3 + K_4)}{2(K_1 + K_2 + K_3 + K_4)}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_14_20191003150620.png",
+    "diagramBBox": [
+      12,
+      149,
+      352,
+      564
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "148",
+    "paperTitle": "PAPER 1 09-01-2019 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 26,
+    "topic": "Modern Physics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/148/1/26_20191003150755.JPG",
+    "localImagePath": "./downloads/question_images/26_20191003150755.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "3"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Radioactivity",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "At a given instant, say $t=0$, two radioactive substances $A$ and $B$ have equal activities. The ratio $\\frac{R_B}{R_A}$ of their activities after time $t$ itself decays with time $t$ as $e^{-3t}$. If the half-life of $A$ is $\\ln 2$, the half-life of $B$ is :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\frac{\\ln 2}{4}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$\\frac{\\ln 2}{2}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$2\\ln 2$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$4\\ln 2$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.1-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "148",
+    "paperTitle": "PAPER 1 09-01-2019 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 6,
+    "topic": "Rotational Motion",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/148/1/6_20191003150453.JPG",
+    "localImagePath": "./downloads/question_images/6_20191003150453.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "3"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Conservation of Mechanical Energy",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A rod of length $50\\text{ cm}$ is pivoted at one end. It is raised such that it makes an angle of $30^{\\circ}$ from the horizontal as shown and released from rest. Its angular speed when it passes through the horizontal (in $\\text{rad s}^{-1}$) will be ($g = 10\\text{ ms}^{-2}$)",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\sqrt{30}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$\\sqrt{\\frac{30}{2}}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$\\frac{\\sqrt{30}}{2}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$\\frac{\\sqrt{20}}{3}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_6_20191003150453.png",
+    "diagramBBox": [
+      22,
+      174,
+      279,
+      337
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.1-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "150",
+    "paperTitle": "PAPER 1 10-01-2019",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 10,
+    "topic": "Thermodynamics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/150/1/10_20190930104515.JPG",
+    "localImagePath": "./downloads/question_images/10_20190930104515.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Carnot Engine",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "Three Carnot engines operate in series between a heat source at a temperature $T_1$ and a heat sink at temperature $T_4$ (see figure). There are two other reservoirs at temperature $T_2$ and $T_3$, as shown, with $T_1 > T_2 > T_3 > T_4$. The three engines are equally efficient if :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$T_2 = (T_1 T_4^2)^{1/3} ; T_3 = (T_1^2 T_4)^{1/3}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$T_2 = (T_1 T_4)^{1/2} ; T_3 = (T_1^2 T_4)^{1/3}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$T_2 = (T_1^2 T_4)^{1/3} ; T_3 = (T_1 T_4^2)^{1/3}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$T_2 = (T_1^3 T_4)^{1/4} ; T_3 = (T_1 T_4^3)^{1/4}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_10_20190930104515.png",
+    "diagramBBox": [
+      13,
+      165,
+      183,
+      439
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "150",
+    "paperTitle": "PAPER 1 10-01-2019",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 14,
+    "topic": "Electrostatic Potential and Capacitance",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/150/1/14_20190930104508.JPG",
+    "localImagePath": "./downloads/question_images/14_20190930104508.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Capacitor with Dielectric",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A parallel plate capacitor is of area $6\\text{ cm}^2$ and a separation $3\\text{ mm}$. The gap is filled with three dielectric materials of equal thickness (see figure) with dielectric constants $K_1 = 10$, $K_2 = 12$ and $K_3 = 14$. The dielectric constant of a material which when fully inserted in above capacitor, gives same capacitance would be :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$36$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$12$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$4$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$14$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_14_20190930104508.png",
+    "diagramBBox": [
+      14,
+      220,
+      252,
+      320
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "150",
+    "paperTitle": "PAPER 1 10-01-2019",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 15,
+    "topic": "Electrostatic Potential and Capacitance",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/150/1/15_20190930104507.JPG",
+    "localImagePath": "./downloads/question_images/15_20190930104507.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Electric Potential due to Dipole",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "Two electric dipoles, $\\text{A}, \\text{B}$ with respective dipole moments $\\vec{d}_{\\text{A}} = -4 \\, qa \\, \\hat{i}$ and $\\vec{d}_{\\text{B}} = -2 \\, qa \\, \\hat{i}$ are placed on the $x$-axis with a separation $R$, as shown in the figure.\\nThe distance from $\\text{A}$ at which both of them produce the same potential is :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\frac{\\sqrt{2} R}{\\sqrt{2} - 1}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$\\frac{\\sqrt{2} R}{\\sqrt{2} + 1}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$\\frac{R}{\\sqrt{2} + 1}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$\\frac{R}{\\sqrt{2} - 1}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_15_20190930104507.png",
+    "diagramBBox": [
+      9,
+      172,
+      294,
+      233
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "150",
+    "paperTitle": "PAPER 1 10-01-2019",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 3,
+    "topic": "Kinematics and Vectors",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/150/1/3_20190930104529.JPG",
+    "localImagePath": "./downloads/question_images/3_20190930104529.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Vector Addition and Subtraction",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "In the cube of side '$a$' shown in the figure, the vector from the central point of the face $ABOD$ to the central point of the face $BEFO$ will be :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "${\\frac{1}{2}a(\\hat{k} - \\hat{i})}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "${\\frac{1}{2}a(\\hat{i} - \\hat{k})}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "${\\frac{1}{2}a(\\hat{j} - \\hat{i})}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "${\\frac{1}{2}a(\\hat{j} - \\hat{k})}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_3_20190930104529.png",
+    "diagramBBox": [
+      22,
+      137,
+      338,
+      392
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "153",
+    "paperTitle": "PAPER 1 11-01-2019 EVENING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 14,
+    "topic": "Current Electricity and Capacitors",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/153/1/14_20191003112218.JPG",
+    "localImagePath": "./downloads/question_images/14_20191003112218.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Combination of Capacitors",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "Seven capacitors, each of capacitance $2\\text{ }\\mu\\text{F}$, are to be connected in a configuration to obtain an effective capacitance of $\\left(\\frac{6}{13}\\right)\\text{ }\\mu\\text{F}$. Which of the combinations, shown in figures below, will achieve the desired value?",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "Option (1)",
+        "hasDiagram": true
+      },
+      {
+        "key": "2",
+        "latex": "Option (2)",
+        "hasDiagram": true
+      },
+      {
+        "key": "3",
+        "latex": "Option (3)",
+        "hasDiagram": true
+      },
+      {
+        "key": "4",
+        "latex": "Option (4)",
+        "hasDiagram": true
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": [
+      2,
+      69,
+      319,
+      581
+    ],
+    "optionsHaveDiagrams": true,
+    "optionDiagrams": {
+      "2": "downloads/diagrams/Physics/options/option_2_14_20191003112218.png",
+      "3": "downloads/diagrams/Physics/options/option_3_14_20191003112218.png",
+      "4": "downloads/diagrams/Physics/options/option_4_14_20191003112218.png",
+      "1": "downloads/diagrams/Physics/options/option_1_14_20191003112218.png"
+    },
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "153",
+    "paperTitle": "PAPER 1 11-01-2019 EVENING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 28,
+    "topic": "Communication Systems",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/153/1/28_20191003112614.JPG",
+    "localImagePath": "./downloads/question_images/28_20191003112614.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Amplitude Modulation",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "An amplitude modulated signal is plotted below : \\nWhich one of the following best describes the above signal ?",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$(9 + \\sin(2.5\\pi \\times 10^5 \\text{ t}))\\sin(2\\pi \\times 10^4\\text{t})\\text{ V}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$(1 + 9\\sin(2\\pi \\times 10^4 \\text{ t}))\\sin(2.5\\pi \\times 10^5\\text{t})\\text{ V}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$(9 + \\sin(4\\pi \\times 10^4 \\text{ t}))\\sin(5\\pi \\times 10^5\\text{t})\\text{ V}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$(9 + \\sin(2\\pi \\times 10^4 \\text{ t}))\\sin(2.5\\pi \\times 10^5\\text{t})\\text{ V}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_28_20191003112614.png",
+    "diagramBBox": [
+      14,
+      77,
+      361,
+      261
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "155",
+    "paperTitle": "PAPER 1 12-01-2019 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 16,
+    "topic": "Electrostatics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/155/1/16_20191003120524.PNG",
+    "localImagePath": "./downloads/question_images/16_20191003120524.PNG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "3"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Electrostatic Potential Energy and Conservation of Energy",
+    "difficulty": "Hard",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "There is a uniform spherically symmetric surface charge density at a distance $R_o$ from the origin. The charge distribution is initially at rest and starts expanding because of mutual repulsion. The figure that represents best the speed $V(R(t))$ of the distribution as a function of its instantaneous radius $R(t)$ is :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "Option 1",
+        "hasDiagram": true
+      },
+      {
+        "key": "2",
+        "latex": "Option 2",
+        "hasDiagram": true
+      },
+      {
+        "key": "3",
+        "latex": "Option 3",
+        "hasDiagram": true
+      },
+      {
+        "key": "4",
+        "latex": "Option 4",
+        "hasDiagram": true
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": [
+      7,
+      131,
+      167,
+      603
+    ],
+    "optionsHaveDiagrams": true,
+    "optionDiagrams": {
+      "1": "downloads/diagrams/Physics/options/option_1_16_20191003120524.png",
+      "2": "downloads/diagrams/Physics/options/option_2_16_20191003120524.png",
+      "3": "downloads/diagrams/Physics/options/option_3_16_20191003120524.png",
+      "4": "downloads/diagrams/Physics/options/option_4_16_20191003120524.png"
+    },
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "155",
+    "paperTitle": "PAPER 1 12-01-2019 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 24,
+    "topic": "Ray Optics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/155/1/24_20191003120537.PNG",
+    "localImagePath": "./downloads/question_images/24_20191003120537.PNG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "3"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Reflection from Plane Mirror",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A point source of light, $S$ is placed at a distance $L$ in front of the centre of plane mirror of width $d$ which is hanging vertically on a wall. A man walks in front of the mirror along a line parallel to the mirror, at a distance $2L$ as shown below. The distance over which the man can see the image of the light source in the mirror is :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\frac{d}{2}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$3d$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$2d$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$d$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_24_20191003120537.png",
+    "diagramBBox": [
+      7,
+      159,
+      189,
+      320
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "155",
+    "paperTitle": "PAPER 1 12-01-2019 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 30,
+    "topic": "Current Electricity",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/155/1/30_20191003120550.PNG",
+    "localImagePath": "./downloads/question_images/30_20191003120550.PNG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "3"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Meter Bridge",
+    "difficulty": "Hard",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "In a meter bridge, the wire of length $1\\text{ m}$ has a non-uniform cross-section such that, the variation $\\frac{\\mathrm{d}R}{\\mathrm{d}l}$ of its resistance $R$ with length $l$ is $\\frac{\\mathrm{d}R}{\\mathrm{d}l} \\propto \\frac{1}{\\sqrt{l}}$. Two equal resistances are connected as shown in the figure. The galvanometer has zero deflection when the jockey is at point P. What is the length $\\text{AP}$?",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$0.2\\text{ m}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$0.25\\text{ m}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$0.3\\text{ m}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$0.35\\text{ m}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_30_20191003120550.png",
+    "diagramBBox": [
+      6,
+      219,
+      207,
+      394
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "161",
+    "paperTitle": "PAPER 1 12-01-2019 EVENING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 15,
+    "topic": "Electrostatic Potential and Capacitance",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/161/1/15_20191003123756.PNG",
+    "localImagePath": "./downloads/question_images/15_20191003123756.PNG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "2"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Combination of Capacitors",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "In the circuit shown, find $C$ if the effective capacitance of the whole circuit is to be $0.5\\text{ }\\mu\\text{F}$. All values in the circuit are in $\\mu\\text{F}$ .",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\frac{7}{10}\\text{ }\\mu\\text{F}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$4\\text{ }\\mu\\text{F}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$\\frac{7}{11}\\text{ }\\mu\\text{F}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$\\frac{6}{5}\\text{ }\\mu\\text{F}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_15_20191003123756.png",
+    "diagramBBox": [
+      6,
+      78,
+      203,
+      240
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "161",
+    "paperTitle": "PAPER 1 12-01-2019 EVENING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 2,
+    "topic": "Kinematics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/161/1/2_20191003123735.JPG",
+    "localImagePath": "./downloads/question_images/2_20191003123735.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "2"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Relative Motion",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "Two particles $A$, $B$ are moving on two concentric circles of radii $R_1$ and $R_2$ with equal angular speed $\\omega$. At $t = 0$, their positions and direction of motion are shown in the figure : \\n The relative velocity $\\vec{v}_A - \\vec{v}_B$ at $t = \\frac{\\pi}{2\\omega}$ is given by :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\omega(R_1 - R_2)\\hat{i}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$\\omega(R_2 - R_1)\\hat{i}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$-\\omega(R_1 + R_2)\\hat{i}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$\\omega(R_1 + R_2)\\hat{i}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_2_20191003123735.png",
+    "diagramBBox": [
+      9,
+      107,
+      220,
+      284
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "161",
+    "paperTitle": "PAPER 1 12-01-2019 EVENING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 6,
+    "topic": "Rotational Motion",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/161/1/6_20191003123741.JPG",
+    "localImagePath": "./downloads/question_images/6_20191003123741.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "2"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Moment of Inertia and Parallel Axis Theorem",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "The moment of inertia of a solid sphere, about an axis parallel to its diameter and at a distance of $x$ from it, is '$I(x)$'. Which one of the graphs represents the variation of $I(x)$ with $x$ correctly ?",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "Linear graph starting from the origin",
+        "hasDiagram": true
+      },
+      {
+        "key": "2",
+        "latex": "Linear graph with a positive intercept on the $I(x)$ axis",
+        "hasDiagram": true
+      },
+      {
+        "key": "3",
+        "latex": "Parabolic graph passing through the origin",
+        "hasDiagram": true
+      },
+      {
+        "key": "4",
+        "latex": "Parabolic graph with a positive intercept on the $I(x)$ axis",
+        "hasDiagram": true
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": true,
+    "optionDiagrams": {
+      "1": "downloads/diagrams/Physics/options/option_1_6_20191003123741.png",
+      "2": "downloads/diagrams/Physics/options/option_2_6_20191003123741.png",
+      "3": "downloads/diagrams/Physics/options/option_3_6_20191003123741.png",
+      "4": "downloads/diagrams/Physics/options/option_4_6_20191003123741.png"
+    },
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "161",
+    "paperTitle": "PAPER 1 12-01-2019 EVENING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 9,
+    "topic": "Mechanical Properties of Fluids",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/161/1/9_20191003123746.JPG",
+    "localImagePath": "./downloads/question_images/9_20191003123746.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "2"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Surface Tension",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A soap bubble, blown by a mechanical pump at the mouth of a tube, increases in volume, with time, at a constant rate. The graph that correctly depicts the time dependence of pressure inside the bubble is given by :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\frac{1}{t^3}$",
+        "hasDiagram": true
+      },
+      {
+        "key": "2",
+        "latex": "$t$",
+        "hasDiagram": true
+      },
+      {
+        "key": "3",
+        "latex": "$\\frac{1}{t}$",
+        "hasDiagram": true
+      },
+      {
+        "key": "4",
+        "latex": "$\\log(t)$",
+        "hasDiagram": true
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": [
+      20,
+      137,
+      175,
+      622
+    ],
+    "optionsHaveDiagrams": true,
+    "optionDiagrams": {
+      "1": "downloads/diagrams/Physics/options/option_1_9_20191003123746.png",
+      "2": "downloads/diagrams/Physics/options/option_2_9_20191003123746.png",
+      "3": "downloads/diagrams/Physics/options/option_3_9_20191003123746.png",
+      "4": "downloads/diagrams/Physics/options/option_4_9_20191003123746.png"
+    },
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "308",
+    "paperTitle": "PAPER 1 EHG 8th  April SHIFT 1",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 6,
+    "topic": "Gravitation",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/308/1/6_20191118114531.JPG",
+    "localImagePath": "./downloads/question_images/6_20191118114531.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "2"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Motion of satellites and gravitational potential",
+    "difficulty": "Hard",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "Four identical particles of mass $M$ are located at the corners of a square of side '$a$'. What should be their speed if each of them revolves under the influence of others' gravitational field in a circular orbit circumscribing the square?",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$1.21 \\sqrt{\\frac{GM}{a}}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$1.35 \\sqrt{\\frac{GM}{a}}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$1.41 \\sqrt{\\frac{GM}{a}}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$1.16 \\sqrt{\\frac{GM}{a}}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_6_20191118114531.png",
+    "diagramBBox": [
+      49,
+      168,
+      157,
+      257
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "308",
+    "paperTitle": "PAPER 1 EHG 8th  April SHIFT 1",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 9,
+    "topic": "Thermal Properties of Matter",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/308/1/9_20191118114543.JPG",
+    "localImagePath": "./downloads/question_images/9_20191118114543.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "2"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Newton's Law of Cooling",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "Two identical beakers $A$ and $B$ contain equal volumes of two different liquids at $60^{\\circ}\\text{C}$ each and left to cool down. Liquid in $A$ has density of $8 \\times 10^2 \\text{ kg/m}^3$ and specific heat of $2000 \\text{ J kg}^{-1} \\text{ K}^{-1}$ while liquid in $B$ has density of $10^3 \\text{ kg m}^{-3}$ and specific heat of $4000 \\text{ J kg}^{-1} \\text{ K}^{-1}$. Which of the following best describes their temperature versus time graph schematically ? (assume the emissivity of both the beakers to be the same)",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "Option 1",
+        "hasDiagram": true
+      },
+      {
+        "key": "2",
+        "latex": "Option 2",
+        "hasDiagram": true
+      },
+      {
+        "key": "3",
+        "latex": "Option 3",
+        "hasDiagram": true
+      },
+      {
+        "key": "4",
+        "latex": "Option 4",
+        "hasDiagram": true
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": [
+      6,
+      288,
+      142,
+      374
+    ],
+    "optionsHaveDiagrams": true,
+    "optionDiagrams": {
+      "1": "downloads/diagrams/Physics/options/option_1_9_20191118114543.png",
+      "2": "downloads/diagrams/Physics/options/option_2_9_20191118114543.png",
+      "3": "downloads/diagrams/Physics/options/option_3_9_20191118114543.png",
+      "4": "downloads/diagrams/Physics/options/option_4_9_20191118114543.png"
+    },
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "310",
+    "paperTitle": "PAPER 1 EHG 8th  April SHIFT 2",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 15,
+    "topic": "Electrostatics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/310/1/15_20191118121650.JPG",
+    "localImagePath": "./downloads/question_images/15_20191118121650.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Electric Field and Potential due to Continuous Charge Distribution",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A positive point charge is released from rest at a distance $r_0$ from a positive line charge with uniform density. The speed ($v$) of the point charge, as a function of instantaneous distance $r$ from line charge, is proportional to :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$v \\propto \\ln\\left(\\frac{r}{r_0}\\right)$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$v \\propto \\left(\\frac{r}{r_0}\\right)$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$v \\propto \\sqrt{\\ln\\left(\\frac{r}{r_0}\\right)}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$v \\propto e^{+r/r_0}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_15_20191118121650.png",
+    "diagramBBox": [
+      17,
+      142,
+      136,
+      264
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "310",
+    "paperTitle": "PAPER 1 EHG 8th  April SHIFT 2",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 20,
+    "topic": "Magnetism and Matter",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/310/1/20_20191118121700.JPG",
+    "localImagePath": "./downloads/question_images/20_20191118121700.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Magnetic Dipole and Force on a Moving Charge",
+    "difficulty": "Hard",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "Two magnetic dipoles $X$ and $Y$ are placed at a separation $d$, with their axes perpendicular to each other. The dipole moment of $Y$ is twice that of $X$. A particle of charge $q$ is passing through their mid-point $P$, at angle $\\theta = 45^\\circ$ with the horizontal line, as shown in figure. What would be the magnitude of force on the particle at that instant ? ($d$ is much larger than the dimensions of the dipole)",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$(\\frac{\\mu_0}{4\\pi}) \\frac{2M}{(d/2)^3} \\times qv$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$(\\frac{\\mu_0}{4\\pi}) \\frac{M}{(d/2)^3} \\times qv$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$0$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$\\sqrt{2} \\left(\\frac{\\mu_0}{4\\pi}\\right) \\frac{M}{(d/2)^3} \\times qv$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_20_20191118121700.png",
+    "diagramBBox": [
+      21,
+      230,
+      283,
+      392
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "310",
+    "paperTitle": "PAPER 1 EHG 8th  April SHIFT 2",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 3,
+    "topic": "Kinematics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/310/1/3_20191118121624.JPG",
+    "localImagePath": "./downloads/question_images/3_20191118121624.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Motion in a Straight Line",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A particle starts from origin $O$ from rest and moves with a uniform acceleration along the positive $x$-axis. Identify all figures that correctly represent the motion qualitatively.\\n($a = \\text{acceleration}, v = \\text{velocity}, x = \\text{displacement}, t = \\text{time}$)",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$(\\text{A}), (\\text{B})$ and $(\\text{D})$",
+        "hasDiagram": true
+      },
+      {
+        "key": "2",
+        "latex": "$(\\text{A}), (\\text{C})$ and $(\\text{D})$",
+        "hasDiagram": true
+      },
+      {
+        "key": "3",
+        "latex": "$(\\text{A}), (\\text{B})$ and $(\\text{C})$",
+        "hasDiagram": true
+      },
+      {
+        "key": "4",
+        "latex": "$(\\text{B})$ and $(\\text{D})$ only",
+        "hasDiagram": true
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": true,
+    "optionDiagrams": {
+      "1": "downloads/diagrams/Physics/options/option_1_3_20191118121624.png",
+      "2": "downloads/diagrams/Physics/options/option_2_3_20191118121624.png",
+      "3": "downloads/diagrams/Physics/options/option_3_3_20191118121624.png",
+      "4": "downloads/diagrams/Physics/options/option_4_3_20191118121624.png"
+    },
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "310",
+    "paperTitle": "PAPER 1 EHG 8th  April SHIFT 2",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 5,
+    "topic": "Rotational Motion",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/310/1/5_20191118121628.JPG",
+    "localImagePath": "./downloads/question_images/5_20191118121628.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Rolling Motion",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A solid sphere and solid cylinder of identical radii approach an incline with the same linear velocity (see figure). Both roll without slipping all throughout. The two climb maximum heights $h_{sph}$ and $h_{cyl}$ on the incline. The ratio $\\frac{h_{sph}}{h_{cyl}}$ is given by :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$1$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$\\frac{2}{\\sqrt{5}}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$\\frac{14}{15}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$\\frac{4}{5}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_5_20191118121628.png",
+    "diagramBBox": [
+      10,
+      180,
+      187,
+      266
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  },
+  {
+    "paperId": "310",
+    "paperTitle": "PAPER 1 EHG 8th  April SHIFT 2",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 7,
+    "topic": "Rotational Motion",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/310/1/7_20191118121632.JPG",
+    "localImagePath": "./downloads/question_images/7_20191118121632.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Angular Displacement and Kinematics",
+    "difficulty": "Hard",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A rectangular solid box of length $0.3\\text{ m}$ is held horizontally, with one of its sides on the edge of a platform of height $5\\text{ m}$. When released, it slips off the table in a very short time $\\tau = 0.01\\text{ s}$, remaining essentially horizontal. The angle by which it would rotate when it hits the ground will be (in radians) close to :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$0.3$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$0.02$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$0.5$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$0.28$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_7_20191118121632.png",
+    "diagramBBox": [
+      2,
+      188,
+      167,
+      345
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)"
+  }
+]
