@@ -252,25 +252,21 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 if (x2 - x1) < 5 or (y2 - y1) < 5:
                     raise ValueError("Selection box too small")
 
-                # Fast clean: white background, threshold ink — no slow upscaling
+                # Fast clean: transparent background with crisp white ink matching viewer themes
                 crop = img[y1:y2, x1:x2]
                 gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
-                # Adaptive threshold → black ink on white background
-                cleaned = cv2.adaptiveThreshold(
-                    gray, 255,
-                    cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                    cv2.THRESH_BINARY,
-                    blockSize=21, C=8
-                )
-                # Convert back to BGR so it saves as a normal PNG
-                crop = cv2.cvtColor(cleaned, cv2.COLOR_GRAY2BGR)
+                ch, cw = crop.shape[:2]
+                alpha = np.clip((245.0 - gray.astype(np.float32)) * 1.5, 0.0, 255.0).astype(np.uint8)
+                out = np.zeros((ch, cw, 4), dtype=np.uint8)
+                out[:, :, :3] = 255
+                out[:, :, 3] = alpha
 
                 stem = Path(img_path).stem
                 if target == 'diagram':
                     diag_dir = REPO_ROOT / "downloads" / "diagrams" / subject
                     diag_dir.mkdir(parents=True, exist_ok=True)
                     save_path = diag_dir / f"diagram_{stem}.png"
-                    cv2.imwrite(str(save_path), crop)
+                    cv2.imwrite(str(save_path), out)
                     
                     rel_path = str(save_path.relative_to(REPO_ROOT)).replace("\\", "/")
                     q_rec["hasDiagram"] = True
@@ -280,7 +276,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     opt_dir = REPO_ROOT / "downloads" / "diagrams" / subject / "options"
                     opt_dir.mkdir(parents=True, exist_ok=True)
                     save_path = opt_dir / f"option_{target}_{stem}.png"
-                    cv2.imwrite(str(save_path), crop)
+                    cv2.imwrite(str(save_path), out)
                     
                     rel_path = str(save_path.relative_to(REPO_ROOT)).replace("\\", "/")
                     if "optionDiagrams" not in q_rec or not isinstance(q_rec["optionDiagrams"], dict):
