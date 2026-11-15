@@ -983,13 +983,17 @@
 
       if (!overlay || !selBox || !img) return;
 
+      const container = document.getElementById('sourceImageContainer');
+
       overlay.addEventListener('mousedown', (e) => {
         if (!isCropMode || e.button !== 0) return;
         e.preventDefault();
         isCropDragging = true;
-        const rect = overlay.getBoundingClientRect();
-        cropStartClientX = e.clientX - rect.left;
-        cropStartClientY = e.clientY - rect.top;
+        // Use img.getBoundingClientRect() as the anchor so we are always
+        // relative to the actual rendered image top-left, regardless of scroll.
+        const imgRect = img.getBoundingClientRect();
+        cropStartClientX = e.clientX - imgRect.left;
+        cropStartClientY = e.clientY - imgRect.top;
 
         selBox.style.left = `${cropStartClientX}px`;
         selBox.style.top = `${cropStartClientY}px`;
@@ -1001,9 +1005,11 @@
 
       window.addEventListener('mousemove', (e) => {
         if (!isCropDragging || !isCropMode) return;
-        const rect = overlay.getBoundingClientRect();
-        const currX = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
-        const currY = Math.max(0, Math.min(rect.height, e.clientY - rect.top));
+        const imgRect = img.getBoundingClientRect();
+        const dispW = imgRect.width;
+        const dispH = imgRect.height;
+        const currX = Math.max(0, Math.min(dispW, e.clientX - imgRect.left));
+        const currY = Math.max(0, Math.min(dispH, e.clientY - imgRect.top));
 
         const x = Math.min(cropStartClientX, currX);
         const y = Math.min(cropStartClientY, currY);
@@ -1046,7 +1052,7 @@
         toolbar.style.top = `${barTop}px`;
         toolbar.style.display = 'flex';
 
-        // Scale factors: overlay fills the displayed image exactly, so clientWidth/Height is correct
+        // selX/selY are relative to the rendered image — convert to natural image pixels
         const scaleX = img.naturalWidth / (img.clientWidth || img.offsetWidth || 1);
         const scaleY = img.naturalHeight / (img.clientHeight || img.offsetHeight || 1);
         const natW = Math.round(selW * scaleX);
