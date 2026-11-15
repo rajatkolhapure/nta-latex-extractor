@@ -80,14 +80,22 @@
     .zoom-fit { max-height: calc(100vh - 240px); width: auto; max-width: 100%; object-fit: contain; display: block; }
     #sourceImageContainer {
       cursor: grab;
-      align-items: flex-start !important;
-      justify-content: center;
-      overflow: auto !important;
+      overflow: auto;
       position: relative;
       scrollbar-width: thin;
+      /* plain block — not flex, flex with justify-center clips left scroll */
+      display: block;
     }
     #sourceImageContainer:active { cursor: grabbing; }
-    #imageWrapper { display: inline-block; vertical-align: top; }
+    #imageWrapper {
+      /* Trick: min-width 100% + margin auto = centered when small,
+         freely scrollable in both directions when larger than container */
+      position: relative;
+      display: flex;
+      justify-content: center;
+      min-width: 100%;
+      width: max-content;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen font-sans selection:bg-blue-500/30 transition-colors duration-200">
@@ -201,8 +209,8 @@
           </div>
         </div>
 
-        <div id="sourceImageContainer" class="flex-1 overflow-auto rounded-lg bg-slate-950 p-3 border border-slate-800/80 relative flex justify-center items-start cursor-grab">
-          <div id="imageWrapper" class="relative inline-block select-none">
+        <div id="sourceImageContainer" class="flex-1 rounded-lg bg-slate-950 p-3 border border-slate-800/80">
+          <div id="imageWrapper" class="relative select-none">
             <img id="sourceImage" src="" alt="Source Question Image" class="zoom-fit block"
                  onerror="this.style.display='none'; document.getElementById('imageErrorMsg').style.display='block';">
             
@@ -615,18 +623,19 @@
         }
 
         const oldScale = currentZoomScale;
-        currentZoomScale = Math.max(0.4, Math.min(3.5, currentZoomScale + delta));
+        currentZoomScale = Math.max(0.3, Math.min(4.0, currentZoomScale + delta));
 
-        // Focal zoom centered on mouse cursor
+        // Focal zoom: keep the point under the cursor stationary
         const rect = container.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left + container.scrollLeft;
-        const mouseY = e.clientY - rect.top + container.scrollTop;
+        // position of cursor relative to scroll content
+        const mouseContentX = e.clientX - rect.left + container.scrollLeft;
+        const mouseContentY = e.clientY - rect.top + container.scrollTop;
         const ratio = currentZoomScale / oldScale;
 
         applyZoom();
 
-        container.scrollLeft = mouseX * ratio - (e.clientX - rect.left);
-        container.scrollTop = mouseY * ratio - (e.clientY - rect.top);
+        container.scrollLeft = mouseContentX * ratio - (e.clientX - rect.left);
+        container.scrollTop = mouseContentY * ratio - (e.clientY - rect.top);
       }, { passive: false });
 
       // Click and drag to pan when NOT in crop mode
