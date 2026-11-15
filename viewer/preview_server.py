@@ -166,6 +166,177 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(json.dumps({"error": str(e)}).encode())
             return
+        elif self.path == "/api/manual-crop":
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            try:
+                import cv2
+                import numpy as np
+
+                data = json.loads(post_data)
+                paper_id = str(data.get('paperId', ''))
+                q_num = str(data.get('questionNumber', ''))
+                subject = data.get('subject', 'Physics')
+                raw_target = str(data.get('target', 'diagram'))
+                target = raw_target.replace('option_', '') # 'diagram' or '1', '2', '3', '4'
+                dataset = data.get('dataset', f'data/extracted_{subject.lower()}.json')
+                
+                # Bounding box in raw image pixel coordinates or ratio
+                coords = data.get('coords') or {}
+                bbox = data.get('bbox')
+                if bbox and isinstance(bbox, list) and len(bbox) == 4:
+                    coords = {
+                        'x': bbox[0],
+                        'y': bbox[1],
+                        'width': bbox[2],
+                        'height': bbox[3],
+                        'naturalWidth': data.get('naturalWidth'),
+                        'naturalHeight': data.get('naturalHeight'),
+                    }
+                
+                # Locate dataset file
+                ds_file = REPO_ROOT / dataset.replace('\\', '/').lstrip('/')
+                if not ds_file.exists():
+                    ds_file = REPO_ROOT / "data" / f"extracted_{subject.lower()}.json"
+
+                with open(ds_file, 'r', encoding='utf-8') as f:
+                    questions = json.load(f)
+
+                q_rec = next(
+                    (q for q in questions
+                     if str(q.get('paperId')) == paper_id
+                     and str(q.get('questionNumber')) == q_num),
+                    None
+                )
+                if q_rec is None:
+                    # Search other datasets
+                    for alt_name in [f"extracted_{subject.lower()}.json", "re_extracted_flagged.json", "manual_crop_queue.json"]:
+                        alt_file = REPO_ROOT / "data" / alt_name
+                        if alt_file.exists():
+                            with open(alt_file, 'r', encoding='utf-8') as f:
+                                alt_qs = json.load(f)
+                            found = next((q for q in alt_qs if str(q.get('paperId')) == paper_id and str(q.get('questionNumber')) == q_num), None)
+                            if found:
+                                q_rec = found
+                                ds_file = alt_file
+                                questions = alt_qs
+                                break
+                    if q_rec is None:
+                        raise ValueError(f"Question {paper_id}_{q_num} not found")
+
+                local_path = q_rec.get('localImagePath', '')
+                img_path = str(REPO_ROOT / local_path.lstrip('./').lstrip('/'))
+                img = cv2.imread(img_path)
+                if img is None:
+                    raise FileNotFoundError(f"Source image not found: {img_path}")
+
+                ih, iw = img.shape[:2]
+                
+                # Scale coordinates if natural dimensions provided
+                nw = coords.get('naturalWidth') or iw
+                nh = coords.get('naturalHeight') or ih
+                scale_x = iw / float(nw)
+                scale_y = ih / float(nh)
+                
+                x = int(coords.get('x', 0) * scale_x)
+                y = int(coords.get('y', 0) * scale_y)
+                w = int(coords.get('width', 0) * scale_x)
+                h = int(coords.get('height', 0) * scale_y)
+
+                # Clamp bounds
+                x1 = max(0, min(iw - 1, x))
+                y1 = max(0, min(ih - 1, y))
+                x2 = max(0, min(iw, x + w))
+                y2 = max(0, min(ih, y + h))
+
+                if (x2 - x1) < 5 or (y2 - y1) < 5:
+                    raise ValueError("Selection box too small")
+
+                # Cut region
+                crop = img[y1:y2, x1:x2]
+                cg = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+                ch, cw = crop.shape[:2]
+
+                # Polish stroke: transparent background with crisp white strokes
+                ink_mask = np.clip((245.0 - cg.astype(float)) / 160.0, 0.0, 1.0)
+                scale = 2.0
+                up_w = int(cw * scale)
+                up_h = int(ch * scale)
+                up_ink = cv2.resize(ink_mask, (up_w, up_h), interpolation=cv2.INTER_LANCZOS4)
+                smooth_ink = cv2.GaussianBlur(up_ink, (3, 3), 0.5)
+                ink_mask = np.clip((smooth_ink - 0.06) / 0.88, 0.0, 1.0)
+
+                out = np.zeros((up_h, up_w, 4), dtype=np.uint8)
+                out[:, :, :3] = 255
+                out[:, :, 3] = (ink_mask * 255).astype(np.uint8)
+
+                stem = Path(img_path).stem
+                if target == 'diagram':
+                    diag_dir = REPO_ROOT / "downloads" / "diagrams" / subject
+                    diag_dir.mkdir(parents=True, exist_ok=True)
+                    save_path = diag_dir / f"diagram_{stem}.png"
+                    cv2.imwrite(str(save_path), out)
+                    
+                    rel_path = str(save_path.relative_to(REPO_ROOT)).replace("\\", "/")
+                    q_rec["hasDiagram"] = True
+                    q_rec["diagramPath"] = rel_path
+                    q_rec["diagramBBox"] = [x1, y1, x2, y2]
+                else:
+                    opt_dir = REPO_ROOT / "downloads" / "diagrams" / subject / "options"
+                    opt_dir.mkdir(parents=True, exist_ok=True)
+                    save_path = opt_dir / f"option_{target}_{stem}.png"
+                    cv2.imwrite(str(save_path), out)
+                    
+                    rel_path = str(save_path.relative_to(REPO_ROOT)).replace("\\", "/")
+                    if "optionDiagrams" not in q_rec or not isinstance(q_rec["optionDiagrams"], dict):
+                        q_rec["optionDiagrams"] = {}
+                    q_rec["optionDiagrams"][target] = rel_path
+                    q_rec["optionsHaveDiagrams"] = True
+
+                with open(ds_file, 'w', encoding='utf-8') as f:
+                    json.dump(questions, f, indent=2, ensure_ascii=False)
+
+                # Sync update to any other dataset files containing this question
+                for alt_name in [f"extracted_{subject.lower()}.json", "re_extracted_flagged.json", "manual_crop_queue.json"]:
+                    alt_path = REPO_ROOT / "data" / alt_name
+                    if alt_path.exists() and alt_path.resolve() != ds_file.resolve():
+                        try:
+                            with open(alt_path, 'r', encoding='utf-8') as f:
+                                alt_data = json.load(f)
+                            changed = False
+                            for aq in alt_data:
+                                if str(aq.get('paperId')) == paper_id and str(aq.get('questionNumber')) == q_num:
+                                    if target == 'diagram':
+                                        aq["hasDiagram"] = True
+                                        aq["diagramPath"] = rel_path
+                                        aq["diagramBBox"] = [x1, y1, x2, y2]
+                                    else:
+                                        if "optionDiagrams" not in aq or not isinstance(aq["optionDiagrams"], dict):
+                                            aq["optionDiagrams"] = {}
+                                        aq["optionDiagrams"][target] = rel_path
+                                        aq["optionsHaveDiagrams"] = True
+                                    changed = True
+                            if changed:
+                                with open(alt_path, 'w', encoding='utf-8') as f:
+                                    json.dump(alt_data, f, indent=2, ensure_ascii=False)
+                        except Exception:
+                            pass
+
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({
+                    "success": True,
+                    "target": target,
+                    "path": rel_path,
+                    "bbox": [x1, y1, x2, y2]
+                }).encode())
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+            return
         self.send_response(404)
         self.end_headers()
 

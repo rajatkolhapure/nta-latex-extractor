@@ -1,0 +1,681 @@
+[
+  {
+    "paperId": "133",
+    "paperTitle": "Paper1",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 6,
+    "topic": "Rotational Motion",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/133/1/6_20190918144902.png",
+    "localImagePath": "./downloads/question_images/6_20190918144902.png",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "4"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Conservation of Angular Momentum",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A thin uniform bar of length $L$ and mass $8\\text{ m}$ lies on a smooth horizontal table. Two point masses $m$ and $2\\text{ m}$ are moving in the same horizontal plane from opposite sides of the bar with speeds $2v$ and $v$ respectively. The masses stick to the bar after collision at a distance $\\frac{L}{3}$ and $\\frac{L}{6}$ respectively from the centre of the bar. If the bar starts rotating about its center of mass as a result of collision, the angular speed of the bar will be :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\frac{v}{5L}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$\\frac{6v}{5L}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$\\frac{3v}{5L}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$\\frac{v}{6L}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)",
+    "aiAnomalyReport": {
+      "needs_manual_crop": true,
+      "has_visual_diagram": true,
+      "options_have_visuals": false,
+      "anomaly_types": [
+        "missing_diagram",
+        "incomplete_ocr"
+      ],
+      "reason": "The question includes a physical diagram illustrating the bar, point masses, distances, and velocities, which is completely missing in the current extracted data. Furthermore, the latexQuestion is cut off at the end of the text ('fr').",
+      "suggested_targets": [
+        "diagram"
+      ]
+    }
+  },
+  {
+    "paperId": "150",
+    "paperTitle": "PAPER 1 10-01-2019",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 3,
+    "topic": "Kinematics and Vectors",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/150/1/3_20190930104529.JPG",
+    "localImagePath": "./downloads/question_images/3_20190930104529.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Vector Addition and Subtraction",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "In the cube of side '$a$' shown in the figure, the vector from the central point of the face $ABOD$ to the central point of the face $BEFO$ will be :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "${\\frac{1}{2}a(\\hat{k} - \\hat{i})}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "${\\frac{1}{2}a(\\hat{i} - \\hat{k})}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "${\\frac{1}{2}a(\\hat{j} - \\hat{i})}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "${\\frac{1}{2}a(\\hat{j} - \\hat{k})}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": true,
+    "diagramPath": "downloads/diagrams/Physics/diagram_3_20190930104529.png",
+    "diagramBBox": [
+      680,
+      23,
+      1440,
+      758
+    ],
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)",
+    "aiAnomalyReport": {
+      "needs_manual_crop": true,
+      "has_visual_diagram": true,
+      "options_have_visuals": false,
+      "anomaly_types": [
+        "multi_language_layout"
+      ],
+      "reason": "The image contains multiple language versions (English, Hindi, Gujarati) of the same question arranged side-by-side. Manual cropping is needed to correctly isolate the English text and diagram region cleanly without overlapping text from other languages.",
+      "suggested_targets": [
+        "diagram"
+      ]
+    }
+  },
+  {
+    "paperId": "155",
+    "paperTitle": "PAPER 1 12-01-2019 MORNING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 16,
+    "topic": "Electrostatics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/155/1/16_20191003120524.PNG",
+    "localImagePath": "./downloads/question_images/16_20191003120524.PNG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "3"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Electrostatic Potential Energy and Conservation of Energy",
+    "difficulty": "Hard",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "There is a uniform spherically symmetric surface charge density at a distance $R_o$ from the origin. The charge distribution is initially at rest and starts expanding because of mutual repulsion. The figure that represents best the speed $V(R(t))$ of the distribution as a function of its instantaneous radius $R(t)$ is :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "Option 1",
+        "hasDiagram": true
+      },
+      {
+        "key": "2",
+        "latex": "Option 2",
+        "hasDiagram": true
+      },
+      {
+        "key": "3",
+        "latex": "Option 3",
+        "hasDiagram": true
+      },
+      {
+        "key": "4",
+        "latex": "Option 4",
+        "hasDiagram": true
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": [
+      7,
+      131,
+      167,
+      603
+    ],
+    "optionsHaveDiagrams": true,
+    "optionDiagrams": {
+      "1": null,
+      "2": "downloads/diagrams/Physics/options/option_2_16_20191003120524.png",
+      "3": null,
+      "4": null
+    },
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)",
+    "aiAnomalyReport": {
+      "needs_manual_crop": true,
+      "has_visual_diagram": false,
+      "options_have_visuals": true,
+      "anomaly_types": [
+        "missing_option_diagrams"
+      ],
+      "reason": "All four options are graphs representing functions, but only option 2 has a crop path registered in the extracted data while options 1, 3, and 4 are missing diagram crops.",
+      "suggested_targets": [
+        "option_1",
+        "option_3",
+        "option_4"
+      ]
+    }
+  },
+  {
+    "paperId": "161",
+    "paperTitle": "PAPER 1 12-01-2019 EVENING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 6,
+    "topic": "Rotational Motion",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/161/1/6_20191003123741.JPG",
+    "localImagePath": "./downloads/question_images/6_20191003123741.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "2"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Moment of Inertia and Parallel Axis Theorem",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "The moment of inertia of a solid sphere, about an axis parallel to its diameter and at a distance of $x$ from it, is '$I(x)$'. Which one of the graphs represents the variation of $I(x)$ with $x$ correctly ?",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "Linear graph starting from the origin",
+        "hasDiagram": true
+      },
+      {
+        "key": "2",
+        "latex": "Linear graph with a positive intercept on the $I(x)$ axis",
+        "hasDiagram": true
+      },
+      {
+        "key": "3",
+        "latex": "Parabolic graph passing through the origin",
+        "hasDiagram": true
+      },
+      {
+        "key": "4",
+        "latex": "Parabolic graph with a positive intercept on the $I(x)$ axis",
+        "hasDiagram": true
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": true,
+    "optionDiagrams": {
+      "1": "downloads/diagrams/Physics/options/option_1_6_20191003123741.png",
+      "2": "downloads/diagrams/Physics/options/option_2_6_20191003123741.png",
+      "3": null,
+      "4": "downloads/diagrams/Physics/options/option_4_6_20191003123741.png"
+    },
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)",
+    "aiAnomalyReport": {
+      "needs_manual_crop": true,
+      "has_visual_diagram": false,
+      "options_have_visuals": true,
+      "anomaly_types": [
+        "missing_option_crop"
+      ],
+      "reason": "Option 3 is missing its corresponding diagram crop in the extracted data while options 1, 2, and 4 have them.",
+      "suggested_targets": [
+        "option_3"
+      ]
+    }
+  },
+  {
+    "paperId": "161",
+    "paperTitle": "PAPER 1 12-01-2019 EVENING",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 9,
+    "topic": "Mechanical Properties of Fluids",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/161/1/9_20191003123746.JPG",
+    "localImagePath": "./downloads/question_images/9_20191003123746.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "2"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Surface Tension",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A soap bubble, blown by a mechanical pump at the mouth of a tube, increases in volume, with time, at a constant rate. The graph that correctly depicts the time dependence of pressure inside the bubble is given by :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$\\frac{1}{t^3}$",
+        "hasDiagram": true
+      },
+      {
+        "key": "2",
+        "latex": "$t$",
+        "hasDiagram": true
+      },
+      {
+        "key": "3",
+        "latex": "$\\frac{1}{t}$",
+        "hasDiagram": true
+      },
+      {
+        "key": "4",
+        "latex": "$\\log(t)$",
+        "hasDiagram": true
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": [
+      20,
+      137,
+      175,
+      622
+    ],
+    "optionsHaveDiagrams": true,
+    "optionDiagrams": {
+      "1": "downloads/diagrams/Physics/options/option_1_9_20191003123746.png",
+      "2": null,
+      "3": "downloads/diagrams/Physics/options/option_3_9_20191003123746.png",
+      "4": "downloads/diagrams/Physics/options/option_4_9_20191003123746.png"
+    },
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)",
+    "aiAnomalyReport": {
+      "needs_manual_crop": true,
+      "has_visual_diagram": false,
+      "options_have_visuals": true,
+      "anomaly_types": [
+        "missing_option_crop"
+      ],
+      "reason": "Option 2 is missing its diagram crop, while options 1, 3, and 4 have graphs that need to be correctly extracted as option diagrams.",
+      "suggested_targets": [
+        "option_2"
+      ]
+    }
+  },
+  {
+    "paperId": "310",
+    "paperTitle": "PAPER 1 EHG 8th  April SHIFT 2",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 15,
+    "topic": "Electrostatics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/310/1/15_20191118121650.JPG",
+    "localImagePath": "./downloads/question_images/15_20191118121650.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Electric Field and Potential due to Continuous Charge Distribution",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A positive point charge is released from rest at a distance $r_0$ from a positive line charge with uniform density. The speed ($v$) of the point charge, as a function of instantaneous distance $r$ from line charge, is proportional to :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$v \\propto \\ln\\left(\\frac{r}{r_0}\\right)$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$v \\propto \\left(\\frac{r}{r_0}\\right)$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$v \\propto \\sqrt{\\ln\\left(\\frac{r}{r_0}\\right)}$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$v \\propto e^{+r/r_0}$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)",
+    "aiAnomalyReport": {
+      "needs_manual_crop": true,
+      "has_visual_diagram": true,
+      "options_have_visuals": false,
+      "anomaly_types": [
+        "missing_diagram"
+      ],
+      "reason": "The question includes a diagram showing the line charge and the point charge at distance r_0, which is currently missing from the extracted data.",
+      "suggested_targets": [
+        "diagram"
+      ]
+    }
+  },
+  {
+    "paperId": "310",
+    "paperTitle": "PAPER 1 EHG 8th  April SHIFT 2",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 3,
+    "topic": "Kinematics",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/310/1/3_20191118121624.JPG",
+    "localImagePath": "./downloads/question_images/3_20191118121624.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Motion in a Straight Line",
+    "difficulty": "Medium",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A particle starts from origin $O$ from rest and moves with a uniform acceleration along the positive $x$-axis. Identify all figures that correctly represent the motion qualitatively.\\n($a = \\text{acceleration}, v = \\text{velocity}, x = \\text{displacement}, t = \\text{time}$)",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$(\\text{A}), (\\text{B})$ and $(\\text{D})$",
+        "hasDiagram": true
+      },
+      {
+        "key": "2",
+        "latex": "$(\\text{A}), (\\text{C})$ and $(\\text{D})$",
+        "hasDiagram": true
+      },
+      {
+        "key": "3",
+        "latex": "$(\\text{A}), (\\text{B})$ and $(\\text{C})$",
+        "hasDiagram": true
+      },
+      {
+        "key": "4",
+        "latex": "$(\\text{B})$ and $(\\text{D})$ only",
+        "hasDiagram": true
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": true,
+    "optionDiagrams": {
+      "1": "downloads/diagrams/Physics/options/option_1_3_20191118121624.png",
+      "2": null,
+      "3": "downloads/diagrams/Physics/options/option_3_3_20191118121624.png",
+      "4": null
+    },
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)",
+    "aiAnomalyReport": {
+      "needs_manual_crop": true,
+      "has_visual_diagram": false,
+      "options_have_visuals": true,
+      "anomaly_types": [
+        "missing_option_crops"
+      ],
+      "reason": "Options (2) and (4) are missing diagram crops in the extracted data, while options (1) and (3) have crops but all options contain graphical plots that need proper verification and cropping.",
+      "suggested_targets": [
+        "option_2",
+        "option_4"
+      ]
+    }
+  },
+  {
+    "paperId": "310",
+    "paperTitle": "PAPER 1 EHG 8th  April SHIFT 2",
+    "targetExam": "JEE_MAIN",
+    "subject": "Physics",
+    "questionNumber": 7,
+    "topic": "Rotational Motion",
+    "imageUrl": "https://nta.ac.in/Uploads/Question/1/310/1/7_20191118121632.JPG",
+    "localImagePath": "./downloads/question_images/7_20191118121632.JPG",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "key": "1",
+        "text": "Option 1"
+      },
+      {
+        "key": "2",
+        "text": "Option 2"
+      },
+      {
+        "key": "3",
+        "text": "Option 3"
+      },
+      {
+        "key": "4",
+        "text": "Option 4"
+      }
+    ],
+    "correctOptions": [
+      "1"
+    ],
+    "marks": 3.0,
+    "negativeMarks": 1.0,
+    "subTopic": "Angular Displacement and Kinematics",
+    "difficulty": "Hard",
+    "exam": "JEE_MAIN",
+    "latexQuestion": "A rectangular solid box of length $0.3\\text{ m}$ is held horizontally, with one of its sides on the edge of a platform of height $5\\text{ m}$. When released, it slips off the table in a very short time $\\tau = 0.01\\text{ s}$, remaining essentially horizontal. The angle by which it would rotate when it hits the ground will be (in radians) close to :",
+    "hasTable": false,
+    "tableHtml": null,
+    "latexOptions": [
+      {
+        "key": "1",
+        "latex": "$0.3$",
+        "hasDiagram": false
+      },
+      {
+        "key": "2",
+        "latex": "$0.02$",
+        "hasDiagram": false
+      },
+      {
+        "key": "3",
+        "latex": "$0.5$",
+        "hasDiagram": false
+      },
+      {
+        "key": "4",
+        "latex": "$0.28$",
+        "hasDiagram": false
+      }
+    ],
+    "hasDiagram": false,
+    "diagramPath": null,
+    "diagramBBox": null,
+    "optionsHaveDiagrams": false,
+    "optionDiagrams": {},
+    "extractedVia": "gemini-3.5-flash-lite (prompt_1)",
+    "aiAnomalyReport": {
+      "needs_manual_crop": true,
+      "has_visual_diagram": true,
+      "options_have_visuals": false,
+      "anomaly_types": [
+        "missing_diagram_crop"
+      ],
+      "reason": "The question contains a clear physical diagram showing the rectangular box, platform, and height h, which is completely missing from the extracted data.",
+      "suggested_targets": [
+        "diagram"
+      ]
+    }
+  }
+]

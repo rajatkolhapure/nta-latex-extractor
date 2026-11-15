@@ -145,6 +145,7 @@
           <option value="data/extracted_chemistry.json">Chemistry</option>
           <option value="data/extracted_mathematics.json">Mathematics</option>
           <option value="data/re_extracted_flagged.json">Flagged Re-OCRed</option>
+          <option value="data/manual_crop_queue.json">Manual Crop Queue (AI Outliers)</option>
         </select>
 
         <label class="font-medium text-slate-400 ml-2">Queue:</label>
@@ -184,12 +185,51 @@
             <button onclick="setImageZoom('orig')" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 hover:border-slate-500">100%</button>
             <button onclick="setImageZoom('2x')" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 hover:border-slate-500">Zoom</button>
             <a id="openRawImageLink" href="#" target="_blank" class="input-ctrl px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-blue-400 hover:border-slate-500 ml-1">Open</a>
+            <button id="cropToggleBtn" onclick="toggleManualCropMode()" class="input-ctrl px-2.5 py-0.5 bg-blue-600 hover:bg-blue-500 text-white rounded font-medium ml-2 transition flex items-center gap-1 shadow-sm">
+              <span>✂️</span> <span id="cropToggleLabel">Crop Tool</span>
+            </button>
           </div>
         </div>
 
         <div id="sourceImageContainer" class="flex-1 flex items-center justify-center overflow-auto rounded-lg bg-slate-950 p-2 border border-slate-800/80 relative">
-          <img id="sourceImage" src="" alt="Source Question Image" class="zoom-fit transition-all duration-150"
-               onerror="this.style.display='none'; document.getElementById('imageErrorMsg').style.display='block';">
+          <div id="imageWrapper" class="relative inline-block select-none">
+            <img id="sourceImage" src="" alt="Source Question Image" class="zoom-fit transition-all duration-150 block"
+                 onerror="this.style.display='none'; document.getElementById('imageErrorMsg').style.display='block';">
+            
+            <!-- Crop Interactive Overlay -->
+            <div id="cropOverlay" class="absolute inset-0 cursor-crosshair hidden select-none z-20 bg-blue-500/5">
+              <div id="cropSelectionBox" class="absolute hidden border-2 border-dashed border-sky-400 bg-sky-500/25 pointer-events-none rounded shadow-sm"></div>
+            </div>
+
+            <!-- Floating Crop Action Menu -->
+            <div id="cropActionToolbar" style="display:none;" class="absolute z-30 bg-slate-900/95 border border-slate-700 shadow-2xl rounded-xl p-2.5 text-xs backdrop-blur-md flex flex-col gap-2">
+              <div class="flex items-center justify-between text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                <span>Assign Selection As:</span>
+                <span id="cropCoordsInfo" class="font-mono text-slate-500"></span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" onclick="submitManualCrop('diagram')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded shadow-sm flex items-center gap-1 transition">
+                  <span>📌 Diagram</span>
+                </button>
+                <button type="button" onclick="submitManualCrop('option_1')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+                  1️⃣ Opt 1
+                </button>
+                <button type="button" onclick="submitManualCrop('option_2')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+                  2️⃣ Opt 2
+                </button>
+                <button type="button" onclick="submitManualCrop('option_3')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+                  3️⃣ Opt 3
+                </button>
+                <button type="button" onclick="submitManualCrop('option_4')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+                  4️⃣ Opt 4
+                </button>
+                <button type="button" onclick="cancelCropSelection()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition">
+                  ✕ Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div id="imageErrorMsg" style="display:none;" class="text-center text-slate-500 text-xs p-6">
             Source image not found locally.<br>
             <span id="sourceImageMissingPath" class="font-mono text-[10px] text-slate-600 block mt-1"></span>
@@ -285,6 +325,7 @@
       <div class="text-[11px] text-slate-500 hidden xl:flex items-center gap-3 font-mono">
         <span>[V] Verify</span>
         <span>[F] Flag</span>
+        <span>[C] Crop</span>
         <span>[&larr;/&rarr;] Step</span>
         <span>[Z] Undo</span>
         <span>[D] Theme</span>
@@ -500,6 +541,7 @@
     }
 
     function renderCurrent() {
+      cancelCropSelection();
       if (!activeQueue.length) {
         document.getElementById('queuePositionLabel').innerText = '0 / 0';
         document.getElementById('latexQuestionArea').innerHTML = '<div class="p-8 text-center text-slate-500">No questions in this queue.</div>';
@@ -628,24 +670,41 @@
       const optsGrid = document.getElementById('optionsGrid');
       const opts = (q.latexOptions && q.latexOptions.length) ? q.latexOptions : (q.options || []);
 
+      optsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-3 text-xs';
+
       optsGrid.innerHTML = opts.map(opt => {
         const key = String(opt.key || '');
         const isCorrect = correctKeys.includes(key);
-        const optClass = isCorrect ? 'opt-correct' : 'bg-slate-950/60 border-slate-800 text-slate-300';
+        const borderClass = isCorrect ? 'opt-correct' : 'bg-slate-950/70 border-slate-800 text-slate-300';
         const cropPath = q.optionDiagrams && q.optionDiagrams[key];
 
-        let content;
+        let contentHtml;
         if (cropPath) {
           const src = resolveMediaSrc(cropPath);
-          content = `<img src="${src}" class="diagram-img mt-1 max-w-full rounded" style="max-height:160px;object-fit:contain;" onerror="this.style.display='none'">`;
+          contentHtml = `
+            <div class="diagram-frame flex-1 h-28 my-1 flex items-center justify-center p-2 rounded-lg bg-slate-900/60 border border-slate-800/80 overflow-hidden">
+              <img src="${src}" alt="Option ${key}" class="diagram-img max-h-24 max-w-full object-contain mx-auto" onerror="this.style.display='none'">
+            </div>
+          `;
         } else {
-          content = `<div class="flex-1">${sanitizeLatex(opt.latex || opt.text || '')}</div>`;
+          contentHtml = `
+            <div class="flex-1 flex items-center justify-start p-2 leading-relaxed text-sm font-medium">
+              ${sanitizeLatex(opt.latex || opt.text || '')}
+            </div>
+          `;
         }
 
         return `
-          <div class="p-2.5 rounded-lg border ${optClass} flex items-start gap-2">
-            <span class="font-bold ${isCorrect ? 'text-emerald-400' : 'text-slate-500'}">${key}.</span>
-            ${content}
+          <div class="min-h-[140px] flex flex-col justify-between p-3 rounded-xl border ${borderClass} transition shadow-sm hover:border-slate-700">
+            <div class="flex items-center justify-between pb-1.5 border-b border-slate-800/60 mb-1">
+              <span class="font-bold font-mono text-xs ${isCorrect ? 'text-emerald-400' : 'text-slate-400'}">Option ${key}</span>
+              ${isCorrect ? '<span class="text-[10px] uppercase font-bold tracking-wider text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">✓ Correct</span>' : ''}
+            </div>
+            ${contentHtml}
+            <div class="pt-1 flex items-center justify-between text-[10px] text-slate-500 font-mono">
+              <span>${cropPath ? 'Cropped visual' : 'Text / LaTeX'}</span>
+              ${isCropMode ? `<button type="button" onclick="submitManualCrop('option_${key}')" class="text-blue-400 hover:text-blue-300 underline font-sans">Set to Crop</button>` : ''}
+            </div>
           </div>
         `;
       }).join('');
@@ -660,6 +719,191 @@
           ],
           throwOnError: false
         });
+      }
+    }
+
+    // ==========================================
+    // MANUAL CROPPER ENGINE
+    // ==========================================
+    let isCropMode = false;
+    let isCropDragging = false;
+    let cropStartClientX = 0;
+    let cropStartClientY = 0;
+    let currentSelection = null; // { x, y, w, h } relative to natural coords
+
+    function toggleManualCropMode() {
+      isCropMode = !isCropMode;
+      const overlay = document.getElementById('cropOverlay');
+      const btn = document.getElementById('cropToggleBtn');
+      const label = document.getElementById('cropToggleLabel');
+      
+      if (isCropMode) {
+        overlay.classList.remove('hidden');
+        btn.className = 'input-ctrl px-2.5 py-0.5 bg-rose-600 hover:bg-rose-500 text-white rounded font-medium ml-2 transition flex items-center gap-1 shadow-sm';
+        label.innerText = 'Exit Crop';
+      } else {
+        cancelCropSelection();
+        overlay.classList.add('hidden');
+        btn.className = 'input-ctrl px-2.5 py-0.5 bg-blue-600 hover:bg-blue-500 text-white rounded font-medium ml-2 transition flex items-center gap-1 shadow-sm';
+        label.innerText = 'Crop Tool';
+      }
+      if (activeQueue.length) {
+        renderOptionsGrid(activeQueue[currentIndex]);
+      }
+    }
+
+    function initCropOverlay() {
+      const overlay = document.getElementById('cropOverlay');
+      const selBox = document.getElementById('cropSelectionBox');
+      const toolbar = document.getElementById('cropActionToolbar');
+      const img = document.getElementById('sourceImage');
+
+      if (!overlay || !selBox || !img) return;
+
+      overlay.addEventListener('mousedown', (e) => {
+        if (!isCropMode || e.button !== 0) return;
+        e.preventDefault();
+        isCropDragging = true;
+        const rect = overlay.getBoundingClientRect();
+        cropStartClientX = e.clientX - rect.left;
+        cropStartClientY = e.clientY - rect.top;
+
+        selBox.style.left = `${cropStartClientX}px`;
+        selBox.style.top = `${cropStartClientY}px`;
+        selBox.style.width = '0px';
+        selBox.style.height = '0px';
+        selBox.classList.remove('hidden');
+        toolbar.style.display = 'none';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isCropDragging || !isCropMode) return;
+        const rect = overlay.getBoundingClientRect();
+        const currX = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+        const currY = Math.max(0, Math.min(rect.height, e.clientY - rect.top));
+
+        const x = Math.min(cropStartClientX, currX);
+        const y = Math.min(cropStartClientY, currY);
+        const w = Math.abs(currX - cropStartClientX);
+        const h = Math.abs(currY - cropStartClientY);
+
+        selBox.style.left = `${x}px`;
+        selBox.style.top = `${y}px`;
+        selBox.style.width = `${w}px`;
+        selBox.style.height = `${h}px`;
+      });
+
+      window.addEventListener('mouseup', (e) => {
+        if (!isCropDragging || !isCropMode) return;
+        isCropDragging = false;
+
+        const selW = parseFloat(selBox.style.width) || 0;
+        const selH = parseFloat(selBox.style.height) || 0;
+
+        if (selW < 12 || selH < 12) {
+          selBox.classList.add('hidden');
+          toolbar.style.display = 'none';
+          currentSelection = null;
+          return;
+        }
+
+        const selX = parseFloat(selBox.style.left) || 0;
+        const selY = parseFloat(selBox.style.top) || 0;
+
+        // Position floating toolbar just under selection (or above if near bottom)
+        const overlayRect = overlay.getBoundingClientRect();
+        let barTop = selY + selH + 10;
+        if (barTop + 100 > overlayRect.height) {
+          barTop = Math.max(5, selY - 85);
+        }
+        let barLeft = Math.max(5, Math.min(overlayRect.width - 280, selX));
+
+        toolbar.style.left = `${barLeft}px`;
+        toolbar.style.top = `${barTop}px`;
+        toolbar.style.display = 'flex';
+
+        // Scale factors
+        const scaleX = img.naturalWidth / img.clientWidth;
+        const scaleY = img.naturalHeight / img.clientHeight;
+        const natW = Math.round(selW * scaleX);
+        const natH = Math.round(selH * scaleY);
+        const coordsEl = document.getElementById('cropCoordsInfo');
+        if (coordsEl) coordsEl.innerText = `${natW} × ${natH} px`;
+
+        currentSelection = {
+          x: Math.round(selX * scaleX),
+          y: Math.round(selY * scaleY),
+          w: natW,
+          h: natH
+        };
+      });
+    }
+
+    function cancelCropSelection() {
+      const selBox = document.getElementById('cropSelectionBox');
+      const toolbar = document.getElementById('cropActionToolbar');
+      if (selBox) selBox.classList.add('hidden');
+      if (toolbar) toolbar.style.display = 'none';
+      currentSelection = null;
+    }
+
+    async function submitManualCrop(target) {
+      if (!currentSelection || !activeQueue.length) {
+        alert('Please draw a crop rectangle over the image first.');
+        return;
+      }
+      const q = activeQueue[currentIndex];
+      const toolbar = document.getElementById('cropActionToolbar');
+      const originalBtnsHtml = toolbar.innerHTML;
+
+      toolbar.innerHTML = `<div class="p-2 text-sky-400 font-mono text-xs flex items-center gap-2"><span>⏳</span> Cropping &amp; Enhancing...</div>`;
+
+      try {
+        const payload = {
+          paperId: q.paperId,
+          questionNumber: q.questionNumber,
+          subject: q.subject,
+          target: target,
+          bbox: [currentSelection.x, currentSelection.y, currentSelection.w, currentSelection.h]
+        };
+
+        const resp = await fetch('/api/manual-crop', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          throw new Error(err.error || `HTTP ${resp.status}`);
+        }
+
+        const data = await resp.json();
+        const savedPath = data.path;
+
+        if (target === 'diagram') {
+          q.hasDiagram = true;
+          q.diagramPath = savedPath;
+          const diagSec = document.getElementById('diagramSection');
+          diagSec.style.display = 'block';
+          const dImg = document.getElementById('diagramImage');
+          dImg.src = resolveMediaSrc(savedPath) + '?t=' + Date.now();
+          dImg.style.display = 'block';
+          document.getElementById('diagramMissingMsg').style.display = 'none';
+          document.getElementById('diagramPathLabel').innerText = savedPath;
+        } else if (target.startsWith('option_')) {
+          const optKey = target.replace('option_', '');
+          q.optionDiagrams = q.optionDiagrams || {};
+          q.optionDiagrams[optKey] = savedPath;
+          q.optionsHaveDiagrams = true;
+          renderOptionsGrid(q);
+        }
+
+        cancelCropSelection();
+        setSaveStatus('saved');
+      } catch (err) {
+        alert('Manual crop failed: ' + err.message);
+        toolbar.innerHTML = originalBtnsHtml;
       }
     }
 
@@ -847,13 +1091,19 @@
       } else if (e.key === 'z' || e.key === 'Z') {
         e.preventDefault();
         undoLast();
+      } else if (e.key === 'c' || e.key === 'C') {
+        e.preventDefault();
+        toggleManualCropMode();
       } else if (e.key === 'd' || e.key === 'D') {
         e.preventDefault();
         toggleTheme();
       }
     });
 
-    window.addEventListener('DOMContentLoaded', loadDataset);
+    window.addEventListener('DOMContentLoaded', () => {
+      initCropOverlay();
+      loadDataset();
+    });
   </script>
 </body>
 </html>
