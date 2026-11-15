@@ -252,8 +252,18 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 if (x2 - x1) < 5 or (y2 - y1) < 5:
                     raise ValueError("Selection box too small")
 
-                # Direct cut without slow enhancing filters
+                # Fast clean: white background, threshold ink — no slow upscaling
                 crop = img[y1:y2, x1:x2]
+                gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+                # Adaptive threshold → black ink on white background
+                cleaned = cv2.adaptiveThreshold(
+                    gray, 255,
+                    cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                    cv2.THRESH_BINARY,
+                    blockSize=21, C=8
+                )
+                # Convert back to BGR so it saves as a normal PNG
+                crop = cv2.cvtColor(cleaned, cv2.COLOR_GRAY2BGR)
 
                 stem = Path(img_path).stem
                 if target == 'diagram':
