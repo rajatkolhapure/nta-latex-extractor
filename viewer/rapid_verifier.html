@@ -389,10 +389,14 @@
         const cleanBody = body.replace(/\$/g, '');
         return `$$\\begin{array}${align}${cleanBody}\\end{array}$$`;
       });
+      // Convert degree expressions like 30^\circ, 30^{\circ}, ^\circ to degree symbol °
+      s = s.replace(/(\d+(?:\.\d+)?)(?:\\,)?\s*\^\{?\\circ\}?/g, '$1°');
+      s = s.replace(/\^\{?\\circ\}?/g, '°');
+
       // Ensure raw TeX math commands like \frac, \sqrt, \times, etc. without $ delimiters are wrapped in math mode
       s = s.trim();
-      if (/\\(?:frac|sqrt|left|right|times|div|pm|alpha|beta|gamma|delta|epsilon|theta|lambda|mu|pi|rho|sigma|tau|phi|omega|Delta|Omega|sum|int|infty|le|ge|neq|approx|cdot|text|mathrm|mathbf|vec|hat|bar)\b/.test(s)) {
-        if (!s.includes('$') && !s.includes('\\(') && !s.includes('\\[') && !s.includes('\\begin{')) {
+      if (!s.includes('$') && !s.includes('\\(') && !s.includes('\\[') && !s.includes('\\begin{')) {
+        if (/\\(?:frac|sqrt|left|right|times|div|pm|alpha|beta|gamma|delta|epsilon|theta|lambda|mu|pi|rho|sigma|tau|phi|omega|Delta|Omega|sum|int|infty|le|ge|neq|approx|cdot|text|mathrm|mathbf|vec|hat|bar|circ|degree)\b/.test(s) || /\\\w+/.test(s) || /\^|_/.test(s)) {
           s = `$${s}$`;
         }
       }
