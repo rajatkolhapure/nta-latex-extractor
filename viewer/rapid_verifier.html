@@ -226,28 +226,28 @@
             </div>
 
             <!-- Floating Crop Action Menu -->
-            <div id="cropActionToolbar" style="display:none;" class="absolute z-30 bg-slate-900/95 border border-slate-700 shadow-2xl rounded-xl p-2.5 text-xs backdrop-blur-md flex flex-col gap-2">
+            <div id="cropActionToolbar" style="display:none;" onmousedown="event.stopPropagation()" onclick="event.stopPropagation()" class="absolute z-30 bg-slate-900/95 border border-slate-700 shadow-2xl rounded-xl p-2.5 text-xs backdrop-blur-md flex flex-col gap-2">
               <div class="flex items-center justify-between text-[10px] uppercase font-bold text-slate-400 tracking-wider">
                 <span>Assign Selection As:</span>
                 <span id="cropCoordsInfo" class="font-mono text-slate-500"></span>
               </div>
-              <div class="flex flex-wrap gap-1.5">
-                <button type="button" onclick="submitManualCrop('diagram')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded shadow-sm flex items-center gap-1 transition">
+              <div class="flex flex-wrap gap-1.5" onmousedown="event.stopPropagation()">
+                <button type="button" onclick="event.stopPropagation(); submitManualCrop('diagram')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded shadow-sm flex items-center gap-1 transition">
                   <span>📌 Diagram</span>
                 </button>
-                <button type="button" onclick="submitManualCrop('option_1')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+                <button type="button" onclick="event.stopPropagation(); submitManualCrop('option_1')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
                   1️⃣ Opt 1
                 </button>
-                <button type="button" onclick="submitManualCrop('option_2')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+                <button type="button" onclick="event.stopPropagation(); submitManualCrop('option_2')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
                   2️⃣ Opt 2
                 </button>
-                <button type="button" onclick="submitManualCrop('option_3')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+                <button type="button" onclick="event.stopPropagation(); submitManualCrop('option_3')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
                   3️⃣ Opt 3
                 </button>
-                <button type="button" onclick="submitManualCrop('option_4')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+                <button type="button" onclick="event.stopPropagation(); submitManualCrop('option_4')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
                   4️⃣ Opt 4
                 </button>
-                <button type="button" onclick="cancelCropSelection()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition">
+                <button type="button" onclick="event.stopPropagation(); cancelCropSelection()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition">
                   ✕ Cancel
                 </button>
               </div>
@@ -297,12 +297,17 @@
         </div>
 
         <div id="diagramSection" style="display:none;" class="mb-4">
-          <div class="flex items-center justify-between mb-1">
-            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Extracted Diagram Crop</span>
-            <span id="diagramPathLabel" class="text-[10px] font-mono text-slate-500 truncate max-w-xs"></span>
+          <div class="flex items-center justify-between mb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Extracted Diagram Crop</span>
+              <span id="diagramPathLabel" class="text-[10px] font-mono text-slate-500 truncate max-w-xs"></span>
+            </div>
+            <button type="button" onclick="removeQuestionDiagram()" class="px-2.5 py-1 bg-rose-950/80 hover:bg-rose-900 border border-rose-800 text-rose-300 rounded text-[11px] font-semibold flex items-center gap-1 transition shadow-sm" title="Remove diagram from question">
+              <span>🗑️</span> Remove Diagram
+            </button>
           </div>
-          <div class="diagram-frame rounded-lg p-2 bg-slate-950/70 border border-slate-800 flex justify-center">
-            <img id="diagramImage" src="" alt="Extracted Diagram" class="diagram-img max-h-56 object-contain"
+          <div class="diagram-frame rounded-xl p-3 bg-slate-950/80 border border-slate-800 flex items-center justify-center min-h-[140px]">
+            <img id="diagramImage" src="" alt="Extracted Diagram" class="diagram-img max-h-56 max-w-full object-contain mx-auto"
                  onerror="this.style.display='none'; document.getElementById('diagramMissingMsg').style.display='block';">
             <span id="diagramMissingMsg" style="display:none;" class="text-xs text-rose-400 italic p-4">Diagram image failed to load</span>
           </div>
@@ -894,7 +899,7 @@
           const src = resolveMediaSrc(cropPath);
           contentHtml = `
             <div class="diagram-frame flex-1 h-28 my-1 flex items-center justify-center p-2 rounded-lg bg-slate-900/60 border border-slate-800/80 overflow-hidden">
-              <img src="${src}" alt="Option ${key}" class="diagram-img max-h-24 max-w-full object-contain mx-auto" onerror="this.style.display='none'">
+              <img src="${src}?t=${Date.now()}" alt="Option ${key}" class="diagram-img max-h-24 max-w-full object-contain mx-auto" onerror="this.style.display='none'">
             </div>
           `;
         } else {
@@ -909,7 +914,10 @@
           <div class="min-h-[140px] flex flex-col justify-between p-3 rounded-xl border ${borderClass} transition shadow-sm hover:border-slate-700">
             <div class="flex items-center justify-between pb-1.5 border-b border-slate-800/60 mb-1">
               <span class="font-bold font-mono text-xs ${isCorrect ? 'text-emerald-400' : 'text-slate-400'}">Option ${key}</span>
-              ${isCorrect ? '<span class="text-[10px] uppercase font-bold tracking-wider text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">✓ Correct</span>' : ''}
+              <div class="flex items-center gap-1.5">
+                ${isCorrect ? '<span class="text-[10px] uppercase font-bold tracking-wider text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">✓ Correct</span>' : ''}
+                ${cropPath ? `<button type="button" onclick="removeOptionDiagram('${key}')" class="text-rose-400 hover:text-rose-300 text-[10px] font-mono hover:underline flex items-center gap-0.5" title="Remove this option diagram">✕ Remove</button>` : ''}
+              </div>
             </div>
             ${contentHtml}
             <div class="pt-1 flex items-center justify-between text-[10px] text-slate-500 font-mono">
@@ -1059,23 +1067,23 @@
           <span>Assign Selection As:</span>
           <span id="cropCoordsInfo" class="font-mono text-slate-500"></span>
         </div>
-        <div class="flex flex-wrap gap-1.5">
-          <button type="button" onclick="submitManualCrop('diagram')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded shadow-sm flex items-center gap-1 transition">
+        <div class="flex flex-wrap gap-1.5" onmousedown="event.stopPropagation()">
+          <button type="button" onmousedown="event.stopPropagation()" onclick="event.stopPropagation(); submitManualCrop('diagram')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded shadow-sm flex items-center gap-1 transition">
             <span>📌 Diagram</span>
           </button>
-          <button type="button" onclick="submitManualCrop('option_1')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+          <button type="button" onmousedown="event.stopPropagation()" onclick="event.stopPropagation(); submitManualCrop('option_1')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
             1️⃣ Opt 1
           </button>
-          <button type="button" onclick="submitManualCrop('option_2')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+          <button type="button" onmousedown="event.stopPropagation()" onclick="event.stopPropagation(); submitManualCrop('option_2')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
             2️⃣ Opt 2
           </button>
-          <button type="button" onclick="submitManualCrop('option_3')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+          <button type="button" onmousedown="event.stopPropagation()" onclick="event.stopPropagation(); submitManualCrop('option_3')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
             3️⃣ Opt 3
           </button>
-          <button type="button" onclick="submitManualCrop('option_4')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
+          <button type="button" onmousedown="event.stopPropagation()" onclick="event.stopPropagation(); submitManualCrop('option_4')" class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded transition">
             4️⃣ Opt 4
           </button>
-          <button type="button" onclick="cancelCropSelection()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition">
+          <button type="button" onmousedown="event.stopPropagation()" onclick="event.stopPropagation(); cancelCropSelection()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition">
             ✕ Cancel
           </button>
         </div>
@@ -1091,6 +1099,61 @@
         renderCropToolbarContent();
       }
       currentSelection = null;
+    }
+
+    async function removeQuestionDiagram() {
+      if (!activeQueue.length) return;
+      const q = activeQueue[currentIndex];
+      q.hasDiagram = false;
+      q.diagramPath = null;
+      q.diagramBBox = null;
+      document.getElementById('diagramSection').style.display = 'none';
+
+      setSaveStatus('saving');
+      try {
+        await fetch('/api/remove-diagram', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            paperId: q.paperId,
+            questionNumber: q.questionNumber,
+            subject: q.subject,
+            dataset: currentDataset,
+            target: 'diagram'
+          })
+        });
+        setSaveStatus('saved');
+      } catch (_) {
+        setSaveStatus('error');
+      }
+    }
+
+    async function removeOptionDiagram(key) {
+      if (!activeQueue.length) return;
+      const q = activeQueue[currentIndex];
+      if (q.optionDiagrams) {
+        delete q.optionDiagrams[key];
+        q.optionsHaveDiagrams = Object.values(q.optionDiagrams || {}).some(v => !!v);
+      }
+      renderOptionsGrid(q);
+
+      setSaveStatus('saving');
+      try {
+        await fetch('/api/remove-diagram', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            paperId: q.paperId,
+            questionNumber: q.questionNumber,
+            subject: q.subject,
+            dataset: currentDataset,
+            target: 'option_' + key
+          })
+        });
+        setSaveStatus('saved');
+      } catch (_) {
+        setSaveStatus('error');
+      }
     }
 
     async function submitManualCrop(target) {

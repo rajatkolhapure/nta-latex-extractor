@@ -328,6 +328,52 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(json.dumps({"error": str(e)}).encode())
             return
+        elif self.path == "/api/remove-diagram":
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            try:
+                data = json.loads(post_data)
+                paper_id = str(data.get('paperId', ''))
+                q_num = str(data.get('questionNumber', ''))
+                subject = data.get('subject', 'Physics')
+                dataset = data.get('dataset', f'data/extracted_{subject.lower()}.json')
+                target = str(data.get('target', 'diagram'))
+
+                # Update across all candidate dataset files
+                for alt_name in [dataset, f"data/extracted_{subject.lower()}.json", "data/re_extracted_flagged.json", "data/manual_crop_queue.json"]:
+                    p = REPO_ROOT / alt_name.replace('\\', '/').lstrip('/')
+                    if p.exists():
+                        try:
+                            with open(p, 'r', encoding='utf-8') as f:
+                                qs = json.load(f)
+                            updated = False
+                            for q in qs:
+                                if str(q.get('paperId')) == paper_id and str(q.get('questionNumber')) == q_num:
+                                    if target == 'diagram':
+                                        q['hasDiagram'] = False
+                                        q['diagramPath'] = None
+                                        q['diagramBBox'] = None
+                                    elif target.startswith('option_'):
+                                        opt_k = target.replace('option_', '')
+                                        if 'optionDiagrams' in q and isinstance(q['optionDiagrams'], dict):
+                                            q['optionDiagrams'].pop(opt_k, None)
+                                            q['optionsHaveDiagrams'] = any(bool(v) for v in q['optionDiagrams'].values())
+                                    updated = True
+                            if updated:
+                                with open(p, 'w', encoding='utf-8') as f:
+                                    json.dump(qs, f, indent=2, ensure_ascii=False)
+                        except Exception:
+                            pass
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"success": True}).encode())
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode())
+            return
         self.send_response(404)
         self.end_headers()
 
