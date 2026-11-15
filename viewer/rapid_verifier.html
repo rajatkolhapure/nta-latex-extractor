@@ -856,7 +856,7 @@
       if (q.hasDiagram && q.diagramPath) {
         diagSec.style.display = 'block';
         const dImg = document.getElementById('diagramImage');
-        dImg.src = resolveMediaSrc(q.diagramPath);
+        dImg.src = resolveMediaSrc(q.diagramPath) + '?t=' + Date.now();
         dImg.style.display = 'block';
         document.getElementById('diagramMissingMsg').style.display = 'none';
         document.getElementById('diagramPathLabel').innerText = q.diagramPath;
